@@ -1,5 +1,5 @@
 /**
- * Dice Duel Onchain Event Data
+ * Dragon Dice Onchain Event Data
  *
  * Shared type definitions for event payloads published by the SVM indexer
  * (handlers.ts / anchor-events.ts) and consumed by the server plugin.
@@ -122,7 +122,7 @@ export interface DiceDuelAccountTypeMap {
  * Maps event type strings to their payload types.
  * Single source of truth for the publisher→consumer contract.
  */
-export interface DiceDuelEventMap {
+export interface DragonDiceEventMap {
 	wager_initiated: WagerInitiatedEventData;
 	wager_accepted: WagerAcceptedEventData;
 	wager_cancelled: WagerCancelledEventData;

@@ -8,7 +8,7 @@ pub mod state;
 
 use instructions::*;
 
-declare_id!("7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM");
+declare_id!("D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof");
 
 #[program]
 pub mod dice_duel {

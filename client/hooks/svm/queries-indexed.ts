@@ -21,13 +21,13 @@ import {
 	fetchWagerHistory,
 } from "../../api/svmApi";
 
-const LOG = "[DiceDuel:Query]";
+const LOG = "[DragonDice:Query]";
 
 /**
  * Namespaced query key factory (SDK Phase 5).
  * Replaces ad-hoc SVM_QUERY_KEYS with plugin-prefixed keys.
  */
-export const queryKeys = createPluginQueryKeys("dice-duel", {
+export const queryKeys = createPluginQueryKeys("dragon-dice", {
 	inventoryWagers: (address: string) => ({ address }),
 	wagerHistory: (address: string) => ({ address }),
 	wagerDetail: (wagerAddress: string) => ({ wagerAddress }),

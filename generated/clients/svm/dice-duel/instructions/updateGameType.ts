@@ -7,305 +7,305 @@
  */
 
 import {
-  addDecoderSizePrefix,
-  addEncoderSizePrefix,
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getBooleanDecoder,
-  getBooleanEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getProgramDerivedAddress,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  getUtf8Decoder,
-  getUtf8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type Option,
-  type OptionOrNullable,
-  type ReadonlyAccount,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type Codec,
+	type Decoder,
+	type Encoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type Option,
+	type OptionOrNullable,
+	type ReadonlyAccount,
+	type ReadonlySignerAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	addDecoderSizePrefix,
+	addEncoderSizePrefix,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getBooleanDecoder,
+	getBooleanEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getOptionDecoder,
+	getOptionEncoder,
+	getProgramDerivedAddress,
+	getStructDecoder,
+	getStructEncoder,
+	getU32Decoder,
+	getU32Encoder,
+	getUtf8Decoder,
+	getUtf8Encoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
-import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
+import { type ResolvedAccount, getAccountMetaFactory } from "../shared";
 
 export const UPDATE_GAME_TYPE_DISCRIMINATOR = new Uint8Array([
-  53, 145, 193, 121, 128, 45, 224, 38,
+	53, 145, 193, 121, 128, 45, 224, 38,
 ]);
 
 export function getUpdateGameTypeDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    UPDATE_GAME_TYPE_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		UPDATE_GAME_TYPE_DISCRIMINATOR,
+	);
 }
 
 export type UpdateGameTypeInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountAdmin extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountGameType extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string | AccountMeta<string> = string,
+	TAccountConfig extends string | AccountMeta<string> = string,
+	TAccountGameType extends string | AccountMeta<string> = string,
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountAdmin extends string
-        ? ReadonlySignerAccount<TAccountAdmin> &
-            AccountSignerMeta<TAccountAdmin>
-        : TAccountAdmin,
-      TAccountConfig extends string
-        ? ReadonlyAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountGameType extends string
-        ? WritableAccount<TAccountGameType>
-        : TAccountGameType,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountAdmin extends string
+				? ReadonlySignerAccount<TAccountAdmin> &
+						AccountSignerMeta<TAccountAdmin>
+				: TAccountAdmin,
+			TAccountConfig extends string
+				? ReadonlyAccount<TAccountConfig>
+				: TAccountConfig,
+			TAccountGameType extends string
+				? WritableAccount<TAccountGameType>
+				: TAccountGameType,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type UpdateGameTypeInstructionData = {
-  discriminator: ReadonlyUint8Array;
-  name: Option<string>;
-  enabled: Option<boolean>;
+	discriminator: ReadonlyUint8Array;
+	name: Option<string>;
+	enabled: Option<boolean>;
 };
 
 export type UpdateGameTypeInstructionDataArgs = {
-  name: OptionOrNullable<string>;
-  enabled: OptionOrNullable<boolean>;
+	name: OptionOrNullable<string>;
+	enabled: OptionOrNullable<boolean>;
 };
 
 export function getUpdateGameTypeInstructionDataEncoder(): Encoder<UpdateGameTypeInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      [
-        "name",
-        getOptionEncoder(
-          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
-        ),
-      ],
-      ["enabled", getOptionEncoder(getBooleanEncoder())],
-    ]),
-    (value) => ({ ...value, discriminator: UPDATE_GAME_TYPE_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			[
+				"name",
+				getOptionEncoder(
+					addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+				),
+			],
+			["enabled", getOptionEncoder(getBooleanEncoder())],
+		]),
+		(value) => ({ ...value, discriminator: UPDATE_GAME_TYPE_DISCRIMINATOR }),
+	);
 }
 
 export function getUpdateGameTypeInstructionDataDecoder(): Decoder<UpdateGameTypeInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    [
-      "name",
-      getOptionDecoder(addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
-    ],
-    ["enabled", getOptionDecoder(getBooleanDecoder())],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		[
+			"name",
+			getOptionDecoder(addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
+		],
+		["enabled", getOptionDecoder(getBooleanDecoder())],
+	]);
 }
 
 export function getUpdateGameTypeInstructionDataCodec(): Codec<
-  UpdateGameTypeInstructionDataArgs,
-  UpdateGameTypeInstructionData
+	UpdateGameTypeInstructionDataArgs,
+	UpdateGameTypeInstructionData
 > {
-  return combineCodec(
-    getUpdateGameTypeInstructionDataEncoder(),
-    getUpdateGameTypeInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getUpdateGameTypeInstructionDataEncoder(),
+		getUpdateGameTypeInstructionDataDecoder(),
+	);
 }
 
 export type UpdateGameTypeAsyncInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
-  TAccountGameType extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
+	TAccountGameType extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config?: Address<TAccountConfig>;
-  gameType: Address<TAccountGameType>;
-  name: UpdateGameTypeInstructionDataArgs["name"];
-  enabled: UpdateGameTypeInstructionDataArgs["enabled"];
+	admin: TransactionSigner<TAccountAdmin>;
+	config?: Address<TAccountConfig>;
+	gameType: Address<TAccountGameType>;
+	name: UpdateGameTypeInstructionDataArgs["name"];
+	enabled: UpdateGameTypeInstructionDataArgs["enabled"];
 };
 
 export async function getUpdateGameTypeInstructionAsync<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TAccountGameType extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TAccountGameType extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: UpdateGameTypeAsyncInput<
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: UpdateGameTypeAsyncInput<
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): Promise<
-  UpdateGameTypeInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType
-  >
+	UpdateGameTypeInstruction<
+		TProgramAddress,
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType
+	>
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: false },
-    config: { value: input.config ?? null, isWritable: false },
-    gameType: { value: input.gameType ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: false },
+		config: { value: input.config ?? null, isWritable: false },
+		gameType: { value: input.gameType ?? null, isWritable: true },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Original args.
-  const args = { ...input };
+	// Original args.
+	const args = { ...input };
 
-  // Resolve default values.
-  if (!accounts.config.value) {
-    accounts.config.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
-      ],
-    });
-  }
+	// Resolve default values.
+	if (!accounts.config.value) {
+		accounts.config.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
+			],
+		});
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.admin),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.gameType),
-    ],
-    data: getUpdateGameTypeInstructionDataEncoder().encode(
-      args as UpdateGameTypeInstructionDataArgs,
-    ),
-    programAddress,
-  } as UpdateGameTypeInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.admin),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.gameType),
+		],
+		data: getUpdateGameTypeInstructionDataEncoder().encode(
+			args as UpdateGameTypeInstructionDataArgs,
+		),
+		programAddress,
+	} as UpdateGameTypeInstruction<
+		TProgramAddress,
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType
+	>);
 }
 
 export type UpdateGameTypeInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
-  TAccountGameType extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
+	TAccountGameType extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config: Address<TAccountConfig>;
-  gameType: Address<TAccountGameType>;
-  name: UpdateGameTypeInstructionDataArgs["name"];
-  enabled: UpdateGameTypeInstructionDataArgs["enabled"];
+	admin: TransactionSigner<TAccountAdmin>;
+	config: Address<TAccountConfig>;
+	gameType: Address<TAccountGameType>;
+	name: UpdateGameTypeInstructionDataArgs["name"];
+	enabled: UpdateGameTypeInstructionDataArgs["enabled"];
 };
 
 export function getUpdateGameTypeInstruction<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TAccountGameType extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TAccountGameType extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: UpdateGameTypeInput<TAccountAdmin, TAccountConfig, TAccountGameType>,
-  config?: { programAddress?: TProgramAddress },
+	input: UpdateGameTypeInput<TAccountAdmin, TAccountConfig, TAccountGameType>,
+	config?: { programAddress?: TProgramAddress },
 ): UpdateGameTypeInstruction<
-  TProgramAddress,
-  TAccountAdmin,
-  TAccountConfig,
-  TAccountGameType
+	TProgramAddress,
+	TAccountAdmin,
+	TAccountConfig,
+	TAccountGameType
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: false },
-    config: { value: input.config ?? null, isWritable: false },
-    gameType: { value: input.gameType ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: false },
+		config: { value: input.config ?? null, isWritable: false },
+		gameType: { value: input.gameType ?? null, isWritable: true },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Original args.
-  const args = { ...input };
+	// Original args.
+	const args = { ...input };
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.admin),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.gameType),
-    ],
-    data: getUpdateGameTypeInstructionDataEncoder().encode(
-      args as UpdateGameTypeInstructionDataArgs,
-    ),
-    programAddress,
-  } as UpdateGameTypeInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.admin),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.gameType),
+		],
+		data: getUpdateGameTypeInstructionDataEncoder().encode(
+			args as UpdateGameTypeInstructionDataArgs,
+		),
+		programAddress,
+	} as UpdateGameTypeInstruction<
+		TProgramAddress,
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType
+	>);
 }
 
 export type ParsedUpdateGameTypeInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    admin: TAccountMetas[0];
-    config: TAccountMetas[1];
-    gameType: TAccountMetas[2];
-  };
-  data: UpdateGameTypeInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		admin: TAccountMetas[0];
+		config: TAccountMetas[1];
+		gameType: TAccountMetas[2];
+	};
+	data: UpdateGameTypeInstructionData;
 };
 
 export function parseUpdateGameTypeInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedUpdateGameTypeInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 3) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      admin: getNextAccount(),
-      config: getNextAccount(),
-      gameType: getNextAccount(),
-    },
-    data: getUpdateGameTypeInstructionDataDecoder().decode(instruction.data),
-  };
+	if (instruction.accounts.length < 3) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: {
+			admin: getNextAccount(),
+			config: getNextAccount(),
+			gameType: getNextAccount(),
+		},
+		data: getUpdateGameTypeInstructionDataDecoder().decode(instruction.data),
+	};
 }

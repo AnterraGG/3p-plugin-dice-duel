@@ -37,7 +37,7 @@ interface Props {
 export default function SvmWagerDetailsContent(props: Props) {
 	return (
 		<GameWindow
-			id="dice-duel:wager-details"
+			id="dragon-dice:wager-details"
 			title="Dice Duel — Details"
 			size="md"
 			isOpen
@@ -121,7 +121,7 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 				nonce: BigInt(wager.nonce),
 			});
 			// No inline notification — the server-driven wager_claimed event
-			// in DiceDuelUIContainer handles the "Winnings Claimed" toast
+			// in DragonDiceUIContainer handles the "Winnings Claimed" toast
 			// with the actual payout amount from the chain.
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.inventoryWagers.all(),
@@ -133,7 +133,7 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 				type: "error",
 				title: "Claim Failed",
 				message: decoded.message,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 		}
 		setIsClaiming(false);

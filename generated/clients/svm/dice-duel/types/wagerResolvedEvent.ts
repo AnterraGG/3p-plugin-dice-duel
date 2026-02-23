@@ -7,75 +7,75 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU64Decoder,
+	getU64Encoder,
 } from "@solana/kit";
 
 export type WagerResolvedEvent = {
-  challenger: Address;
-  opponent: Address;
-  winner: Address;
-  amount: bigint;
-  vrfResult: number;
-  gameType: number;
-  challengerChoice: number;
-  nonce: bigint;
+	challenger: Address;
+	opponent: Address;
+	winner: Address;
+	amount: bigint;
+	vrfResult: number;
+	gameType: number;
+	challengerChoice: number;
+	nonce: bigint;
 };
 
 export type WagerResolvedEventArgs = {
-  challenger: Address;
-  opponent: Address;
-  winner: Address;
-  amount: number | bigint;
-  vrfResult: number;
-  gameType: number;
-  challengerChoice: number;
-  nonce: number | bigint;
+	challenger: Address;
+	opponent: Address;
+	winner: Address;
+	amount: number | bigint;
+	vrfResult: number;
+	gameType: number;
+	challengerChoice: number;
+	nonce: number | bigint;
 };
 
 export function getWagerResolvedEventEncoder(): FixedSizeEncoder<WagerResolvedEventArgs> {
-  return getStructEncoder([
-    ["challenger", getAddressEncoder()],
-    ["opponent", getAddressEncoder()],
-    ["winner", getAddressEncoder()],
-    ["amount", getU64Encoder()],
-    ["vrfResult", getU8Encoder()],
-    ["gameType", getU8Encoder()],
-    ["challengerChoice", getU8Encoder()],
-    ["nonce", getU64Encoder()],
-  ]);
+	return getStructEncoder([
+		["challenger", getAddressEncoder()],
+		["opponent", getAddressEncoder()],
+		["winner", getAddressEncoder()],
+		["amount", getU64Encoder()],
+		["vrfResult", getU8Encoder()],
+		["gameType", getU8Encoder()],
+		["challengerChoice", getU8Encoder()],
+		["nonce", getU64Encoder()],
+	]);
 }
 
 export function getWagerResolvedEventDecoder(): FixedSizeDecoder<WagerResolvedEvent> {
-  return getStructDecoder([
-    ["challenger", getAddressDecoder()],
-    ["opponent", getAddressDecoder()],
-    ["winner", getAddressDecoder()],
-    ["amount", getU64Decoder()],
-    ["vrfResult", getU8Decoder()],
-    ["gameType", getU8Decoder()],
-    ["challengerChoice", getU8Decoder()],
-    ["nonce", getU64Decoder()],
-  ]);
+	return getStructDecoder([
+		["challenger", getAddressDecoder()],
+		["opponent", getAddressDecoder()],
+		["winner", getAddressDecoder()],
+		["amount", getU64Decoder()],
+		["vrfResult", getU8Decoder()],
+		["gameType", getU8Decoder()],
+		["challengerChoice", getU8Decoder()],
+		["nonce", getU64Decoder()],
+	]);
 }
 
 export function getWagerResolvedEventCodec(): FixedSizeCodec<
-  WagerResolvedEventArgs,
-  WagerResolvedEvent
+	WagerResolvedEventArgs,
+	WagerResolvedEvent
 > {
-  return combineCodec(
-    getWagerResolvedEventEncoder(),
-    getWagerResolvedEventDecoder(),
-  );
+	return combineCodec(
+		getWagerResolvedEventEncoder(),
+		getWagerResolvedEventDecoder(),
+	);
 }

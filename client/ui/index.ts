@@ -1,9 +1,9 @@
 /**
- * Dice Duel Plugin - UI Components (SVM-only)
+ * Dragon Dice Plugin - UI Components (SVM-only)
  */
 
 // ─── Container ────────────────────────────────────────────────────────────────
-export { DiceDuelUIContainer } from "./DiceDuelUIContainer";
+export { DragonDiceUIContainer } from "./DragonDiceUIContainer";
 
 // ─── Shop (SVM) ───────────────────────────────────────────────────────────────
 export { SvmShop } from "./svm/SvmShop";

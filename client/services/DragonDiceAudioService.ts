@@ -1,16 +1,16 @@
 /**
- * Dice Duel Audio Service (3p SDK version)
+ * Dragon Dice Audio Service (3p SDK version)
  *
  * Import change: IAudioService from 3p-plugin-sdk/client
  */
 
 import type { IAudioService } from "@townexchange/3p-plugin-sdk/client";
-import { DICE_DUEL_AUDIO, DICE_DUEL_AUDIO_PATHS } from "../audio/constants";
+import { DRAGON_DICE_AUDIO, DRAGON_DICE_AUDIO_PATHS } from "../audio/constants";
 
 let audioService: IAudioService | null = null;
 let audioInitialized = false;
 
-export async function initDiceDuelAudio(audio: IAudioService): Promise<void> {
+export async function initDragonDiceAudio(audio: IAudioService): Promise<void> {
 	if (audioInitialized) return;
 
 	audioService = audio;
@@ -18,7 +18,7 @@ export async function initDiceDuelAudio(audio: IAudioService): Promise<void> {
 
 	try {
 		const loadPromises: Promise<void>[] = [];
-		for (const [key, path] of Object.entries(DICE_DUEL_AUDIO_PATHS)) {
+		for (const [key, path] of Object.entries(DRAGON_DICE_AUDIO_PATHS)) {
 			loadPromises.push(
 				audioService
 					.loadDynamicSound(key, path, { volume: 0.5 })
@@ -32,7 +32,7 @@ export async function initDiceDuelAudio(audio: IAudioService): Promise<void> {
 	}
 }
 
-export function playDiceDuelSound(key: string): void {
+export function playDragonDiceSound(key: string): void {
 	if (!audioService) return;
 	try {
 		audioService.playDynamicSound(key, { volume: 0.6 });
@@ -42,40 +42,40 @@ export function playDiceDuelSound(key: string): void {
 }
 
 export function playChallengeSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.CHALLENGE);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.CHALLENGE);
 }
 
 export function playRollSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.ROLL);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.ROLL);
 }
 
 export function playLandSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.LAND);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.LAND);
 }
 
 export function playWinSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.WIN);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.WIN);
 }
 
 export function playLoseSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.LOSE);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.LOSE);
 }
 
 export function playCoinSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.COIN);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.COIN);
 }
 
 export function playClickSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.CLICK);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.CLICK);
 }
 
 export function playErrorSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.LOSE);
+	playDragonDiceSound(DRAGON_DICE_AUDIO.LOSE);
 }
 
-export function destroyDiceDuelAudio(): void {
+export function destroyDragonDiceAudio(): void {
 	if (!audioService) return;
-	for (const key of Object.values(DICE_DUEL_AUDIO)) {
+	for (const key of Object.values(DRAGON_DICE_AUDIO)) {
 		audioService.unloadDynamicSound(key);
 	}
 	audioService = null;

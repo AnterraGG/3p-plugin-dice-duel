@@ -1,5 +1,5 @@
 /**
- * Dice Duel Window Registration (3p SDK version)
+ * Dragon Dice Window Registration (3p SDK version)
  *
  * Uses tex-ui-kit (allowed dependency) for window registration.
  * Window keys are plain strings (no @tex/window-keys type-safe registry).
@@ -11,7 +11,7 @@
 import { PluginChainProvider } from "@townexchange/3p-plugin-sdk/client";
 import { registerWindow } from "@townexchange/tex-ui-kit";
 import { createElement, type ComponentType, type ReactNode } from "react";
-import { diceDuelChains } from "../shared/chains";
+import { dragonDiceChains } from "../shared/chains";
 import {
 	DD_INCOMING_WAGER,
 	DD_INITIATE_WAGER,
@@ -39,10 +39,10 @@ function withChainContext(
 			return createElement(
 				PluginChainProvider as ComponentType<{
 					chainId: number;
-					config: typeof diceDuelChains;
+					config: typeof dragonDiceChains;
 					children?: ReactNode;
 				}>,
-				{ chainId: 0, config: diceDuelChains },
+				{ chainId: 0, config: dragonDiceChains },
 				createElement(Inner, props),
 			);
 		}
@@ -51,7 +51,7 @@ function withChainContext(
 	};
 }
 
-export function registerDiceDuelWindows(): void {
+export function registerDragonDiceWindows(): void {
 	registerWindow({
 		key: DD_SHOP as AnyWindowKey,
 		component: withChainContext(

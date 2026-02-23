@@ -8,8 +8,8 @@ import { SvmShop } from "./SvmShop";
 export default function SvmShopContent({ onClose }: { onClose: () => void }) {
 	return (
 		<GameWindow
-			id="dice-duel:shop"
-			title="Dice Duel Shop"
+			id="dragon-dice:shop"
+			title="Dragon Dice Shop"
 			size="sm"
 			isOpen
 			onClose={onClose}

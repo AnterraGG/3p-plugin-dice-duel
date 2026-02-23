@@ -1,7 +1,7 @@
 /**
- * Dice Duel UI Components
+ * Dragon Dice UI Components
  *
- * Shared reusable components for Dice Duel plugin UI.
+ * Shared reusable components for Dragon Dice plugin UI.
  */
 
 export { DiceResultDisplay } from "./DiceResultDisplay";

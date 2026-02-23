@@ -3,7 +3,7 @@ use anchor_lang::system_program;
 
 use crate::constants::*;
 use crate::errors::DiceDuelError;
-use crate::events::{DiceBagUsed, WagerResolved};
+use crate::events::WagerResolved;
 use crate::state::{DiceBag, GameConfig, PlayerStats, Wager, WagerStatus};
 
 /// Settle a wager that has received VRF randomness
@@ -224,13 +224,6 @@ pub fn handle_settle_wager(context: Context<SettleWagerAccountConstraints>) -> R
             opponent_stats.current_streak = -1;
         }
     }
-
-    // Emit DiceBagUsed after bag stats update
-    emit!(DiceBagUsed {
-        mint: challenger_bag.mint,
-        owner: challenger_bag.owner,
-        uses_remaining: challenger_bag.uses_remaining,
-    });
 
     // Close escrow: zero data, drain remaining lamports to challenger
     let escrow = &context.accounts.escrow;

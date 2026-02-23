@@ -37,7 +37,7 @@ interface Props {
 export default function SvmWagerHistoryContent({ onClose }: Props) {
 	return (
 		<GameWindow
-			id="dice-duel:wager-history"
+			id="dragon-dice:wager-history"
 			title="Dice Duel — History"
 			size="md"
 			isOpen

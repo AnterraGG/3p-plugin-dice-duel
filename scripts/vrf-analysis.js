@@ -18,7 +18,7 @@ const OUR_DICE_DUEL_ID = new PublicKey(
 
 // Setup connection with Helius
 const connection = new Connection(
-	process.env.HELIUS_RPC_URL || "https://api.devnet.solana.com",
+	"https://devnet.helius-rpc.com/?api-key=e97f43d4-ee09-4081-8260-6bfd0fb78fb7",
 	"confirmed",
 );
 

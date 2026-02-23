@@ -7,66 +7,66 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU64Decoder,
+	getU64Encoder,
 } from "@solana/kit";
 
 export type WagerInitiated = {
-  challenger: Address;
-  opponent: Address;
-  amount: bigint;
-  gameType: number;
-  nonce: bigint;
-  createdAt: bigint;
+	challenger: Address;
+	opponent: Address;
+	amount: bigint;
+	gameType: number;
+	nonce: bigint;
+	createdAt: bigint;
 };
 
 export type WagerInitiatedArgs = {
-  challenger: Address;
-  opponent: Address;
-  amount: number | bigint;
-  gameType: number;
-  nonce: number | bigint;
-  createdAt: number | bigint;
+	challenger: Address;
+	opponent: Address;
+	amount: number | bigint;
+	gameType: number;
+	nonce: number | bigint;
+	createdAt: number | bigint;
 };
 
 export function getWagerInitiatedEncoder(): FixedSizeEncoder<WagerInitiatedArgs> {
-  return getStructEncoder([
-    ["challenger", getAddressEncoder()],
-    ["opponent", getAddressEncoder()],
-    ["amount", getU64Encoder()],
-    ["gameType", getU8Encoder()],
-    ["nonce", getU64Encoder()],
-    ["createdAt", getI64Encoder()],
-  ]);
+	return getStructEncoder([
+		["challenger", getAddressEncoder()],
+		["opponent", getAddressEncoder()],
+		["amount", getU64Encoder()],
+		["gameType", getU8Encoder()],
+		["nonce", getU64Encoder()],
+		["createdAt", getI64Encoder()],
+	]);
 }
 
 export function getWagerInitiatedDecoder(): FixedSizeDecoder<WagerInitiated> {
-  return getStructDecoder([
-    ["challenger", getAddressDecoder()],
-    ["opponent", getAddressDecoder()],
-    ["amount", getU64Decoder()],
-    ["gameType", getU8Decoder()],
-    ["nonce", getU64Decoder()],
-    ["createdAt", getI64Decoder()],
-  ]);
+	return getStructDecoder([
+		["challenger", getAddressDecoder()],
+		["opponent", getAddressDecoder()],
+		["amount", getU64Decoder()],
+		["gameType", getU8Decoder()],
+		["nonce", getU64Decoder()],
+		["createdAt", getI64Decoder()],
+	]);
 }
 
 export function getWagerInitiatedCodec(): FixedSizeCodec<
-  WagerInitiatedArgs,
-  WagerInitiated
+	WagerInitiatedArgs,
+	WagerInitiated
 > {
-  return combineCodec(getWagerInitiatedEncoder(), getWagerInitiatedDecoder());
+	return combineCodec(getWagerInitiatedEncoder(), getWagerInitiatedDecoder());
 }

@@ -7,273 +7,273 @@
  */
 
 import {
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressDecoder,
-  getAddressEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getProgramDerivedAddress,
-  getStructDecoder,
-  getStructEncoder,
-  getU16Decoder,
-  getU16Encoder,
-  getU64Decoder,
-  getU64Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type Option,
-  type OptionOrNullable,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type Codec,
+	type Decoder,
+	type Encoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type Option,
+	type OptionOrNullable,
+	type ReadonlySignerAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressDecoder,
+	getAddressEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getOptionDecoder,
+	getOptionEncoder,
+	getProgramDerivedAddress,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU16Decoder,
+	getU16Encoder,
+	getU64Decoder,
+	getU64Encoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
-import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
+import { type ResolvedAccount, getAccountMetaFactory } from "../shared";
 
 export const UPDATE_CONFIG_DISCRIMINATOR = new Uint8Array([
-  29, 158, 252, 191, 10, 83, 219, 99,
+	29, 158, 252, 191, 10, 83, 219, 99,
 ]);
 
 export function getUpdateConfigDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    UPDATE_CONFIG_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		UPDATE_CONFIG_DISCRIMINATOR,
+	);
 }
 
 export type UpdateConfigInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountAdmin extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string | AccountMeta<string> = string,
+	TAccountConfig extends string | AccountMeta<string> = string,
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountAdmin extends string
-        ? ReadonlySignerAccount<TAccountAdmin> &
-            AccountSignerMeta<TAccountAdmin>
-        : TAccountAdmin,
-      TAccountConfig extends string
-        ? WritableAccount<TAccountConfig>
-        : TAccountConfig,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountAdmin extends string
+				? ReadonlySignerAccount<TAccountAdmin> &
+						AccountSignerMeta<TAccountAdmin>
+				: TAccountAdmin,
+			TAccountConfig extends string
+				? WritableAccount<TAccountConfig>
+				: TAccountConfig,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type UpdateConfigInstructionData = {
-  discriminator: ReadonlyUint8Array;
-  treasury: Option<Address>;
-  feeBps: Option<number>;
-  mintPrice: Option<bigint>;
-  initialUses: Option<number>;
-  wagerExpirySeconds: Option<bigint>;
-  vrfTimeoutSeconds: Option<bigint>;
+	discriminator: ReadonlyUint8Array;
+	treasury: Option<Address>;
+	feeBps: Option<number>;
+	mintPrice: Option<bigint>;
+	initialUses: Option<number>;
+	wagerExpirySeconds: Option<bigint>;
+	vrfTimeoutSeconds: Option<bigint>;
 };
 
 export type UpdateConfigInstructionDataArgs = {
-  treasury: OptionOrNullable<Address>;
-  feeBps: OptionOrNullable<number>;
-  mintPrice: OptionOrNullable<number | bigint>;
-  initialUses: OptionOrNullable<number>;
-  wagerExpirySeconds: OptionOrNullable<number | bigint>;
-  vrfTimeoutSeconds: OptionOrNullable<number | bigint>;
+	treasury: OptionOrNullable<Address>;
+	feeBps: OptionOrNullable<number>;
+	mintPrice: OptionOrNullable<number | bigint>;
+	initialUses: OptionOrNullable<number>;
+	wagerExpirySeconds: OptionOrNullable<number | bigint>;
+	vrfTimeoutSeconds: OptionOrNullable<number | bigint>;
 };
 
 export function getUpdateConfigInstructionDataEncoder(): Encoder<UpdateConfigInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["treasury", getOptionEncoder(getAddressEncoder())],
-      ["feeBps", getOptionEncoder(getU16Encoder())],
-      ["mintPrice", getOptionEncoder(getU64Encoder())],
-      ["initialUses", getOptionEncoder(getU8Encoder())],
-      ["wagerExpirySeconds", getOptionEncoder(getI64Encoder())],
-      ["vrfTimeoutSeconds", getOptionEncoder(getI64Encoder())],
-    ]),
-    (value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			["treasury", getOptionEncoder(getAddressEncoder())],
+			["feeBps", getOptionEncoder(getU16Encoder())],
+			["mintPrice", getOptionEncoder(getU64Encoder())],
+			["initialUses", getOptionEncoder(getU8Encoder())],
+			["wagerExpirySeconds", getOptionEncoder(getI64Encoder())],
+			["vrfTimeoutSeconds", getOptionEncoder(getI64Encoder())],
+		]),
+		(value) => ({ ...value, discriminator: UPDATE_CONFIG_DISCRIMINATOR }),
+	);
 }
 
 export function getUpdateConfigInstructionDataDecoder(): Decoder<UpdateConfigInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["treasury", getOptionDecoder(getAddressDecoder())],
-    ["feeBps", getOptionDecoder(getU16Decoder())],
-    ["mintPrice", getOptionDecoder(getU64Decoder())],
-    ["initialUses", getOptionDecoder(getU8Decoder())],
-    ["wagerExpirySeconds", getOptionDecoder(getI64Decoder())],
-    ["vrfTimeoutSeconds", getOptionDecoder(getI64Decoder())],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		["treasury", getOptionDecoder(getAddressDecoder())],
+		["feeBps", getOptionDecoder(getU16Decoder())],
+		["mintPrice", getOptionDecoder(getU64Decoder())],
+		["initialUses", getOptionDecoder(getU8Decoder())],
+		["wagerExpirySeconds", getOptionDecoder(getI64Decoder())],
+		["vrfTimeoutSeconds", getOptionDecoder(getI64Decoder())],
+	]);
 }
 
 export function getUpdateConfigInstructionDataCodec(): Codec<
-  UpdateConfigInstructionDataArgs,
-  UpdateConfigInstructionData
+	UpdateConfigInstructionDataArgs,
+	UpdateConfigInstructionData
 > {
-  return combineCodec(
-    getUpdateConfigInstructionDataEncoder(),
-    getUpdateConfigInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getUpdateConfigInstructionDataEncoder(),
+		getUpdateConfigInstructionDataDecoder(),
+	);
 }
 
 export type UpdateConfigAsyncInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config?: Address<TAccountConfig>;
-  treasury: UpdateConfigInstructionDataArgs["treasury"];
-  feeBps: UpdateConfigInstructionDataArgs["feeBps"];
-  mintPrice: UpdateConfigInstructionDataArgs["mintPrice"];
-  initialUses: UpdateConfigInstructionDataArgs["initialUses"];
-  wagerExpirySeconds: UpdateConfigInstructionDataArgs["wagerExpirySeconds"];
-  vrfTimeoutSeconds: UpdateConfigInstructionDataArgs["vrfTimeoutSeconds"];
+	admin: TransactionSigner<TAccountAdmin>;
+	config?: Address<TAccountConfig>;
+	treasury: UpdateConfigInstructionDataArgs["treasury"];
+	feeBps: UpdateConfigInstructionDataArgs["feeBps"];
+	mintPrice: UpdateConfigInstructionDataArgs["mintPrice"];
+	initialUses: UpdateConfigInstructionDataArgs["initialUses"];
+	wagerExpirySeconds: UpdateConfigInstructionDataArgs["wagerExpirySeconds"];
+	vrfTimeoutSeconds: UpdateConfigInstructionDataArgs["vrfTimeoutSeconds"];
 };
 
 export async function getUpdateConfigInstructionAsync<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: UpdateConfigAsyncInput<TAccountAdmin, TAccountConfig>,
-  config?: { programAddress?: TProgramAddress },
+	input: UpdateConfigAsyncInput<TAccountAdmin, TAccountConfig>,
+	config?: { programAddress?: TProgramAddress },
 ): Promise<
-  UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>
+	UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: false },
-    config: { value: input.config ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: false },
+		config: { value: input.config ?? null, isWritable: true },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Original args.
-  const args = { ...input };
+	// Original args.
+	const args = { ...input };
 
-  // Resolve default values.
-  if (!accounts.config.value) {
-    accounts.config.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
-      ],
-    });
-  }
+	// Resolve default values.
+	if (!accounts.config.value) {
+		accounts.config.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
+			],
+		});
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
-    data: getUpdateConfigInstructionDataEncoder().encode(
-      args as UpdateConfigInstructionDataArgs,
-    ),
-    programAddress,
-  } as UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
+		data: getUpdateConfigInstructionDataEncoder().encode(
+			args as UpdateConfigInstructionDataArgs,
+		),
+		programAddress,
+	} as UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
 }
 
 export type UpdateConfigInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config: Address<TAccountConfig>;
-  treasury: UpdateConfigInstructionDataArgs["treasury"];
-  feeBps: UpdateConfigInstructionDataArgs["feeBps"];
-  mintPrice: UpdateConfigInstructionDataArgs["mintPrice"];
-  initialUses: UpdateConfigInstructionDataArgs["initialUses"];
-  wagerExpirySeconds: UpdateConfigInstructionDataArgs["wagerExpirySeconds"];
-  vrfTimeoutSeconds: UpdateConfigInstructionDataArgs["vrfTimeoutSeconds"];
+	admin: TransactionSigner<TAccountAdmin>;
+	config: Address<TAccountConfig>;
+	treasury: UpdateConfigInstructionDataArgs["treasury"];
+	feeBps: UpdateConfigInstructionDataArgs["feeBps"];
+	mintPrice: UpdateConfigInstructionDataArgs["mintPrice"];
+	initialUses: UpdateConfigInstructionDataArgs["initialUses"];
+	wagerExpirySeconds: UpdateConfigInstructionDataArgs["wagerExpirySeconds"];
+	vrfTimeoutSeconds: UpdateConfigInstructionDataArgs["vrfTimeoutSeconds"];
 };
 
 export function getUpdateConfigInstruction<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: UpdateConfigInput<TAccountAdmin, TAccountConfig>,
-  config?: { programAddress?: TProgramAddress },
+	input: UpdateConfigInput<TAccountAdmin, TAccountConfig>,
+	config?: { programAddress?: TProgramAddress },
 ): UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig> {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: false },
-    config: { value: input.config ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: false },
+		config: { value: input.config ?? null, isWritable: true },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Original args.
-  const args = { ...input };
+	// Original args.
+	const args = { ...input };
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
-    data: getUpdateConfigInstructionDataEncoder().encode(
-      args as UpdateConfigInstructionDataArgs,
-    ),
-    programAddress,
-  } as UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
+		data: getUpdateConfigInstructionDataEncoder().encode(
+			args as UpdateConfigInstructionDataArgs,
+		),
+		programAddress,
+	} as UpdateConfigInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
 }
 
 export type ParsedUpdateConfigInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    admin: TAccountMetas[0];
-    config: TAccountMetas[1];
-  };
-  data: UpdateConfigInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		admin: TAccountMetas[0];
+		config: TAccountMetas[1];
+	};
+	data: UpdateConfigInstructionData;
 };
 
 export function parseUpdateConfigInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedUpdateConfigInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 2) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: { admin: getNextAccount(), config: getNextAccount() },
-    data: getUpdateConfigInstructionDataDecoder().decode(instruction.data),
-  };
+	if (instruction.accounts.length < 2) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: { admin: getNextAccount(), config: getNextAccount() },
+		data: getUpdateConfigInstructionDataDecoder().decode(instruction.data),
+	};
 }

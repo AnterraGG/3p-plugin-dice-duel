@@ -7,212 +7,213 @@
  */
 
 import {
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getBytesDecoder,
-  getBytesEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type ReadonlySignerAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getBytesDecoder,
+	getBytesEncoder,
+	getStructDecoder,
+	getStructEncoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
-import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
+import { type ResolvedAccount, getAccountMetaFactory } from "../shared";
 
 export const CONSUME_RANDOMNESS_MINIMAL_DISCRIMINATOR = new Uint8Array([
-  134, 130, 24, 11, 244, 65, 71, 231,
+	134, 130, 24, 11, 244, 65, 71, 231,
 ]);
 
 export function getConsumeRandomnessMinimalDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    CONSUME_RANDOMNESS_MINIMAL_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		CONSUME_RANDOMNESS_MINIMAL_DISCRIMINATOR,
+	);
 }
 
 export type ConsumeRandomnessMinimalInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountVrfProgramIdentity extends string | AccountMeta<string> =
-    "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw",
-  TAccountWager extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountVrfProgramIdentity extends
+		| string
+		| AccountMeta<string> = "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw",
+	TAccountWager extends string | AccountMeta<string> = string,
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountVrfProgramIdentity extends string
-        ? ReadonlySignerAccount<TAccountVrfProgramIdentity> &
-            AccountSignerMeta<TAccountVrfProgramIdentity>
-        : TAccountVrfProgramIdentity,
-      TAccountWager extends string
-        ? WritableAccount<TAccountWager>
-        : TAccountWager,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountVrfProgramIdentity extends string
+				? ReadonlySignerAccount<TAccountVrfProgramIdentity> &
+						AccountSignerMeta<TAccountVrfProgramIdentity>
+				: TAccountVrfProgramIdentity,
+			TAccountWager extends string
+				? WritableAccount<TAccountWager>
+				: TAccountWager,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type ConsumeRandomnessMinimalInstructionData = {
-  discriminator: ReadonlyUint8Array;
-  randomness: ReadonlyUint8Array;
+	discriminator: ReadonlyUint8Array;
+	randomness: ReadonlyUint8Array;
 };
 
 export type ConsumeRandomnessMinimalInstructionDataArgs = {
-  randomness: ReadonlyUint8Array;
+	randomness: ReadonlyUint8Array;
 };
 
 export function getConsumeRandomnessMinimalInstructionDataEncoder(): FixedSizeEncoder<ConsumeRandomnessMinimalInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["randomness", fixEncoderSize(getBytesEncoder(), 32)],
-    ]),
-    (value) => ({
-      ...value,
-      discriminator: CONSUME_RANDOMNESS_MINIMAL_DISCRIMINATOR,
-    }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			["randomness", fixEncoderSize(getBytesEncoder(), 32)],
+		]),
+		(value) => ({
+			...value,
+			discriminator: CONSUME_RANDOMNESS_MINIMAL_DISCRIMINATOR,
+		}),
+	);
 }
 
 export function getConsumeRandomnessMinimalInstructionDataDecoder(): FixedSizeDecoder<ConsumeRandomnessMinimalInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["randomness", fixDecoderSize(getBytesDecoder(), 32)],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		["randomness", fixDecoderSize(getBytesDecoder(), 32)],
+	]);
 }
 
 export function getConsumeRandomnessMinimalInstructionDataCodec(): FixedSizeCodec<
-  ConsumeRandomnessMinimalInstructionDataArgs,
-  ConsumeRandomnessMinimalInstructionData
+	ConsumeRandomnessMinimalInstructionDataArgs,
+	ConsumeRandomnessMinimalInstructionData
 > {
-  return combineCodec(
-    getConsumeRandomnessMinimalInstructionDataEncoder(),
-    getConsumeRandomnessMinimalInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getConsumeRandomnessMinimalInstructionDataEncoder(),
+		getConsumeRandomnessMinimalInstructionDataDecoder(),
+	);
 }
 
 export type ConsumeRandomnessMinimalInput<
-  TAccountVrfProgramIdentity extends string = string,
-  TAccountWager extends string = string,
+	TAccountVrfProgramIdentity extends string = string,
+	TAccountWager extends string = string,
 > = {
-  /**
-   * SECURITY: Validates callback is from the real VRF program.
-   * In test builds, any signer is accepted to enable integration testing
-   * of the settlement path without a real VRF oracle.
-   */
-  vrfProgramIdentity?: TransactionSigner<TAccountVrfProgramIdentity>;
-  wager: Address<TAccountWager>;
-  randomness: ConsumeRandomnessMinimalInstructionDataArgs["randomness"];
+	/**
+	 * SECURITY: Validates callback is from the real VRF program.
+	 * In test builds, any signer is accepted to enable integration testing
+	 * of the settlement path without a real VRF oracle.
+	 */
+	vrfProgramIdentity?: TransactionSigner<TAccountVrfProgramIdentity>;
+	wager: Address<TAccountWager>;
+	randomness: ConsumeRandomnessMinimalInstructionDataArgs["randomness"];
 };
 
 export function getConsumeRandomnessMinimalInstruction<
-  TAccountVrfProgramIdentity extends string,
-  TAccountWager extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountVrfProgramIdentity extends string,
+	TAccountWager extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: ConsumeRandomnessMinimalInput<
-    TAccountVrfProgramIdentity,
-    TAccountWager
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: ConsumeRandomnessMinimalInput<
+		TAccountVrfProgramIdentity,
+		TAccountWager
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): ConsumeRandomnessMinimalInstruction<
-  TProgramAddress,
-  TAccountVrfProgramIdentity,
-  TAccountWager
+	TProgramAddress,
+	TAccountVrfProgramIdentity,
+	TAccountWager
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    vrfProgramIdentity: {
-      value: input.vrfProgramIdentity ?? null,
-      isWritable: false,
-    },
-    wager: { value: input.wager ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		vrfProgramIdentity: {
+			value: input.vrfProgramIdentity ?? null,
+			isWritable: false,
+		},
+		wager: { value: input.wager ?? null, isWritable: true },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Original args.
-  const args = { ...input };
+	// Original args.
+	const args = { ...input };
 
-  // Resolve default values.
-  if (!accounts.vrfProgramIdentity.value) {
-    accounts.vrfProgramIdentity.value =
-      "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw" as Address<"9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw">;
-  }
+	// Resolve default values.
+	if (!accounts.vrfProgramIdentity.value) {
+		accounts.vrfProgramIdentity.value =
+			"9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw" as Address<"9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.vrfProgramIdentity),
-      getAccountMeta(accounts.wager),
-    ],
-    data: getConsumeRandomnessMinimalInstructionDataEncoder().encode(
-      args as ConsumeRandomnessMinimalInstructionDataArgs,
-    ),
-    programAddress,
-  } as ConsumeRandomnessMinimalInstruction<
-    TProgramAddress,
-    TAccountVrfProgramIdentity,
-    TAccountWager
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.vrfProgramIdentity),
+			getAccountMeta(accounts.wager),
+		],
+		data: getConsumeRandomnessMinimalInstructionDataEncoder().encode(
+			args as ConsumeRandomnessMinimalInstructionDataArgs,
+		),
+		programAddress,
+	} as ConsumeRandomnessMinimalInstruction<
+		TProgramAddress,
+		TAccountVrfProgramIdentity,
+		TAccountWager
+	>);
 }
 
 export type ParsedConsumeRandomnessMinimalInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    /**
-     * SECURITY: Validates callback is from the real VRF program.
-     * In test builds, any signer is accepted to enable integration testing
-     * of the settlement path without a real VRF oracle.
-     */
-    vrfProgramIdentity: TAccountMetas[0];
-    wager: TAccountMetas[1];
-  };
-  data: ConsumeRandomnessMinimalInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		/**
+		 * SECURITY: Validates callback is from the real VRF program.
+		 * In test builds, any signer is accepted to enable integration testing
+		 * of the settlement path without a real VRF oracle.
+		 */
+		vrfProgramIdentity: TAccountMetas[0];
+		wager: TAccountMetas[1];
+	};
+	data: ConsumeRandomnessMinimalInstructionData;
 };
 
 export function parseConsumeRandomnessMinimalInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedConsumeRandomnessMinimalInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 2) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: { vrfProgramIdentity: getNextAccount(), wager: getNextAccount() },
-    data: getConsumeRandomnessMinimalInstructionDataDecoder().decode(
-      instruction.data,
-    ),
-  };
+	if (instruction.accounts.length < 2) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: { vrfProgramIdentity: getNextAccount(), wager: getNextAccount() },
+		data: getConsumeRandomnessMinimalInstructionDataDecoder().decode(
+			instruction.data,
+		),
+	};
 }

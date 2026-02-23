@@ -2,7 +2,7 @@
  * CelebrationRenderSystem (3p SDK version)
  *
  * Uses UIService entity anchors to follow the player entity,
- * with fallback to camera-based position when entity is unavailable.
+ * with fallback to world-space position when entity is unavailable.
  */
 
 import type {
@@ -14,8 +14,8 @@ import type {
 } from "@townexchange/3p-plugin-sdk/client";
 import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
 import {
-	DICE_DUEL_ANIMATION,
-	DICE_DUEL_DEPTHS,
+	DRAGON_DICE_ANIMATION,
+	DRAGON_DICE_DEPTHS,
 } from "../../shared/constants";
 import {
 	registerCleanupCallback,
@@ -24,7 +24,7 @@ import {
 	unregisterGraphics,
 	unregisterText,
 } from "../state";
-import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
+import { useDragonDiceGameStore } from "../store/dragonDiceGameStore";
 
 interface CelebrationVisuals {
 	text: IText;
@@ -38,9 +38,6 @@ export function createCelebrationRenderSystem() {
 
 	return (world: PluginWorld, ctx: PluginSystemContext) => {
 		const render = ctx.services.render;
-		const camera = ctx.services.camera;
-		const { width, height } = render.getGameSize();
-		const gameSize = { x: width, y: height };
 
 		if (!cleanupRegistered) {
 			registerCleanupCallback(() => {
@@ -56,7 +53,7 @@ export function createCelebrationRenderSystem() {
 			cleanupRegistered = true;
 		}
 
-		const store = useDiceDuelGameStore.getState();
+		const store = useDragonDiceGameStore.getState();
 		const activeIds = new Set<string>();
 
 		for (const [id, celebration] of store.celebrations) {
@@ -73,13 +70,13 @@ export function createCelebrationRenderSystem() {
 					strokeThickness: celebration.type === "win" ? 6 : 4,
 				});
 				text.setOrigin(0.5, 0.5);
-				text.setDepth(DICE_DUEL_DEPTHS.CELEBRATION);
-				text.setScrollFactor(0, 0);
+				text.setDepth(DRAGON_DICE_DEPTHS.CELEBRATION);
+				text.setScrollFactor(1, 1);
 				registerText(text);
 
 				const graphics = render.createGraphics();
-				graphics.setDepth(DICE_DUEL_DEPTHS.CELEBRATION - 1);
-				graphics.setScrollFactor(0, 0);
+				graphics.setDepth(DRAGON_DICE_DEPTHS.CELEBRATION - 1);
+				graphics.setScrollFactor(1, 1);
 				registerGraphics(graphics);
 
 				// Create entity anchor if entityId is available
@@ -98,26 +95,23 @@ export function createCelebrationRenderSystem() {
 
 			const { text, graphics, anchor } = visuals;
 			const elapsed = Date.now() - celebration.startTime;
-			const totalDuration = DICE_DUEL_ANIMATION.CELEBRATION_DURATION;
-			const holdDuration = DICE_DUEL_ANIMATION.CELEBRATION_HOLD;
+			const totalDuration = DRAGON_DICE_ANIMATION.CELEBRATION_DURATION;
+			const holdDuration = DRAGON_DICE_ANIMATION.CELEBRATION_HOLD;
 			const fadeDuration = totalDuration - holdDuration;
 
-			// Use entity anchor position, fall back to camera-based position
-			let screenPos: { x: number; y: number };
+			// Use entity anchor position, fall back to world-space position
+			let worldPos: { x: number; y: number };
 			if (anchor) {
-				screenPos = anchor.getPosition();
+				worldPos = anchor.getPosition();
 			} else {
-				screenPos = camera.getRenderPosition(
-					"world",
-					celebration.position,
-					gameSize,
-				);
+				// Use world coords directly — Phaser camera handles scroll + zoom
+				worldPos = celebration.position;
 			}
 
 			// Gentle float: only 30px over the full duration
 			const floatProgress = Math.min(elapsed / totalDuration, 1);
 			const floatOffset = floatProgress * 30;
-			const yPos = screenPos.y - floatOffset;
+			const yPos = worldPos.y - floatOffset;
 
 			// Alpha: fully visible during hold, then fade out with ease
 			let alpha: number;
@@ -134,7 +128,7 @@ export function createCelebrationRenderSystem() {
 
 			if (celebration.type === "win") {
 				text.setText("YOU WON!");
-				text.setPosition(screenPos.x, yPos);
+				text.setPosition(worldPos.x, yPos);
 				text.setAlpha(alpha);
 
 				// Pop-in scale: starts at 0, overshoots to 1.3, settles to 1.0
@@ -160,7 +154,7 @@ export function createCelebrationRenderSystem() {
 				for (let i = 0; i < particleCount; i++) {
 					const angle = (i / particleCount) * Math.PI * 2 + elapsed / 400;
 					const radius = 40 + Math.sin(elapsed / 180 + i) * 15;
-					const px = screenPos.x + Math.cos(angle) * radius;
+					const px = worldPos.x + Math.cos(angle) * radius;
 					const py = yPos + Math.sin(angle) * radius;
 
 					const color = colors[i % colors.length];
@@ -172,10 +166,10 @@ export function createCelebrationRenderSystem() {
 				// Inner glow ring
 				graphics.lineStyle(2, 0xffd700, alpha * 0.3);
 				const glowRadius = 55 + Math.sin(elapsed / 250) * 8;
-				graphics.strokeCircle(screenPos.x, yPos, glowRadius);
+				graphics.strokeCircle(worldPos.x, yPos, glowRadius);
 			} else {
 				text.setText("You Lost");
-				text.setPosition(screenPos.x, yPos);
+				text.setPosition(worldPos.x, yPos);
 				text.setAlpha(alpha * 0.7);
 				text.setScale(0.8);
 

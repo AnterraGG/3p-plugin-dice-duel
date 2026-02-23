@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-dice_duel = "7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM"
+dice_duel = "D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof"
 simple-vrf-test = "7ih1HPx6QbhjpE5Bi7SWB4xsyfbHbQnjLWr6Vf67GAjg"
 vrf-test = "Hc2XsRggfBvCvSKEE3w6pPWwjmsttefGx6bcb2VhxHLD"
 

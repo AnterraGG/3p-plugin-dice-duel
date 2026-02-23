@@ -2,7 +2,7 @@
  * DiceDuel Devnet Deploy + Initialize Script
  *
  * 1. Deploys the program (if not already deployed)
- * 2. Initializes GameConfig with admin + treasury wallet
+ * 2. Initializes GameConfig with Felon's wallet as admin + treasury
  * 3. Registers game type 0 (High/Low)
  *
  * Usage: npx tsx scripts/deploy-devnet.ts
@@ -101,7 +101,7 @@ async function main() {
 	} else {
 		console.log("⚠️  Program NOT deployed yet.");
 		console.log(
-			"   Run: cd packages/3p-plugin-dice-duel && anchor deploy --provider.cluster devnet",
+			"   Run: cd packages/3p-plugin-dragon-dice && anchor deploy --provider.cluster devnet",
 		);
 		console.log("   Then re-run this script.");
 		console.log("\n   Or deploy with solana CLI:");
@@ -126,7 +126,7 @@ async function main() {
 		try {
 			const tx = await program.methods
 				.initialize(
-					toPublicKey(ADMIN_AND_TREASURY), // treasury
+					toPublicKey(ADMIN_AND_TREASURY), // treasury = Felon's wallet
 					FEE_BPS,
 					new anchor.BN(MINT_PRICE),
 					INITIAL_USES,

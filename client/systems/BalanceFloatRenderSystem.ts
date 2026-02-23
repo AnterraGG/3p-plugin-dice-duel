@@ -16,11 +16,11 @@ import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
 import { removeEntity } from "@townexchange/3p-plugin-sdk/ecs";
 import { TOKEN_ICONS } from "@townexchange/token-icons";
 import {
-	DICE_DUEL_ANIMATION,
-	DICE_DUEL_DEPTHS,
+	DRAGON_DICE_ANIMATION,
+	DRAGON_DICE_DEPTHS,
 } from "../../shared/constants";
 import { registerCleanupCallback } from "../state";
-import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
+import { useDragonDiceGameStore } from "../store/dragonDiceGameStore";
 
 const TICKER_ICON_SIZE = 32; // desired display width in pixels
 const TICKER_ICON_GAP = 5; // px gap between icon and adjacent text
@@ -70,7 +70,7 @@ export function createBalanceFloatRenderSystem() {
 			cleanupRegistered = true;
 		}
 
-		const store = useDiceDuelGameStore.getState();
+		const store = useDragonDiceGameStore.getState();
 		const activeIds = new Set<string>();
 
 		for (const [id, float] of store.balanceFloats) {
@@ -92,7 +92,7 @@ export function createBalanceFloatRenderSystem() {
 						? Position.worldY[float.entityId]
 						: float.position.y;
 
-				const depth = DICE_DUEL_DEPTHS.CELEBRATION + 1;
+				const depth = DRAGON_DICE_DEPTHS.CELEBRATION + 1;
 
 				const textStyle = {
 					fontFamily: "Tickerbit" as const,
@@ -153,15 +153,20 @@ export function createBalanceFloatRenderSystem() {
 						...textStyle,
 					});
 
-					visual = { textEid, tickerTextEid: null, iconEid: null, coinCircle: null };
+					visual = {
+						textEid,
+						tickerTextEid: null,
+						iconEid: null,
+						coinCircle: null,
+					};
 				}
 
 				floatVisuals.set(id, visual);
 			}
 
 			const elapsed = Date.now() - float.startTime;
-			const totalDuration = DICE_DUEL_ANIMATION.BALANCE_FLOAT_DURATION;
-			const holdDuration = DICE_DUEL_ANIMATION.BALANCE_FLOAT_HOLD;
+			const totalDuration = DRAGON_DICE_ANIMATION.BALANCE_FLOAT_DURATION;
+			const holdDuration = DRAGON_DICE_ANIMATION.BALANCE_FLOAT_HOLD;
 			const fadeDuration = totalDuration - holdDuration;
 			const progress = Math.min(elapsed / totalDuration, 1);
 
@@ -181,7 +186,10 @@ export function createBalanceFloatRenderSystem() {
 			if (elapsed < holdDuration) {
 				alpha = 1;
 			} else {
-				const fadeProgress = Math.min((elapsed - holdDuration) / fadeDuration, 1);
+				const fadeProgress = Math.min(
+					(elapsed - holdDuration) / fadeDuration,
+					1,
+				);
 				alpha = 1 - fadeProgress * fadeProgress;
 			}
 
@@ -204,12 +212,19 @@ export function createBalanceFloatRenderSystem() {
 				const amountW = ctx.entities.getTextWidth(visual.textEid) * scale;
 				const tickerW = ctx.entities.getTextWidth(visual.tickerTextEid) * scale;
 				const iconW = TICKER_ICON_SIZE * scale;
-				const totalW = amountW + TICKER_ICON_GAP + iconW + TICKER_ICON_GAP + tickerW;
+				const totalW =
+					amountW + TICKER_ICON_GAP + iconW + TICKER_ICON_GAP + tickerW;
 
 				const leftEdge = baseWorldX - totalW / 2;
 				const amountX = leftEdge + amountW / 2;
 				const iconX = leftEdge + amountW + TICKER_ICON_GAP + iconW / 2;
-				const tickerX = leftEdge + amountW + TICKER_ICON_GAP + iconW + TICKER_ICON_GAP + tickerW / 2;
+				const tickerX =
+					leftEdge +
+					amountW +
+					TICKER_ICON_GAP +
+					iconW +
+					TICKER_ICON_GAP +
+					tickerW / 2;
 
 				// Text origin (0.5, 0): top-anchored. Icon center offset down by half text height.
 				const iconY = currentWorldY + (TICKER_TEXT_HEIGHT * scale) / 2;
@@ -228,9 +243,7 @@ export function createBalanceFloatRenderSystem() {
 				Position.worldY[visual.iconEid] = iconY;
 				Sprite.alpha[visual.iconEid] = alpha;
 
-				visual.coinCircle
-					?.setPosition(iconX, iconY)
-					.setAlpha(alpha);
+				visual.coinCircle?.setPosition(iconX, iconY).setAlpha(alpha);
 			} else {
 				// No icon: single centered text
 				Position.worldX[visual.textEid] = baseWorldX;
@@ -250,8 +263,7 @@ export function createBalanceFloatRenderSystem() {
 				removeEntity(world, visual.textEid);
 				if (visual.tickerTextEid != null)
 					removeEntity(world, visual.tickerTextEid);
-				if (visual.iconEid != null)
-					removeEntity(world, visual.iconEid);
+				if (visual.iconEid != null) removeEntity(world, visual.iconEid);
 				visual.coinCircle?.destroy();
 				floatVisuals.delete(id);
 			}

@@ -6,7 +6,7 @@
  */
 
 import { defineSvmPlugin } from "@townexchange/3p-plugin-sdk/indexer";
-import type { DiceDuelEventMap } from "../event-data";
+import type { DragonDiceEventMap } from "../event-data";
 import { diceDuelProgram } from "../svm/program";
 import {
 	wagerTable,
@@ -24,9 +24,9 @@ import {
 import { svmApi } from "./api";
 import { hourlyWagerStats, dailyWagerStats } from "./aggregates";
 
-export const diceDuelSvmPlugin = defineSvmPlugin<DiceDuelEventMap>({
-	id: "dice-duel",
-	name: "Dice Duel",
+export const dragonDiceSvmPlugin = defineSvmPlugin<DragonDiceEventMap>({
+	id: "dragon-dice",
+	name: "Dragon Dice",
 	version: "2.0.0",
 	program: diceDuelProgram,
 	tables: { wagerTable, diceBagTable, playerStatsTable, gameConfigTable, wagerEventLog },
@@ -34,7 +34,7 @@ export const diceDuelSvmPlugin = defineSvmPlugin<DiceDuelEventMap>({
 	api: svmApi,
 	aggregates: { hourlyWagerStats, dailyWagerStats },
 	sourceModules: [
-		"@townexchange/3p-plugin-dice-duel/indexing-svm",
-		"@townexchange/3p-plugin-dice-duel/svm",
+		"@townexchange/3p-plugin-dragon-dice/indexing-svm",
+		"@townexchange/3p-plugin-dragon-dice/svm",
 	],
 });

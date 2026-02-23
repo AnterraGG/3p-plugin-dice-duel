@@ -1,5 +1,5 @@
 /**
- * DiceDuelUIContainer - Zone-aware UI container for Dice Duel (3p SDK version)
+ * DragonDiceUIContainer - Zone-aware UI container for Dragon Dice (3p SDK version)
  */
 
 import {
@@ -14,7 +14,7 @@ import {
 	useNotification,
 } from "@townexchange/tex-ui-kit";
 import { useEffect } from "react";
-import { DICE_DUEL_ANIMATION } from "../../shared/constants";
+import { DRAGON_DICE_ANIMATION } from "../../shared/constants";
 import { formatTokenAmount, getTokenSymbol } from "../../shared/tokenUtils";
 import {
 	playChallengeSound,
@@ -23,21 +23,21 @@ import {
 	playLoseSound,
 	playRollSound,
 	playWinSound,
-} from "../services/DiceDuelAudioService";
+} from "../services/DragonDiceAudioService";
 import { getLocalPlayerEntityId, getLocalPlayerPosition } from "../state";
 import {
-	useDiceDuelGameStore,
-	useDiceDuelNotificationStore,
+	useDragonDiceGameStore,
+	useDragonDiceNotificationStore,
 } from "../store";
 import { SvmInventory } from "./svm/SvmInventory";
 
 /**
- * Hook to handle Dice Duel notifications and show toast notifications.
+ * Hook to handle Dragon Dice notifications and show toast notifications.
  *
  * Chain-aware: uses the appropriate wallet address and query keys
  * depending on whether the active game chain is EVM or SVM.
  */
-function useDiceDuelNotifications() {
+function useDragonDiceNotifications() {
 	const notify = useNotification((s) => s.notify);
 	const chain = usePluginActiveChain("svm");
 	const { walletAddress: svmWalletAddress } = usePluginSvmTransaction();
@@ -48,8 +48,8 @@ function useDiceDuelNotifications() {
 		if (!address) return "Unknown";
 		return getUsernameBySvmAddress(address);
 	};
-	const notifications = useDiceDuelNotificationStore((s) => s.notifications);
-	const clearNotification = useDiceDuelNotificationStore(
+	const notifications = useDragonDiceNotificationStore((s) => s.notifications);
+	const clearNotification = useDragonDiceNotificationStore(
 		(s) => s.clearNotification,
 	);
 
@@ -66,7 +66,7 @@ function useDiceDuelNotifications() {
 			return pos ?? { x: 0, y: 0 };
 		};
 
-		const gameStore = useDiceDuelGameStore.getState();
+		const gameStore = useDragonDiceGameStore.getState();
 
 		const compareAddresses = (a: string, b: string): boolean => {
 			return a === b;
@@ -79,7 +79,7 @@ function useDiceDuelNotifications() {
 					type: "success",
 					title: "Dice Minted!",
 					message: `You received Dice #${notification.diceId}`,
-					channel: "dice-duel",
+					channel: "dragon-dice",
 				});
 				break;
 
@@ -89,7 +89,7 @@ function useDiceDuelNotifications() {
 					type: "success",
 					title: "Dice Bag Minted!",
 					message: `Your new dice bag is ready (${notification.mint.slice(0, 4)}...${notification.mint.slice(-4)})`,
-					channel: "dice-duel",
+					channel: "dragon-dice",
 				});
 				break;
 
@@ -113,7 +113,7 @@ function useDiceDuelNotifications() {
 						message: amt
 							? `Dice Duel challenge sent to ${opponentName} for ${amt}.`
 							: `Dice Duel challenge sent to ${opponentName}.`,
-						channel: "dice-duel",
+						channel: "dragon-dice",
 					});
 				} else {
 					// Opponent — incoming challenge
@@ -125,7 +125,7 @@ function useDiceDuelNotifications() {
 						type: "info",
 						title: "New Wager Challenge!",
 						message: `${getDisplayName(notification.initiator)} challenged you to a wager!`,
-						channel: "dice-duel",
+						channel: "dragon-dice",
 					});
 				}
 				break;
@@ -145,14 +145,14 @@ function useDiceDuelNotifications() {
 						type: "success",
 						title: "Challenge Accepted!",
 						message: "Dice are rolling!",
-						channel: "dice-duel",
+						channel: "dragon-dice",
 					});
 				} else {
 					notify({
 						type: "success",
 						title: "Wager Accepted!",
 						message: `${getDisplayName(notification.acceptor)} accepted your challenge. Rolling dice!`,
-						channel: "dice-duel",
+						channel: "dragon-dice",
 					});
 				}
 				break;
@@ -182,14 +182,14 @@ function useDiceDuelNotifications() {
 				const rollTimeRemaining = existingRoll
 					? Math.max(
 							0,
-							DICE_DUEL_ANIMATION.DICE_ROLL_DURATION -
+							DRAGON_DICE_ANIMATION.DICE_ROLL_DURATION -
 								(Date.now() - existingRoll.startTime),
 						)
-					: DICE_DUEL_ANIMATION.DICE_ROLL_DURATION;
+					: DRAGON_DICE_ANIMATION.DICE_ROLL_DURATION;
 				const celebrationDelay =
 					rollTimeRemaining +
 					300 + // landing animation
-					DICE_DUEL_ANIMATION.CELEBRATION_DELAY;
+					DRAGON_DICE_ANIMATION.CELEBRATION_DELAY;
 
 				setTimeout(() => {
 					if (isWinner) {
@@ -244,7 +244,7 @@ function useDiceDuelNotifications() {
 					type: isWinner ? "success" : "info",
 					title: isWinner ? "You Won!" : "You Lost",
 					message: resultMsg,
-					channel: "dice-duel",
+					channel: "dragon-dice",
 				});
 				break;
 			}
@@ -258,7 +258,7 @@ function useDiceDuelNotifications() {
 						type: "success",
 						title: "Winnings Claimed!",
 						message: `+${payoutSol} SOL sent to your wallet.`,
-						channel: "dice-duel",
+						channel: "dragon-dice",
 					});
 				}
 				break;
@@ -276,7 +276,7 @@ function useDiceDuelNotifications() {
 						compareAddresses(notification.initiator, gameWalletAddress)
 							? "Your wager has been cancelled. Funds have been refunded."
 							: `${getDisplayName(notification.initiator)} cancelled their wager.`,
-					channel: "dice-duel",
+					channel: "dragon-dice",
 				});
 				break;
 
@@ -287,7 +287,7 @@ function useDiceDuelNotifications() {
 					title: "Wager Expired",
 					message:
 						"A wager expired without being accepted. Funds have been refunded.",
-					channel: "dice-duel",
+					channel: "dragon-dice",
 				});
 				break;
 
@@ -296,7 +296,7 @@ function useDiceDuelNotifications() {
 					type: "warning",
 					title: "VRF Timeout",
 					message: "The dice roll timed out. Both players have been refunded.",
-					channel: "dice-duel",
+					channel: "dragon-dice",
 				});
 				break;
 		}
@@ -313,14 +313,14 @@ function useDiceDuelNotifications() {
 }
 
 /**
- * Main UI for Dice Duel game mode.
+ * Main UI for Dragon Dice game mode.
  */
-function DiceDuelUI() {
-	useDiceDuelNotifications();
+function DragonDiceUI() {
+	useDragonDiceNotifications();
 
 	return (
 		<div
-			className="dice-duel-ui"
+			className="dragon-dice-ui"
 			style={{
 				position: "absolute",
 				top: 0,
@@ -331,7 +331,7 @@ function DiceDuelUI() {
 				zIndex: 100,
 			}}
 		>
-			<NotificationContainer position="top-center" channel="dice-duel" />
+			<NotificationContainer position="top-center" channel="dragon-dice" />
 
 			<div
 				style={{
@@ -352,11 +352,11 @@ function DiceDuelUI() {
 /**
  * Container that checks zone activation before rendering.
  */
-export function DiceDuelUIContainer() {
+export function DragonDiceUIContainer() {
 	const activeZones = useActiveZones();
-	const isInDiceDuelZone = activeZones.has(ZoneType.DragonDice);
+	const isInDragonDiceZone = activeZones.has(ZoneType.DragonDice);
 
-	if (!isInDiceDuelZone) return null;
+	if (!isInDragonDiceZone) return null;
 
-	return <DiceDuelUI />;
+	return <DragonDiceUI />;
 }

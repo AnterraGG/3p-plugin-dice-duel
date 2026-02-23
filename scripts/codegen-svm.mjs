@@ -37,12 +37,9 @@ for (const file of idlFiles) {
 
 		const codama = createFromRoot(rootNodeFromAnchor(idl));
 
-		// renderVisitor uses an async callback internally — accept() returns a Promise.
-		// deleteFolderBeforeRendering: false preserves manual files like pdas.ts
-		await codama.accept(
+		codama.accept(
 			renderVisitor(join(outDir, programName), {
 				dependencyMap: {},
-				deleteFolderBeforeRendering: false,
 			}),
 		);
 

@@ -7,571 +7,575 @@
  */
 
 import {
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getProgramDerivedAddress,
-  getStructDecoder,
-  getStructEncoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
-  type WritableSignerAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type ReadonlyAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	type WritableSignerAccount,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getProgramDerivedAddress,
+	getStructDecoder,
+	getStructEncoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
 import {
-  expectAddress,
-  getAccountMetaFactory,
-  type ResolvedAccount,
+	type ResolvedAccount,
+	expectAddress,
+	getAccountMetaFactory,
 } from "../shared";
 
 export const ACCEPT_WAGER_DISCRIMINATOR = new Uint8Array([
-  214, 18, 178, 214, 203, 22, 50, 119,
+	214, 18, 178, 214, 203, 22, 50, 119,
 ]);
 
 export function getAcceptWagerDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    ACCEPT_WAGER_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		ACCEPT_WAGER_DISCRIMINATOR,
+	);
 }
 
 export type AcceptWagerInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountOpponent extends string | AccountMeta<string> = string,
-  TAccountWager extends string | AccountMeta<string> = string,
-  TAccountChallenger extends string | AccountMeta<string> = string,
-  TAccountChallengerBag extends string | AccountMeta<string> = string,
-  TAccountEscrow extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountChallengerStats extends string | AccountMeta<string> = string,
-  TAccountOpponentStats extends string | AccountMeta<string> = string,
-  TAccountOracleQueue extends string | AccountMeta<string> =
-    "Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh",
-  TAccountSystemProgram extends string | AccountMeta<string> =
-    "11111111111111111111111111111111",
-  TAccountProgramIdentity extends string | AccountMeta<string> = string,
-  TAccountVrfProgram extends string | AccountMeta<string> =
-    "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz",
-  TAccountSlotHashes extends string | AccountMeta<string> =
-    "SysvarS1otHashes111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountOpponent extends string | AccountMeta<string> = string,
+	TAccountWager extends string | AccountMeta<string> = string,
+	TAccountChallenger extends string | AccountMeta<string> = string,
+	TAccountChallengerBag extends string | AccountMeta<string> = string,
+	TAccountEscrow extends string | AccountMeta<string> = string,
+	TAccountConfig extends string | AccountMeta<string> = string,
+	TAccountChallengerStats extends string | AccountMeta<string> = string,
+	TAccountOpponentStats extends string | AccountMeta<string> = string,
+	TAccountOracleQueue extends
+		| string
+		| AccountMeta<string> = "Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh",
+	TAccountSystemProgram extends
+		| string
+		| AccountMeta<string> = "11111111111111111111111111111111",
+	TAccountProgramIdentity extends string | AccountMeta<string> = string,
+	TAccountVrfProgram extends
+		| string
+		| AccountMeta<string> = "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz",
+	TAccountSlotHashes extends
+		| string
+		| AccountMeta<string> = "SysvarS1otHashes111111111111111111111111111",
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountOpponent extends string
-        ? WritableSignerAccount<TAccountOpponent> &
-            AccountSignerMeta<TAccountOpponent>
-        : TAccountOpponent,
-      TAccountWager extends string
-        ? WritableAccount<TAccountWager>
-        : TAccountWager,
-      TAccountChallenger extends string
-        ? ReadonlyAccount<TAccountChallenger>
-        : TAccountChallenger,
-      TAccountChallengerBag extends string
-        ? WritableAccount<TAccountChallengerBag>
-        : TAccountChallengerBag,
-      TAccountEscrow extends string
-        ? WritableAccount<TAccountEscrow>
-        : TAccountEscrow,
-      TAccountConfig extends string
-        ? ReadonlyAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountChallengerStats extends string
-        ? WritableAccount<TAccountChallengerStats>
-        : TAccountChallengerStats,
-      TAccountOpponentStats extends string
-        ? WritableAccount<TAccountOpponentStats>
-        : TAccountOpponentStats,
-      TAccountOracleQueue extends string
-        ? WritableAccount<TAccountOracleQueue>
-        : TAccountOracleQueue,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
-      TAccountProgramIdentity extends string
-        ? ReadonlyAccount<TAccountProgramIdentity>
-        : TAccountProgramIdentity,
-      TAccountVrfProgram extends string
-        ? ReadonlyAccount<TAccountVrfProgram>
-        : TAccountVrfProgram,
-      TAccountSlotHashes extends string
-        ? ReadonlyAccount<TAccountSlotHashes>
-        : TAccountSlotHashes,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountOpponent extends string
+				? WritableSignerAccount<TAccountOpponent> &
+						AccountSignerMeta<TAccountOpponent>
+				: TAccountOpponent,
+			TAccountWager extends string
+				? WritableAccount<TAccountWager>
+				: TAccountWager,
+			TAccountChallenger extends string
+				? ReadonlyAccount<TAccountChallenger>
+				: TAccountChallenger,
+			TAccountChallengerBag extends string
+				? WritableAccount<TAccountChallengerBag>
+				: TAccountChallengerBag,
+			TAccountEscrow extends string
+				? WritableAccount<TAccountEscrow>
+				: TAccountEscrow,
+			TAccountConfig extends string
+				? ReadonlyAccount<TAccountConfig>
+				: TAccountConfig,
+			TAccountChallengerStats extends string
+				? WritableAccount<TAccountChallengerStats>
+				: TAccountChallengerStats,
+			TAccountOpponentStats extends string
+				? WritableAccount<TAccountOpponentStats>
+				: TAccountOpponentStats,
+			TAccountOracleQueue extends string
+				? WritableAccount<TAccountOracleQueue>
+				: TAccountOracleQueue,
+			TAccountSystemProgram extends string
+				? ReadonlyAccount<TAccountSystemProgram>
+				: TAccountSystemProgram,
+			TAccountProgramIdentity extends string
+				? ReadonlyAccount<TAccountProgramIdentity>
+				: TAccountProgramIdentity,
+			TAccountVrfProgram extends string
+				? ReadonlyAccount<TAccountVrfProgram>
+				: TAccountVrfProgram,
+			TAccountSlotHashes extends string
+				? ReadonlyAccount<TAccountSlotHashes>
+				: TAccountSlotHashes,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type AcceptWagerInstructionData = { discriminator: ReadonlyUint8Array };
 
 export type AcceptWagerInstructionDataArgs = {};
 
 export function getAcceptWagerInstructionDataEncoder(): FixedSizeEncoder<AcceptWagerInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: ACCEPT_WAGER_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
+		(value) => ({ ...value, discriminator: ACCEPT_WAGER_DISCRIMINATOR }),
+	);
 }
 
 export function getAcceptWagerInstructionDataDecoder(): FixedSizeDecoder<AcceptWagerInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+	]);
 }
 
 export function getAcceptWagerInstructionDataCodec(): FixedSizeCodec<
-  AcceptWagerInstructionDataArgs,
-  AcceptWagerInstructionData
+	AcceptWagerInstructionDataArgs,
+	AcceptWagerInstructionData
 > {
-  return combineCodec(
-    getAcceptWagerInstructionDataEncoder(),
-    getAcceptWagerInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getAcceptWagerInstructionDataEncoder(),
+		getAcceptWagerInstructionDataDecoder(),
+	);
 }
 
 export type AcceptWagerAsyncInput<
-  TAccountOpponent extends string = string,
-  TAccountWager extends string = string,
-  TAccountChallenger extends string = string,
-  TAccountChallengerBag extends string = string,
-  TAccountEscrow extends string = string,
-  TAccountConfig extends string = string,
-  TAccountChallengerStats extends string = string,
-  TAccountOpponentStats extends string = string,
-  TAccountOracleQueue extends string = string,
-  TAccountSystemProgram extends string = string,
-  TAccountProgramIdentity extends string = string,
-  TAccountVrfProgram extends string = string,
-  TAccountSlotHashes extends string = string,
+	TAccountOpponent extends string = string,
+	TAccountWager extends string = string,
+	TAccountChallenger extends string = string,
+	TAccountChallengerBag extends string = string,
+	TAccountEscrow extends string = string,
+	TAccountConfig extends string = string,
+	TAccountChallengerStats extends string = string,
+	TAccountOpponentStats extends string = string,
+	TAccountOracleQueue extends string = string,
+	TAccountSystemProgram extends string = string,
+	TAccountProgramIdentity extends string = string,
+	TAccountVrfProgram extends string = string,
+	TAccountSlotHashes extends string = string,
 > = {
-  opponent: TransactionSigner<TAccountOpponent>;
-  wager: Address<TAccountWager>;
-  challenger: Address<TAccountChallenger>;
-  challengerBag: Address<TAccountChallengerBag>;
-  escrow?: Address<TAccountEscrow>;
-  config?: Address<TAccountConfig>;
-  /**
-   * Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).
-   * NOT init_if_needed — prevents opponent from paying rent for challenger's stats.
-   */
-  challengerStats: Address<TAccountChallengerStats>;
-  opponentStats?: Address<TAccountOpponentStats>;
-  oracleQueue?: Address<TAccountOracleQueue>;
-  systemProgram?: Address<TAccountSystemProgram>;
-  programIdentity?: Address<TAccountProgramIdentity>;
-  vrfProgram?: Address<TAccountVrfProgram>;
-  slotHashes?: Address<TAccountSlotHashes>;
+	opponent: TransactionSigner<TAccountOpponent>;
+	wager: Address<TAccountWager>;
+	challenger: Address<TAccountChallenger>;
+	challengerBag: Address<TAccountChallengerBag>;
+	escrow?: Address<TAccountEscrow>;
+	config?: Address<TAccountConfig>;
+	/**
+	 * Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).
+	 * NOT init_if_needed — prevents opponent from paying rent for challenger's stats.
+	 */
+	challengerStats: Address<TAccountChallengerStats>;
+	opponentStats?: Address<TAccountOpponentStats>;
+	oracleQueue?: Address<TAccountOracleQueue>;
+	systemProgram?: Address<TAccountSystemProgram>;
+	programIdentity?: Address<TAccountProgramIdentity>;
+	vrfProgram?: Address<TAccountVrfProgram>;
+	slotHashes?: Address<TAccountSlotHashes>;
 };
 
 export async function getAcceptWagerInstructionAsync<
-  TAccountOpponent extends string,
-  TAccountWager extends string,
-  TAccountChallenger extends string,
-  TAccountChallengerBag extends string,
-  TAccountEscrow extends string,
-  TAccountConfig extends string,
-  TAccountChallengerStats extends string,
-  TAccountOpponentStats extends string,
-  TAccountOracleQueue extends string,
-  TAccountSystemProgram extends string,
-  TAccountProgramIdentity extends string,
-  TAccountVrfProgram extends string,
-  TAccountSlotHashes extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountOpponent extends string,
+	TAccountWager extends string,
+	TAccountChallenger extends string,
+	TAccountChallengerBag extends string,
+	TAccountEscrow extends string,
+	TAccountConfig extends string,
+	TAccountChallengerStats extends string,
+	TAccountOpponentStats extends string,
+	TAccountOracleQueue extends string,
+	TAccountSystemProgram extends string,
+	TAccountProgramIdentity extends string,
+	TAccountVrfProgram extends string,
+	TAccountSlotHashes extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: AcceptWagerAsyncInput<
-    TAccountOpponent,
-    TAccountWager,
-    TAccountChallenger,
-    TAccountChallengerBag,
-    TAccountEscrow,
-    TAccountConfig,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountOracleQueue,
-    TAccountSystemProgram,
-    TAccountProgramIdentity,
-    TAccountVrfProgram,
-    TAccountSlotHashes
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: AcceptWagerAsyncInput<
+		TAccountOpponent,
+		TAccountWager,
+		TAccountChallenger,
+		TAccountChallengerBag,
+		TAccountEscrow,
+		TAccountConfig,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountOracleQueue,
+		TAccountSystemProgram,
+		TAccountProgramIdentity,
+		TAccountVrfProgram,
+		TAccountSlotHashes
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): Promise<
-  AcceptWagerInstruction<
-    TProgramAddress,
-    TAccountOpponent,
-    TAccountWager,
-    TAccountChallenger,
-    TAccountChallengerBag,
-    TAccountEscrow,
-    TAccountConfig,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountOracleQueue,
-    TAccountSystemProgram,
-    TAccountProgramIdentity,
-    TAccountVrfProgram,
-    TAccountSlotHashes
-  >
+	AcceptWagerInstruction<
+		TProgramAddress,
+		TAccountOpponent,
+		TAccountWager,
+		TAccountChallenger,
+		TAccountChallengerBag,
+		TAccountEscrow,
+		TAccountConfig,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountOracleQueue,
+		TAccountSystemProgram,
+		TAccountProgramIdentity,
+		TAccountVrfProgram,
+		TAccountSlotHashes
+	>
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    opponent: { value: input.opponent ?? null, isWritable: true },
-    wager: { value: input.wager ?? null, isWritable: true },
-    challenger: { value: input.challenger ?? null, isWritable: false },
-    challengerBag: { value: input.challengerBag ?? null, isWritable: true },
-    escrow: { value: input.escrow ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    challengerStats: { value: input.challengerStats ?? null, isWritable: true },
-    opponentStats: { value: input.opponentStats ?? null, isWritable: true },
-    oracleQueue: { value: input.oracleQueue ?? null, isWritable: true },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-    programIdentity: {
-      value: input.programIdentity ?? null,
-      isWritable: false,
-    },
-    vrfProgram: { value: input.vrfProgram ?? null, isWritable: false },
-    slotHashes: { value: input.slotHashes ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		opponent: { value: input.opponent ?? null, isWritable: true },
+		wager: { value: input.wager ?? null, isWritable: true },
+		challenger: { value: input.challenger ?? null, isWritable: false },
+		challengerBag: { value: input.challengerBag ?? null, isWritable: true },
+		escrow: { value: input.escrow ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		challengerStats: { value: input.challengerStats ?? null, isWritable: true },
+		opponentStats: { value: input.opponentStats ?? null, isWritable: true },
+		oracleQueue: { value: input.oracleQueue ?? null, isWritable: true },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+		programIdentity: {
+			value: input.programIdentity ?? null,
+			isWritable: false,
+		},
+		vrfProgram: { value: input.vrfProgram ?? null, isWritable: false },
+		slotHashes: { value: input.slotHashes ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Resolve default values.
-  if (!accounts.escrow.value) {
-    accounts.escrow.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([101, 115, 99, 114, 111, 119])),
-        getAddressEncoder().encode(expectAddress(accounts.wager.value)),
-      ],
-    });
-  }
-  if (!accounts.config.value) {
-    accounts.config.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
-      ],
-    });
-  }
-  if (!accounts.opponentStats.value) {
-    accounts.opponentStats.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([115, 116, 97, 116, 115])),
-        getAddressEncoder().encode(expectAddress(accounts.opponent.value)),
-      ],
-    });
-  }
-  if (!accounts.oracleQueue.value) {
-    accounts.oracleQueue.value =
-      "Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh" as Address<"Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh">;
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
-  if (!accounts.programIdentity.value) {
-    accounts.programIdentity.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(
-          new Uint8Array([105, 100, 101, 110, 116, 105, 116, 121]),
-        ),
-      ],
-    });
-  }
-  if (!accounts.vrfProgram.value) {
-    accounts.vrfProgram.value =
-      "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz" as Address<"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz">;
-  }
-  if (!accounts.slotHashes.value) {
-    accounts.slotHashes.value =
-      "SysvarS1otHashes111111111111111111111111111" as Address<"SysvarS1otHashes111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.escrow.value) {
+		accounts.escrow.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([101, 115, 99, 114, 111, 119])),
+				getAddressEncoder().encode(expectAddress(accounts.wager.value)),
+			],
+		});
+	}
+	if (!accounts.config.value) {
+		accounts.config.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
+			],
+		});
+	}
+	if (!accounts.opponentStats.value) {
+		accounts.opponentStats.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([115, 116, 97, 116, 115])),
+				getAddressEncoder().encode(expectAddress(accounts.opponent.value)),
+			],
+		});
+	}
+	if (!accounts.oracleQueue.value) {
+		accounts.oracleQueue.value =
+			"Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh" as Address<"Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh">;
+	}
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
+	if (!accounts.programIdentity.value) {
+		accounts.programIdentity.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(
+					new Uint8Array([105, 100, 101, 110, 116, 105, 116, 121]),
+				),
+			],
+		});
+	}
+	if (!accounts.vrfProgram.value) {
+		accounts.vrfProgram.value =
+			"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz" as Address<"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz">;
+	}
+	if (!accounts.slotHashes.value) {
+		accounts.slotHashes.value =
+			"SysvarS1otHashes111111111111111111111111111" as Address<"SysvarS1otHashes111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.opponent),
-      getAccountMeta(accounts.wager),
-      getAccountMeta(accounts.challenger),
-      getAccountMeta(accounts.challengerBag),
-      getAccountMeta(accounts.escrow),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.challengerStats),
-      getAccountMeta(accounts.opponentStats),
-      getAccountMeta(accounts.oracleQueue),
-      getAccountMeta(accounts.systemProgram),
-      getAccountMeta(accounts.programIdentity),
-      getAccountMeta(accounts.vrfProgram),
-      getAccountMeta(accounts.slotHashes),
-    ],
-    data: getAcceptWagerInstructionDataEncoder().encode({}),
-    programAddress,
-  } as AcceptWagerInstruction<
-    TProgramAddress,
-    TAccountOpponent,
-    TAccountWager,
-    TAccountChallenger,
-    TAccountChallengerBag,
-    TAccountEscrow,
-    TAccountConfig,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountOracleQueue,
-    TAccountSystemProgram,
-    TAccountProgramIdentity,
-    TAccountVrfProgram,
-    TAccountSlotHashes
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.opponent),
+			getAccountMeta(accounts.wager),
+			getAccountMeta(accounts.challenger),
+			getAccountMeta(accounts.challengerBag),
+			getAccountMeta(accounts.escrow),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.challengerStats),
+			getAccountMeta(accounts.opponentStats),
+			getAccountMeta(accounts.oracleQueue),
+			getAccountMeta(accounts.systemProgram),
+			getAccountMeta(accounts.programIdentity),
+			getAccountMeta(accounts.vrfProgram),
+			getAccountMeta(accounts.slotHashes),
+		],
+		data: getAcceptWagerInstructionDataEncoder().encode({}),
+		programAddress,
+	} as AcceptWagerInstruction<
+		TProgramAddress,
+		TAccountOpponent,
+		TAccountWager,
+		TAccountChallenger,
+		TAccountChallengerBag,
+		TAccountEscrow,
+		TAccountConfig,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountOracleQueue,
+		TAccountSystemProgram,
+		TAccountProgramIdentity,
+		TAccountVrfProgram,
+		TAccountSlotHashes
+	>);
 }
 
 export type AcceptWagerInput<
-  TAccountOpponent extends string = string,
-  TAccountWager extends string = string,
-  TAccountChallenger extends string = string,
-  TAccountChallengerBag extends string = string,
-  TAccountEscrow extends string = string,
-  TAccountConfig extends string = string,
-  TAccountChallengerStats extends string = string,
-  TAccountOpponentStats extends string = string,
-  TAccountOracleQueue extends string = string,
-  TAccountSystemProgram extends string = string,
-  TAccountProgramIdentity extends string = string,
-  TAccountVrfProgram extends string = string,
-  TAccountSlotHashes extends string = string,
+	TAccountOpponent extends string = string,
+	TAccountWager extends string = string,
+	TAccountChallenger extends string = string,
+	TAccountChallengerBag extends string = string,
+	TAccountEscrow extends string = string,
+	TAccountConfig extends string = string,
+	TAccountChallengerStats extends string = string,
+	TAccountOpponentStats extends string = string,
+	TAccountOracleQueue extends string = string,
+	TAccountSystemProgram extends string = string,
+	TAccountProgramIdentity extends string = string,
+	TAccountVrfProgram extends string = string,
+	TAccountSlotHashes extends string = string,
 > = {
-  opponent: TransactionSigner<TAccountOpponent>;
-  wager: Address<TAccountWager>;
-  challenger: Address<TAccountChallenger>;
-  challengerBag: Address<TAccountChallengerBag>;
-  escrow: Address<TAccountEscrow>;
-  config: Address<TAccountConfig>;
-  /**
-   * Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).
-   * NOT init_if_needed — prevents opponent from paying rent for challenger's stats.
-   */
-  challengerStats: Address<TAccountChallengerStats>;
-  opponentStats: Address<TAccountOpponentStats>;
-  oracleQueue?: Address<TAccountOracleQueue>;
-  systemProgram?: Address<TAccountSystemProgram>;
-  programIdentity: Address<TAccountProgramIdentity>;
-  vrfProgram?: Address<TAccountVrfProgram>;
-  slotHashes?: Address<TAccountSlotHashes>;
+	opponent: TransactionSigner<TAccountOpponent>;
+	wager: Address<TAccountWager>;
+	challenger: Address<TAccountChallenger>;
+	challengerBag: Address<TAccountChallengerBag>;
+	escrow: Address<TAccountEscrow>;
+	config: Address<TAccountConfig>;
+	/**
+	 * Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).
+	 * NOT init_if_needed — prevents opponent from paying rent for challenger's stats.
+	 */
+	challengerStats: Address<TAccountChallengerStats>;
+	opponentStats: Address<TAccountOpponentStats>;
+	oracleQueue?: Address<TAccountOracleQueue>;
+	systemProgram?: Address<TAccountSystemProgram>;
+	programIdentity: Address<TAccountProgramIdentity>;
+	vrfProgram?: Address<TAccountVrfProgram>;
+	slotHashes?: Address<TAccountSlotHashes>;
 };
 
 export function getAcceptWagerInstruction<
-  TAccountOpponent extends string,
-  TAccountWager extends string,
-  TAccountChallenger extends string,
-  TAccountChallengerBag extends string,
-  TAccountEscrow extends string,
-  TAccountConfig extends string,
-  TAccountChallengerStats extends string,
-  TAccountOpponentStats extends string,
-  TAccountOracleQueue extends string,
-  TAccountSystemProgram extends string,
-  TAccountProgramIdentity extends string,
-  TAccountVrfProgram extends string,
-  TAccountSlotHashes extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountOpponent extends string,
+	TAccountWager extends string,
+	TAccountChallenger extends string,
+	TAccountChallengerBag extends string,
+	TAccountEscrow extends string,
+	TAccountConfig extends string,
+	TAccountChallengerStats extends string,
+	TAccountOpponentStats extends string,
+	TAccountOracleQueue extends string,
+	TAccountSystemProgram extends string,
+	TAccountProgramIdentity extends string,
+	TAccountVrfProgram extends string,
+	TAccountSlotHashes extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: AcceptWagerInput<
-    TAccountOpponent,
-    TAccountWager,
-    TAccountChallenger,
-    TAccountChallengerBag,
-    TAccountEscrow,
-    TAccountConfig,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountOracleQueue,
-    TAccountSystemProgram,
-    TAccountProgramIdentity,
-    TAccountVrfProgram,
-    TAccountSlotHashes
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: AcceptWagerInput<
+		TAccountOpponent,
+		TAccountWager,
+		TAccountChallenger,
+		TAccountChallengerBag,
+		TAccountEscrow,
+		TAccountConfig,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountOracleQueue,
+		TAccountSystemProgram,
+		TAccountProgramIdentity,
+		TAccountVrfProgram,
+		TAccountSlotHashes
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): AcceptWagerInstruction<
-  TProgramAddress,
-  TAccountOpponent,
-  TAccountWager,
-  TAccountChallenger,
-  TAccountChallengerBag,
-  TAccountEscrow,
-  TAccountConfig,
-  TAccountChallengerStats,
-  TAccountOpponentStats,
-  TAccountOracleQueue,
-  TAccountSystemProgram,
-  TAccountProgramIdentity,
-  TAccountVrfProgram,
-  TAccountSlotHashes
+	TProgramAddress,
+	TAccountOpponent,
+	TAccountWager,
+	TAccountChallenger,
+	TAccountChallengerBag,
+	TAccountEscrow,
+	TAccountConfig,
+	TAccountChallengerStats,
+	TAccountOpponentStats,
+	TAccountOracleQueue,
+	TAccountSystemProgram,
+	TAccountProgramIdentity,
+	TAccountVrfProgram,
+	TAccountSlotHashes
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    opponent: { value: input.opponent ?? null, isWritable: true },
-    wager: { value: input.wager ?? null, isWritable: true },
-    challenger: { value: input.challenger ?? null, isWritable: false },
-    challengerBag: { value: input.challengerBag ?? null, isWritable: true },
-    escrow: { value: input.escrow ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    challengerStats: { value: input.challengerStats ?? null, isWritable: true },
-    opponentStats: { value: input.opponentStats ?? null, isWritable: true },
-    oracleQueue: { value: input.oracleQueue ?? null, isWritable: true },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-    programIdentity: {
-      value: input.programIdentity ?? null,
-      isWritable: false,
-    },
-    vrfProgram: { value: input.vrfProgram ?? null, isWritable: false },
-    slotHashes: { value: input.slotHashes ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		opponent: { value: input.opponent ?? null, isWritable: true },
+		wager: { value: input.wager ?? null, isWritable: true },
+		challenger: { value: input.challenger ?? null, isWritable: false },
+		challengerBag: { value: input.challengerBag ?? null, isWritable: true },
+		escrow: { value: input.escrow ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		challengerStats: { value: input.challengerStats ?? null, isWritable: true },
+		opponentStats: { value: input.opponentStats ?? null, isWritable: true },
+		oracleQueue: { value: input.oracleQueue ?? null, isWritable: true },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+		programIdentity: {
+			value: input.programIdentity ?? null,
+			isWritable: false,
+		},
+		vrfProgram: { value: input.vrfProgram ?? null, isWritable: false },
+		slotHashes: { value: input.slotHashes ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Resolve default values.
-  if (!accounts.oracleQueue.value) {
-    accounts.oracleQueue.value =
-      "Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh" as Address<"Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh">;
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
-  if (!accounts.vrfProgram.value) {
-    accounts.vrfProgram.value =
-      "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz" as Address<"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz">;
-  }
-  if (!accounts.slotHashes.value) {
-    accounts.slotHashes.value =
-      "SysvarS1otHashes111111111111111111111111111" as Address<"SysvarS1otHashes111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.oracleQueue.value) {
+		accounts.oracleQueue.value =
+			"Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh" as Address<"Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh">;
+	}
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
+	if (!accounts.vrfProgram.value) {
+		accounts.vrfProgram.value =
+			"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz" as Address<"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz">;
+	}
+	if (!accounts.slotHashes.value) {
+		accounts.slotHashes.value =
+			"SysvarS1otHashes111111111111111111111111111" as Address<"SysvarS1otHashes111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.opponent),
-      getAccountMeta(accounts.wager),
-      getAccountMeta(accounts.challenger),
-      getAccountMeta(accounts.challengerBag),
-      getAccountMeta(accounts.escrow),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.challengerStats),
-      getAccountMeta(accounts.opponentStats),
-      getAccountMeta(accounts.oracleQueue),
-      getAccountMeta(accounts.systemProgram),
-      getAccountMeta(accounts.programIdentity),
-      getAccountMeta(accounts.vrfProgram),
-      getAccountMeta(accounts.slotHashes),
-    ],
-    data: getAcceptWagerInstructionDataEncoder().encode({}),
-    programAddress,
-  } as AcceptWagerInstruction<
-    TProgramAddress,
-    TAccountOpponent,
-    TAccountWager,
-    TAccountChallenger,
-    TAccountChallengerBag,
-    TAccountEscrow,
-    TAccountConfig,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountOracleQueue,
-    TAccountSystemProgram,
-    TAccountProgramIdentity,
-    TAccountVrfProgram,
-    TAccountSlotHashes
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.opponent),
+			getAccountMeta(accounts.wager),
+			getAccountMeta(accounts.challenger),
+			getAccountMeta(accounts.challengerBag),
+			getAccountMeta(accounts.escrow),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.challengerStats),
+			getAccountMeta(accounts.opponentStats),
+			getAccountMeta(accounts.oracleQueue),
+			getAccountMeta(accounts.systemProgram),
+			getAccountMeta(accounts.programIdentity),
+			getAccountMeta(accounts.vrfProgram),
+			getAccountMeta(accounts.slotHashes),
+		],
+		data: getAcceptWagerInstructionDataEncoder().encode({}),
+		programAddress,
+	} as AcceptWagerInstruction<
+		TProgramAddress,
+		TAccountOpponent,
+		TAccountWager,
+		TAccountChallenger,
+		TAccountChallengerBag,
+		TAccountEscrow,
+		TAccountConfig,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountOracleQueue,
+		TAccountSystemProgram,
+		TAccountProgramIdentity,
+		TAccountVrfProgram,
+		TAccountSlotHashes
+	>);
 }
 
 export type ParsedAcceptWagerInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    opponent: TAccountMetas[0];
-    wager: TAccountMetas[1];
-    challenger: TAccountMetas[2];
-    challengerBag: TAccountMetas[3];
-    escrow: TAccountMetas[4];
-    config: TAccountMetas[5];
-    /**
-     * Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).
-     * NOT init_if_needed — prevents opponent from paying rent for challenger's stats.
-     */
-    challengerStats: TAccountMetas[6];
-    opponentStats: TAccountMetas[7];
-    oracleQueue: TAccountMetas[8];
-    systemProgram: TAccountMetas[9];
-    programIdentity: TAccountMetas[10];
-    vrfProgram: TAccountMetas[11];
-    slotHashes: TAccountMetas[12];
-  };
-  data: AcceptWagerInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		opponent: TAccountMetas[0];
+		wager: TAccountMetas[1];
+		challenger: TAccountMetas[2];
+		challengerBag: TAccountMetas[3];
+		escrow: TAccountMetas[4];
+		config: TAccountMetas[5];
+		/**
+		 * Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).
+		 * NOT init_if_needed — prevents opponent from paying rent for challenger's stats.
+		 */
+		challengerStats: TAccountMetas[6];
+		opponentStats: TAccountMetas[7];
+		oracleQueue: TAccountMetas[8];
+		systemProgram: TAccountMetas[9];
+		programIdentity: TAccountMetas[10];
+		vrfProgram: TAccountMetas[11];
+		slotHashes: TAccountMetas[12];
+	};
+	data: AcceptWagerInstructionData;
 };
 
 export function parseAcceptWagerInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedAcceptWagerInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 13) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      opponent: getNextAccount(),
-      wager: getNextAccount(),
-      challenger: getNextAccount(),
-      challengerBag: getNextAccount(),
-      escrow: getNextAccount(),
-      config: getNextAccount(),
-      challengerStats: getNextAccount(),
-      opponentStats: getNextAccount(),
-      oracleQueue: getNextAccount(),
-      systemProgram: getNextAccount(),
-      programIdentity: getNextAccount(),
-      vrfProgram: getNextAccount(),
-      slotHashes: getNextAccount(),
-    },
-    data: getAcceptWagerInstructionDataDecoder().decode(instruction.data),
-  };
+	if (instruction.accounts.length < 13) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: {
+			opponent: getNextAccount(),
+			wager: getNextAccount(),
+			challenger: getNextAccount(),
+			challengerBag: getNextAccount(),
+			escrow: getNextAccount(),
+			config: getNextAccount(),
+			challengerStats: getNextAccount(),
+			opponentStats: getNextAccount(),
+			oracleQueue: getNextAccount(),
+			systemProgram: getNextAccount(),
+			programIdentity: getNextAccount(),
+			vrfProgram: getNextAccount(),
+			slotHashes: getNextAccount(),
+		},
+		data: getAcceptWagerInstructionDataDecoder().decode(instruction.data),
+	};
 }

@@ -7,52 +7,52 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU64Decoder,
+	getU64Encoder,
 } from "@solana/kit";
 
 export type WagerCancelled = {
-  challenger: Address;
-  nonce: bigint;
-  settledAt: bigint;
+	challenger: Address;
+	nonce: bigint;
+	settledAt: bigint;
 };
 
 export type WagerCancelledArgs = {
-  challenger: Address;
-  nonce: number | bigint;
-  settledAt: number | bigint;
+	challenger: Address;
+	nonce: number | bigint;
+	settledAt: number | bigint;
 };
 
 export function getWagerCancelledEncoder(): FixedSizeEncoder<WagerCancelledArgs> {
-  return getStructEncoder([
-    ["challenger", getAddressEncoder()],
-    ["nonce", getU64Encoder()],
-    ["settledAt", getI64Encoder()],
-  ]);
+	return getStructEncoder([
+		["challenger", getAddressEncoder()],
+		["nonce", getU64Encoder()],
+		["settledAt", getI64Encoder()],
+	]);
 }
 
 export function getWagerCancelledDecoder(): FixedSizeDecoder<WagerCancelled> {
-  return getStructDecoder([
-    ["challenger", getAddressDecoder()],
-    ["nonce", getU64Decoder()],
-    ["settledAt", getI64Decoder()],
-  ]);
+	return getStructDecoder([
+		["challenger", getAddressDecoder()],
+		["nonce", getU64Decoder()],
+		["settledAt", getI64Decoder()],
+	]);
 }
 
 export function getWagerCancelledCodec(): FixedSizeCodec<
-  WagerCancelledArgs,
-  WagerCancelled
+	WagerCancelledArgs,
+	WagerCancelled
 > {
-  return combineCodec(getWagerCancelledEncoder(), getWagerCancelledDecoder());
+	return combineCodec(getWagerCancelledEncoder(), getWagerCancelledDecoder());
 }

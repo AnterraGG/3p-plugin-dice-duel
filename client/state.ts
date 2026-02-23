@@ -1,5 +1,5 @@
 /**
- * Dice Duel Module State (3p SDK version)
+ * Dragon Dice Module State (3p SDK version)
  *
  * Tracks sprites, graphics, cleanup callbacks, and local player position.
  * Import change: ISprite/IGraphics/IText from 3p-plugin-sdk/client
@@ -11,14 +11,14 @@ import type {
 	IText,
 } from "@townexchange/3p-plugin-sdk/client";
 
-interface DiceDuelModuleState {
+interface DragonDiceModuleState {
 	sprites: Set<ISprite>;
 	graphics: Set<IGraphics>;
 	texts: Set<IText>;
 	cleanupCallbacks: Set<() => void>;
 }
 
-const state: DiceDuelModuleState = {
+const state: DragonDiceModuleState = {
 	sprites: new Set(),
 	graphics: new Set(),
 	texts: new Set(),
@@ -86,8 +86,8 @@ export function registerCleanupCallback(callback: () => void): void {
 
 // ─── Full Cleanup ──────────────────────────────────────────────────────────
 
-export function clearDiceDuelVisuals(): void {
-	console.log("[DiceDuel] Clearing all visuals...");
+export function clearDragonDiceVisuals(): void {
+	console.log("[DragonDice] Clearing all visuals...");
 
 	for (const sprite of state.sprites) {
 		try {
@@ -120,7 +120,7 @@ export function clearDiceDuelVisuals(): void {
 		try {
 			callback();
 		} catch (e) {
-			console.warn("[DiceDuel] Cleanup callback error:", e);
+			console.warn("[DragonDice] Cleanup callback error:", e);
 		}
 	}
 	state.cleanupCallbacks.clear();
@@ -128,5 +128,5 @@ export function clearDiceDuelVisuals(): void {
 	_localPlayerPosition = null;
 	_localPlayerEntityId = null;
 
-	console.log("[DiceDuel] All visuals cleared");
+	console.log("[DragonDice] All visuals cleared");
 }

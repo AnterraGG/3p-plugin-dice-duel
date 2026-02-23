@@ -7,156 +7,156 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressDecoder,
-  getAddressEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type Account,
-  type Address,
-  type EncodedAccount,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
-  type ReadonlyUint8Array,
+	type Account,
+	type Address,
+	type EncodedAccount,
+	type FetchAccountConfig,
+	type FetchAccountsConfig,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	type MaybeAccount,
+	type MaybeEncodedAccount,
+	type ReadonlyUint8Array,
+	assertAccountExists,
+	assertAccountsExist,
+	combineCodec,
+	decodeAccount,
+	fetchEncodedAccount,
+	fetchEncodedAccounts,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressDecoder,
+	getAddressEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU32Decoder,
+	getU32Encoder,
+	transformEncoder,
 } from "@solana/kit";
 
 export const DICE_BAG_DISCRIMINATOR = new Uint8Array([
-  248, 248, 136, 8, 17, 97, 117, 157,
+	248, 248, 136, 8, 17, 97, 117, 157,
 ]);
 
 export function getDiceBagDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(DICE_BAG_DISCRIMINATOR);
+	return fixEncoderSize(getBytesEncoder(), 8).encode(DICE_BAG_DISCRIMINATOR);
 }
 
 export type DiceBag = {
-  discriminator: ReadonlyUint8Array;
-  mint: Address;
-  owner: Address;
-  usesRemaining: number;
-  totalGames: number;
-  wins: number;
-  losses: number;
-  bump: number;
+	discriminator: ReadonlyUint8Array;
+	mint: Address;
+	owner: Address;
+	usesRemaining: number;
+	totalGames: number;
+	wins: number;
+	losses: number;
+	bump: number;
 };
 
 export type DiceBagArgs = {
-  mint: Address;
-  owner: Address;
-  usesRemaining: number;
-  totalGames: number;
-  wins: number;
-  losses: number;
-  bump: number;
+	mint: Address;
+	owner: Address;
+	usesRemaining: number;
+	totalGames: number;
+	wins: number;
+	losses: number;
+	bump: number;
 };
 
 /** Gets the encoder for {@link DiceBagArgs} account data. */
 export function getDiceBagEncoder(): FixedSizeEncoder<DiceBagArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["mint", getAddressEncoder()],
-      ["owner", getAddressEncoder()],
-      ["usesRemaining", getU8Encoder()],
-      ["totalGames", getU32Encoder()],
-      ["wins", getU32Encoder()],
-      ["losses", getU32Encoder()],
-      ["bump", getU8Encoder()],
-    ]),
-    (value) => ({ ...value, discriminator: DICE_BAG_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			["mint", getAddressEncoder()],
+			["owner", getAddressEncoder()],
+			["usesRemaining", getU8Encoder()],
+			["totalGames", getU32Encoder()],
+			["wins", getU32Encoder()],
+			["losses", getU32Encoder()],
+			["bump", getU8Encoder()],
+		]),
+		(value) => ({ ...value, discriminator: DICE_BAG_DISCRIMINATOR }),
+	);
 }
 
 /** Gets the decoder for {@link DiceBag} account data. */
 export function getDiceBagDecoder(): FixedSizeDecoder<DiceBag> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["mint", getAddressDecoder()],
-    ["owner", getAddressDecoder()],
-    ["usesRemaining", getU8Decoder()],
-    ["totalGames", getU32Decoder()],
-    ["wins", getU32Decoder()],
-    ["losses", getU32Decoder()],
-    ["bump", getU8Decoder()],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		["mint", getAddressDecoder()],
+		["owner", getAddressDecoder()],
+		["usesRemaining", getU8Decoder()],
+		["totalGames", getU32Decoder()],
+		["wins", getU32Decoder()],
+		["losses", getU32Decoder()],
+		["bump", getU8Decoder()],
+	]);
 }
 
 /** Gets the codec for {@link DiceBag} account data. */
 export function getDiceBagCodec(): FixedSizeCodec<DiceBagArgs, DiceBag> {
-  return combineCodec(getDiceBagEncoder(), getDiceBagDecoder());
+	return combineCodec(getDiceBagEncoder(), getDiceBagDecoder());
 }
 
 export function decodeDiceBag<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress>,
 ): Account<DiceBag, TAddress>;
 export function decodeDiceBag<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+	encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<DiceBag, TAddress>;
 export function decodeDiceBag<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<DiceBag, TAddress> | MaybeAccount<DiceBag, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getDiceBagDecoder(),
-  );
+	return decodeAccount(
+		encodedAccount as MaybeEncodedAccount<TAddress>,
+		getDiceBagDecoder(),
+	);
 }
 
 export async function fetchDiceBag<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<Account<DiceBag, TAddress>> {
-  const maybeAccount = await fetchMaybeDiceBag(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+	const maybeAccount = await fetchMaybeDiceBag(rpc, address, config);
+	assertAccountExists(maybeAccount);
+	return maybeAccount;
 }
 
 export async function fetchMaybeDiceBag<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<MaybeAccount<DiceBag, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodeDiceBag(maybeAccount);
+	const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+	return decodeDiceBag(maybeAccount);
 }
 
 export async function fetchAllDiceBag(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<Account<DiceBag>[]> {
-  const maybeAccounts = await fetchAllMaybeDiceBag(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+	const maybeAccounts = await fetchAllMaybeDiceBag(rpc, addresses, config);
+	assertAccountsExist(maybeAccounts);
+	return maybeAccounts;
 }
 
 export async function fetchAllMaybeDiceBag(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<DiceBag>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map((maybeAccount) => decodeDiceBag(maybeAccount));
+	const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+	return maybeAccounts.map((maybeAccount) => decodeDiceBag(maybeAccount));
 }
 
 export function getDiceBagSize(): number {
-  return 86;
+	return 86;
 }

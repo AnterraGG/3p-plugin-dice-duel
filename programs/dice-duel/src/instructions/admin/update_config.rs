@@ -2,7 +2,6 @@ use anchor_lang::prelude::*;
 
 use crate::constants::*;
 use crate::errors::DiceDuelError;
-use crate::events::ConfigUpdated;
 use crate::state::GameConfig;
 
 #[derive(Accounts)]
@@ -60,10 +59,6 @@ pub fn handle_update_config(
         config.vrf_timeout_seconds > config.wager_expiry_seconds,
         DiceDuelError::InvalidTimeoutConfig
     );
-
-    emit!(ConfigUpdated {
-        admin: config.admin,
-    });
 
     Ok(())
 }

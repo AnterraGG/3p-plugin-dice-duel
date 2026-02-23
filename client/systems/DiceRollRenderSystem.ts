@@ -22,18 +22,18 @@ import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
 import {
 	DICE_FACE_COUNT,
 	DICE_TEXTURE_PREFIX,
-	DICE_DUEL_ANIMATION,
-	DICE_DUEL_DEPTHS,
-	DICE_DUEL_SCALES,
+	DRAGON_DICE_ANIMATION,
+	DRAGON_DICE_DEPTHS,
+	DRAGON_DICE_SCALES,
 } from "../../shared/constants";
 import { getHighLowDicePair } from "../../shared/dice-faces";
-import { playLandSound } from "../services/DiceDuelAudioService";
+import { playLandSound } from "../services/DragonDiceAudioService";
 import {
 	registerCleanupCallback,
 	registerSprite,
 	unregisterSprite,
 } from "../state";
-import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
+import { useDragonDiceGameStore } from "../store/dragonDiceGameStore";
 
 // ─── Bounce pre-computation ─────────────────────────────────────────────
 
@@ -181,9 +181,9 @@ export function createDiceRollRenderSystem() {
 			cleanupRegistered = true;
 		}
 
-		const store = useDiceDuelGameStore.getState();
+		const store = useDragonDiceGameStore.getState();
 		const activeWagerIds = new Set<string>();
-		const scale = DICE_DUEL_SCALES.DICE;
+		const scale = DRAGON_DICE_SCALES.DICE;
 
 		for (const [wagerId, roll] of store.diceRolls) {
 			activeWagerIds.add(wagerId);
@@ -199,7 +199,7 @@ export function createDiceRollRenderSystem() {
 					s.setScrollFactor(0, 0);
 					s.setScale(scale);
 					s.setOrigin(0.5, 0.5);
-					s.setDepth(DICE_DUEL_DEPTHS.DICE_ROLL);
+					s.setDepth(DRAGON_DICE_DEPTHS.DICE_ROLL);
 					registerSprite(s);
 				});
 
@@ -229,9 +229,9 @@ export function createDiceRollRenderSystem() {
 			if (!states) continue;
 
 			if (roll.state === "rolling") {
-				const rollDur = DICE_DUEL_ANIMATION.DICE_ROLL_DURATION;
+				const rollDur = DRAGON_DICE_ANIMATION.DICE_ROLL_DURATION;
 				const rollProgress = Math.min(elapsed / rollDur, 1);
-				const speedDecay = Math.pow(1 - rollProgress, 1.8);
+				const speedDecay = (1 - rollProgress) ** 1.8;
 
 				for (let i = 0; i < 2; i++) {
 					const die = states[i];
@@ -293,7 +293,7 @@ export function createDiceRollRenderSystem() {
 					if (elapsed < throwEnd) {
 						// THROW: parabolic arc from center outward
 						const t = elapsed / throwEnd;
-						const easeX = 1 - Math.pow(1 - t, 3);
+						const easeX = 1 - (1 - t) ** 3;
 						x = screenPos.x + side * diceSpacing * easeX;
 						// Arc up then down
 						y = screenPos.y - die.throwArcHeight * 4 * t * (1 - t);
@@ -314,7 +314,7 @@ export function createDiceRollRenderSystem() {
 						// Squash near ground, proportional to bounce energy
 						if (b.peak > 0) {
 							const hRatio = Math.abs(b.y) / b.peak;
-							const groundF = Math.pow(1 - hRatio, 3);
+							const groundF = (1 - hRatio) ** 3;
 							const intensity = groundF * 0.3 * Math.min(b.peak / 30, 1);
 							squashY = 1 - intensity;
 							stretchX = 1 + intensity * 0.5;
@@ -325,7 +325,7 @@ export function createDiceRollRenderSystem() {
 					} else if (elapsed < settleEnd) {
 						// SETTLE: damped wobble
 						const st = (elapsed - bounceEnd) / die.settleDur;
-						const damp = Math.pow(1 - st, 2.5);
+						const damp = (1 - st) ** 2.5;
 
 						angle =
 							die.settleAngleAmp *
@@ -361,7 +361,7 @@ export function createDiceRollRenderSystem() {
 				}
 
 				if (
-					elapsed > DICE_DUEL_ANIMATION.DICE_ROLL_DURATION &&
+					elapsed > DRAGON_DICE_ANIMATION.DICE_ROLL_DURATION &&
 					roll.result !== null
 				) {
 					store.landDice(wagerId, roll.result);
@@ -372,7 +372,7 @@ export function createDiceRollRenderSystem() {
 				const ease =
 					settleT < 1
 						? 1 -
-							Math.pow(2, -10 * settleT) *
+							2 ** (-10 * settleT) *
 								Math.cos((settleT * 10 - 0.75) * ((2 * Math.PI) / 3))
 						: 1;
 
@@ -406,7 +406,7 @@ export function createDiceRollRenderSystem() {
 							state: "showing",
 							startTime: Date.now(),
 						});
-						useDiceDuelGameStore.setState({
+						useDragonDiceGameStore.setState({
 							diceRolls: newRolls,
 						});
 					}
@@ -428,10 +428,10 @@ export function createDiceRollRenderSystem() {
 					}
 				}
 
-				if (elapsed > DICE_DUEL_ANIMATION.DICE_LAND_PAUSE) {
+				if (elapsed > DRAGON_DICE_ANIMATION.DICE_LAND_PAUSE) {
 					const fadeT =
-						(elapsed - DICE_DUEL_ANIMATION.DICE_LAND_PAUSE) /
-						DICE_DUEL_ANIMATION.FADE_OUT_DURATION;
+						(elapsed - DRAGON_DICE_ANIMATION.DICE_LAND_PAUSE) /
+						DRAGON_DICE_ANIMATION.FADE_OUT_DURATION;
 					const alpha = 1 - Math.min(fadeT, 1);
 					sprites[0].setAlpha(alpha);
 					sprites[1].setAlpha(alpha);

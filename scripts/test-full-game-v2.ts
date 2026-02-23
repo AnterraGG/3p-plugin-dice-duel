@@ -16,7 +16,7 @@ import {
 } from "@solana/web3.js";
 
 const PROGRAM_ID = new PublicKey(
-	"7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM",
+	"D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof",
 );
 const VRF_PROGRAM_ID = new PublicKey(
 	"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz",
@@ -54,7 +54,7 @@ function pda(seeds: Buffer[]): [PublicKey, number] {
 async function main() {
 	const conn = new Connection("https://api.devnet.solana.com", "confirmed");
 	const adminKey = JSON.parse(
-		fs.readFileSync(process.env.SOLANA_KEYPAIR || (process.env.HOME + "/.config/solana/id.json"), "utf8"),
+		fs.readFileSync("/home/node/.config/solana/id.json", "utf8"),
 	);
 	const admin = Keypair.fromSecretKey(Uint8Array.from(adminKey));
 	const challenger = Keypair.generate();

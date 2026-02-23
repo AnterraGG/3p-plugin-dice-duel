@@ -7,7 +7,8 @@ const SYSVAR_SLOT_HASHES_PUBKEY = new PublicKey(
 );
 import fs from "fs";
 
-const RPC = process.env.HELIUS_RPC_URL || "https://api.devnet.solana.com";
+const RPC =
+	"https://devnet.helius-rpc.com/?api-key=e97f43d4-ee09-4081-8260-6bfd0fb78fb7";
 const PROGRAM_ID = new PublicKey(
 	"2JhsTkFQc11pTE1rzAKJno2TbBMCzNJhEUsWBeRunBcN",
 );
@@ -23,7 +24,7 @@ const MPL_CORE = new PublicKey("CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rKrKLhdt");
 const idl = JSON.parse(fs.readFileSync("../target/idl/dice_duel.json", "utf8"));
 const adminKey = JSON.parse(
 	fs.readFileSync(
-		process.env.ADMIN_KEYPAIR_PATH || (process.env.HOME + "/.config/solana/id.json"),
+		"/home/node/.openclaw/secrets/devnet-keypairs/admin.json",
 		"utf8",
 	),
 );

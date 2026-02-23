@@ -1,12 +1,12 @@
 {
 	"name": "@townexchange/3p-plugin-dragon-dice",
 	"version": "0.1.0",
-	"description": "Dice Duel game plugin for TEX (third-party SDK)",
+	"description": "Dragon Dice game plugin for TEX (third-party SDK)",
 	"type": "module",
 	"private": false,
 	"license": "MIT",
 	"scripts": {
-		"build:svm": "bash scripts/anchor-build.sh",
+		"build:svm": "anchor build && mkdir -p generated/idl && cp target/idl/*.json generated/idl/",
 		"codegen:svm": "node scripts/codegen-svm.mjs",
 		"build:ts": "tsc --noEmit",
 		"build": "pnpm build:svm && pnpm codegen:svm && pnpm build:ts",

@@ -1,5 +1,5 @@
 /**
- * Token formatting and parsing utilities for Dice Duel.
+ * Token formatting and parsing utilities for Dragon Dice.
  *
  * SVM-only — supports SOL token.
  */

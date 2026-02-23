@@ -41,7 +41,7 @@ function anchorDisc(namespace: string, name: string): Buffer {
 async function main() {
 	const conn = new Connection("https://api.devnet.solana.com", "confirmed");
 	const adminKey = JSON.parse(
-		fs.readFileSync(process.env.SOLANA_KEYPAIR || (process.env.HOME + "/.config/solana/id.json"), "utf8"),
+		fs.readFileSync("/home/node/.config/solana/id.json", "utf8"),
 	);
 	const payer = Keypair.fromSecretKey(Uint8Array.from(adminKey));
 

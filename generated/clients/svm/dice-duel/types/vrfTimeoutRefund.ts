@@ -7,63 +7,63 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU64Decoder,
+	getU64Encoder,
 } from "@solana/kit";
 
 export type VrfTimeoutRefund = {
-  challenger: Address;
-  opponent: Address;
-  amount: bigint;
-  nonce: bigint;
-  settledAt: bigint;
+	challenger: Address;
+	opponent: Address;
+	amount: bigint;
+	nonce: bigint;
+	settledAt: bigint;
 };
 
 export type VrfTimeoutRefundArgs = {
-  challenger: Address;
-  opponent: Address;
-  amount: number | bigint;
-  nonce: number | bigint;
-  settledAt: number | bigint;
+	challenger: Address;
+	opponent: Address;
+	amount: number | bigint;
+	nonce: number | bigint;
+	settledAt: number | bigint;
 };
 
 export function getVrfTimeoutRefundEncoder(): FixedSizeEncoder<VrfTimeoutRefundArgs> {
-  return getStructEncoder([
-    ["challenger", getAddressEncoder()],
-    ["opponent", getAddressEncoder()],
-    ["amount", getU64Encoder()],
-    ["nonce", getU64Encoder()],
-    ["settledAt", getI64Encoder()],
-  ]);
+	return getStructEncoder([
+		["challenger", getAddressEncoder()],
+		["opponent", getAddressEncoder()],
+		["amount", getU64Encoder()],
+		["nonce", getU64Encoder()],
+		["settledAt", getI64Encoder()],
+	]);
 }
 
 export function getVrfTimeoutRefundDecoder(): FixedSizeDecoder<VrfTimeoutRefund> {
-  return getStructDecoder([
-    ["challenger", getAddressDecoder()],
-    ["opponent", getAddressDecoder()],
-    ["amount", getU64Decoder()],
-    ["nonce", getU64Decoder()],
-    ["settledAt", getI64Decoder()],
-  ]);
+	return getStructDecoder([
+		["challenger", getAddressDecoder()],
+		["opponent", getAddressDecoder()],
+		["amount", getU64Decoder()],
+		["nonce", getU64Decoder()],
+		["settledAt", getI64Decoder()],
+	]);
 }
 
 export function getVrfTimeoutRefundCodec(): FixedSizeCodec<
-  VrfTimeoutRefundArgs,
-  VrfTimeoutRefund
+	VrfTimeoutRefundArgs,
+	VrfTimeoutRefund
 > {
-  return combineCodec(
-    getVrfTimeoutRefundEncoder(),
-    getVrfTimeoutRefundDecoder(),
-  );
+	return combineCodec(
+		getVrfTimeoutRefundEncoder(),
+		getVrfTimeoutRefundDecoder(),
+	);
 }

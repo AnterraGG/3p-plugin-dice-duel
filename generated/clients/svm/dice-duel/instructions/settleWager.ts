@@ -7,466 +7,467 @@
  */
 
 import {
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getProgramDerivedAddress,
-  getStructDecoder,
-  getStructEncoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
-  type WritableSignerAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type ReadonlyAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	type WritableSignerAccount,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getProgramDerivedAddress,
+	getStructDecoder,
+	getStructEncoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
 import {
-  expectAddress,
-  getAccountMetaFactory,
-  type ResolvedAccount,
+	type ResolvedAccount,
+	expectAddress,
+	getAccountMetaFactory,
 } from "../shared";
 
 export const SETTLE_WAGER_DISCRIMINATOR = new Uint8Array([
-  161, 242, 169, 152, 172, 163, 161, 104,
+	161, 242, 169, 152, 172, 163, 161, 104,
 ]);
 
 export function getSettleWagerDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    SETTLE_WAGER_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		SETTLE_WAGER_DISCRIMINATOR,
+	);
 }
 
 export type SettleWagerInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountSettler extends string | AccountMeta<string> = string,
-  TAccountWager extends string | AccountMeta<string> = string,
-  TAccountEscrow extends string | AccountMeta<string> = string,
-  TAccountChallenger extends string | AccountMeta<string> = string,
-  TAccountOpponent extends string | AccountMeta<string> = string,
-  TAccountChallengerBag extends string | AccountMeta<string> = string,
-  TAccountChallengerStats extends string | AccountMeta<string> = string,
-  TAccountOpponentStats extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountTreasury extends string | AccountMeta<string> = string,
-  TAccountSystemProgram extends string | AccountMeta<string> =
-    "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountSettler extends string | AccountMeta<string> = string,
+	TAccountWager extends string | AccountMeta<string> = string,
+	TAccountEscrow extends string | AccountMeta<string> = string,
+	TAccountChallenger extends string | AccountMeta<string> = string,
+	TAccountOpponent extends string | AccountMeta<string> = string,
+	TAccountChallengerBag extends string | AccountMeta<string> = string,
+	TAccountChallengerStats extends string | AccountMeta<string> = string,
+	TAccountOpponentStats extends string | AccountMeta<string> = string,
+	TAccountConfig extends string | AccountMeta<string> = string,
+	TAccountTreasury extends string | AccountMeta<string> = string,
+	TAccountSystemProgram extends
+		| string
+		| AccountMeta<string> = "11111111111111111111111111111111",
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountSettler extends string
-        ? WritableSignerAccount<TAccountSettler> &
-            AccountSignerMeta<TAccountSettler>
-        : TAccountSettler,
-      TAccountWager extends string
-        ? WritableAccount<TAccountWager>
-        : TAccountWager,
-      TAccountEscrow extends string
-        ? WritableAccount<TAccountEscrow>
-        : TAccountEscrow,
-      TAccountChallenger extends string
-        ? WritableAccount<TAccountChallenger>
-        : TAccountChallenger,
-      TAccountOpponent extends string
-        ? WritableAccount<TAccountOpponent>
-        : TAccountOpponent,
-      TAccountChallengerBag extends string
-        ? WritableAccount<TAccountChallengerBag>
-        : TAccountChallengerBag,
-      TAccountChallengerStats extends string
-        ? WritableAccount<TAccountChallengerStats>
-        : TAccountChallengerStats,
-      TAccountOpponentStats extends string
-        ? WritableAccount<TAccountOpponentStats>
-        : TAccountOpponentStats,
-      TAccountConfig extends string
-        ? ReadonlyAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountTreasury extends string
-        ? WritableAccount<TAccountTreasury>
-        : TAccountTreasury,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountSettler extends string
+				? WritableSignerAccount<TAccountSettler> &
+						AccountSignerMeta<TAccountSettler>
+				: TAccountSettler,
+			TAccountWager extends string
+				? WritableAccount<TAccountWager>
+				: TAccountWager,
+			TAccountEscrow extends string
+				? WritableAccount<TAccountEscrow>
+				: TAccountEscrow,
+			TAccountChallenger extends string
+				? WritableAccount<TAccountChallenger>
+				: TAccountChallenger,
+			TAccountOpponent extends string
+				? WritableAccount<TAccountOpponent>
+				: TAccountOpponent,
+			TAccountChallengerBag extends string
+				? WritableAccount<TAccountChallengerBag>
+				: TAccountChallengerBag,
+			TAccountChallengerStats extends string
+				? WritableAccount<TAccountChallengerStats>
+				: TAccountChallengerStats,
+			TAccountOpponentStats extends string
+				? WritableAccount<TAccountOpponentStats>
+				: TAccountOpponentStats,
+			TAccountConfig extends string
+				? ReadonlyAccount<TAccountConfig>
+				: TAccountConfig,
+			TAccountTreasury extends string
+				? WritableAccount<TAccountTreasury>
+				: TAccountTreasury,
+			TAccountSystemProgram extends string
+				? ReadonlyAccount<TAccountSystemProgram>
+				: TAccountSystemProgram,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type SettleWagerInstructionData = { discriminator: ReadonlyUint8Array };
 
 export type SettleWagerInstructionDataArgs = {};
 
 export function getSettleWagerInstructionDataEncoder(): FixedSizeEncoder<SettleWagerInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: SETTLE_WAGER_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
+		(value) => ({ ...value, discriminator: SETTLE_WAGER_DISCRIMINATOR }),
+	);
 }
 
 export function getSettleWagerInstructionDataDecoder(): FixedSizeDecoder<SettleWagerInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+	]);
 }
 
 export function getSettleWagerInstructionDataCodec(): FixedSizeCodec<
-  SettleWagerInstructionDataArgs,
-  SettleWagerInstructionData
+	SettleWagerInstructionDataArgs,
+	SettleWagerInstructionData
 > {
-  return combineCodec(
-    getSettleWagerInstructionDataEncoder(),
-    getSettleWagerInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getSettleWagerInstructionDataEncoder(),
+		getSettleWagerInstructionDataDecoder(),
+	);
 }
 
 export type SettleWagerAsyncInput<
-  TAccountSettler extends string = string,
-  TAccountWager extends string = string,
-  TAccountEscrow extends string = string,
-  TAccountChallenger extends string = string,
-  TAccountOpponent extends string = string,
-  TAccountChallengerBag extends string = string,
-  TAccountChallengerStats extends string = string,
-  TAccountOpponentStats extends string = string,
-  TAccountConfig extends string = string,
-  TAccountTreasury extends string = string,
-  TAccountSystemProgram extends string = string,
+	TAccountSettler extends string = string,
+	TAccountWager extends string = string,
+	TAccountEscrow extends string = string,
+	TAccountChallenger extends string = string,
+	TAccountOpponent extends string = string,
+	TAccountChallengerBag extends string = string,
+	TAccountChallengerStats extends string = string,
+	TAccountOpponentStats extends string = string,
+	TAccountConfig extends string = string,
+	TAccountTreasury extends string = string,
+	TAccountSystemProgram extends string = string,
 > = {
-  /** Anyone can call settlement once VRF result is available */
-  settler: TransactionSigner<TAccountSettler>;
-  wager: Address<TAccountWager>;
-  escrow?: Address<TAccountEscrow>;
-  challenger: Address<TAccountChallenger>;
-  opponent: Address<TAccountOpponent>;
-  challengerBag: Address<TAccountChallengerBag>;
-  challengerStats: Address<TAccountChallengerStats>;
-  opponentStats: Address<TAccountOpponentStats>;
-  config?: Address<TAccountConfig>;
-  treasury: Address<TAccountTreasury>;
-  systemProgram?: Address<TAccountSystemProgram>;
+	/** Anyone can call settlement once VRF result is available */
+	settler: TransactionSigner<TAccountSettler>;
+	wager: Address<TAccountWager>;
+	escrow?: Address<TAccountEscrow>;
+	challenger: Address<TAccountChallenger>;
+	opponent: Address<TAccountOpponent>;
+	challengerBag: Address<TAccountChallengerBag>;
+	challengerStats: Address<TAccountChallengerStats>;
+	opponentStats: Address<TAccountOpponentStats>;
+	config?: Address<TAccountConfig>;
+	treasury: Address<TAccountTreasury>;
+	systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export async function getSettleWagerInstructionAsync<
-  TAccountSettler extends string,
-  TAccountWager extends string,
-  TAccountEscrow extends string,
-  TAccountChallenger extends string,
-  TAccountOpponent extends string,
-  TAccountChallengerBag extends string,
-  TAccountChallengerStats extends string,
-  TAccountOpponentStats extends string,
-  TAccountConfig extends string,
-  TAccountTreasury extends string,
-  TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountSettler extends string,
+	TAccountWager extends string,
+	TAccountEscrow extends string,
+	TAccountChallenger extends string,
+	TAccountOpponent extends string,
+	TAccountChallengerBag extends string,
+	TAccountChallengerStats extends string,
+	TAccountOpponentStats extends string,
+	TAccountConfig extends string,
+	TAccountTreasury extends string,
+	TAccountSystemProgram extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: SettleWagerAsyncInput<
-    TAccountSettler,
-    TAccountWager,
-    TAccountEscrow,
-    TAccountChallenger,
-    TAccountOpponent,
-    TAccountChallengerBag,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountConfig,
-    TAccountTreasury,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: SettleWagerAsyncInput<
+		TAccountSettler,
+		TAccountWager,
+		TAccountEscrow,
+		TAccountChallenger,
+		TAccountOpponent,
+		TAccountChallengerBag,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountConfig,
+		TAccountTreasury,
+		TAccountSystemProgram
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): Promise<
-  SettleWagerInstruction<
-    TProgramAddress,
-    TAccountSettler,
-    TAccountWager,
-    TAccountEscrow,
-    TAccountChallenger,
-    TAccountOpponent,
-    TAccountChallengerBag,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountConfig,
-    TAccountTreasury,
-    TAccountSystemProgram
-  >
+	SettleWagerInstruction<
+		TProgramAddress,
+		TAccountSettler,
+		TAccountWager,
+		TAccountEscrow,
+		TAccountChallenger,
+		TAccountOpponent,
+		TAccountChallengerBag,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountConfig,
+		TAccountTreasury,
+		TAccountSystemProgram
+	>
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    settler: { value: input.settler ?? null, isWritable: true },
-    wager: { value: input.wager ?? null, isWritable: true },
-    escrow: { value: input.escrow ?? null, isWritable: true },
-    challenger: { value: input.challenger ?? null, isWritable: true },
-    opponent: { value: input.opponent ?? null, isWritable: true },
-    challengerBag: { value: input.challengerBag ?? null, isWritable: true },
-    challengerStats: { value: input.challengerStats ?? null, isWritable: true },
-    opponentStats: { value: input.opponentStats ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    treasury: { value: input.treasury ?? null, isWritable: true },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		settler: { value: input.settler ?? null, isWritable: true },
+		wager: { value: input.wager ?? null, isWritable: true },
+		escrow: { value: input.escrow ?? null, isWritable: true },
+		challenger: { value: input.challenger ?? null, isWritable: true },
+		opponent: { value: input.opponent ?? null, isWritable: true },
+		challengerBag: { value: input.challengerBag ?? null, isWritable: true },
+		challengerStats: { value: input.challengerStats ?? null, isWritable: true },
+		opponentStats: { value: input.opponentStats ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		treasury: { value: input.treasury ?? null, isWritable: true },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Resolve default values.
-  if (!accounts.escrow.value) {
-    accounts.escrow.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([101, 115, 99, 114, 111, 119])),
-        getAddressEncoder().encode(expectAddress(accounts.wager.value)),
-      ],
-    });
-  }
-  if (!accounts.config.value) {
-    accounts.config.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
-      ],
-    });
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.escrow.value) {
+		accounts.escrow.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([101, 115, 99, 114, 111, 119])),
+				getAddressEncoder().encode(expectAddress(accounts.wager.value)),
+			],
+		});
+	}
+	if (!accounts.config.value) {
+		accounts.config.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
+			],
+		});
+	}
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.settler),
-      getAccountMeta(accounts.wager),
-      getAccountMeta(accounts.escrow),
-      getAccountMeta(accounts.challenger),
-      getAccountMeta(accounts.opponent),
-      getAccountMeta(accounts.challengerBag),
-      getAccountMeta(accounts.challengerStats),
-      getAccountMeta(accounts.opponentStats),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.treasury),
-      getAccountMeta(accounts.systemProgram),
-    ],
-    data: getSettleWagerInstructionDataEncoder().encode({}),
-    programAddress,
-  } as SettleWagerInstruction<
-    TProgramAddress,
-    TAccountSettler,
-    TAccountWager,
-    TAccountEscrow,
-    TAccountChallenger,
-    TAccountOpponent,
-    TAccountChallengerBag,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountConfig,
-    TAccountTreasury,
-    TAccountSystemProgram
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.settler),
+			getAccountMeta(accounts.wager),
+			getAccountMeta(accounts.escrow),
+			getAccountMeta(accounts.challenger),
+			getAccountMeta(accounts.opponent),
+			getAccountMeta(accounts.challengerBag),
+			getAccountMeta(accounts.challengerStats),
+			getAccountMeta(accounts.opponentStats),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.treasury),
+			getAccountMeta(accounts.systemProgram),
+		],
+		data: getSettleWagerInstructionDataEncoder().encode({}),
+		programAddress,
+	} as SettleWagerInstruction<
+		TProgramAddress,
+		TAccountSettler,
+		TAccountWager,
+		TAccountEscrow,
+		TAccountChallenger,
+		TAccountOpponent,
+		TAccountChallengerBag,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountConfig,
+		TAccountTreasury,
+		TAccountSystemProgram
+	>);
 }
 
 export type SettleWagerInput<
-  TAccountSettler extends string = string,
-  TAccountWager extends string = string,
-  TAccountEscrow extends string = string,
-  TAccountChallenger extends string = string,
-  TAccountOpponent extends string = string,
-  TAccountChallengerBag extends string = string,
-  TAccountChallengerStats extends string = string,
-  TAccountOpponentStats extends string = string,
-  TAccountConfig extends string = string,
-  TAccountTreasury extends string = string,
-  TAccountSystemProgram extends string = string,
+	TAccountSettler extends string = string,
+	TAccountWager extends string = string,
+	TAccountEscrow extends string = string,
+	TAccountChallenger extends string = string,
+	TAccountOpponent extends string = string,
+	TAccountChallengerBag extends string = string,
+	TAccountChallengerStats extends string = string,
+	TAccountOpponentStats extends string = string,
+	TAccountConfig extends string = string,
+	TAccountTreasury extends string = string,
+	TAccountSystemProgram extends string = string,
 > = {
-  /** Anyone can call settlement once VRF result is available */
-  settler: TransactionSigner<TAccountSettler>;
-  wager: Address<TAccountWager>;
-  escrow: Address<TAccountEscrow>;
-  challenger: Address<TAccountChallenger>;
-  opponent: Address<TAccountOpponent>;
-  challengerBag: Address<TAccountChallengerBag>;
-  challengerStats: Address<TAccountChallengerStats>;
-  opponentStats: Address<TAccountOpponentStats>;
-  config: Address<TAccountConfig>;
-  treasury: Address<TAccountTreasury>;
-  systemProgram?: Address<TAccountSystemProgram>;
+	/** Anyone can call settlement once VRF result is available */
+	settler: TransactionSigner<TAccountSettler>;
+	wager: Address<TAccountWager>;
+	escrow: Address<TAccountEscrow>;
+	challenger: Address<TAccountChallenger>;
+	opponent: Address<TAccountOpponent>;
+	challengerBag: Address<TAccountChallengerBag>;
+	challengerStats: Address<TAccountChallengerStats>;
+	opponentStats: Address<TAccountOpponentStats>;
+	config: Address<TAccountConfig>;
+	treasury: Address<TAccountTreasury>;
+	systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export function getSettleWagerInstruction<
-  TAccountSettler extends string,
-  TAccountWager extends string,
-  TAccountEscrow extends string,
-  TAccountChallenger extends string,
-  TAccountOpponent extends string,
-  TAccountChallengerBag extends string,
-  TAccountChallengerStats extends string,
-  TAccountOpponentStats extends string,
-  TAccountConfig extends string,
-  TAccountTreasury extends string,
-  TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountSettler extends string,
+	TAccountWager extends string,
+	TAccountEscrow extends string,
+	TAccountChallenger extends string,
+	TAccountOpponent extends string,
+	TAccountChallengerBag extends string,
+	TAccountChallengerStats extends string,
+	TAccountOpponentStats extends string,
+	TAccountConfig extends string,
+	TAccountTreasury extends string,
+	TAccountSystemProgram extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: SettleWagerInput<
-    TAccountSettler,
-    TAccountWager,
-    TAccountEscrow,
-    TAccountChallenger,
-    TAccountOpponent,
-    TAccountChallengerBag,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountConfig,
-    TAccountTreasury,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: SettleWagerInput<
+		TAccountSettler,
+		TAccountWager,
+		TAccountEscrow,
+		TAccountChallenger,
+		TAccountOpponent,
+		TAccountChallengerBag,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountConfig,
+		TAccountTreasury,
+		TAccountSystemProgram
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): SettleWagerInstruction<
-  TProgramAddress,
-  TAccountSettler,
-  TAccountWager,
-  TAccountEscrow,
-  TAccountChallenger,
-  TAccountOpponent,
-  TAccountChallengerBag,
-  TAccountChallengerStats,
-  TAccountOpponentStats,
-  TAccountConfig,
-  TAccountTreasury,
-  TAccountSystemProgram
+	TProgramAddress,
+	TAccountSettler,
+	TAccountWager,
+	TAccountEscrow,
+	TAccountChallenger,
+	TAccountOpponent,
+	TAccountChallengerBag,
+	TAccountChallengerStats,
+	TAccountOpponentStats,
+	TAccountConfig,
+	TAccountTreasury,
+	TAccountSystemProgram
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    settler: { value: input.settler ?? null, isWritable: true },
-    wager: { value: input.wager ?? null, isWritable: true },
-    escrow: { value: input.escrow ?? null, isWritable: true },
-    challenger: { value: input.challenger ?? null, isWritable: true },
-    opponent: { value: input.opponent ?? null, isWritable: true },
-    challengerBag: { value: input.challengerBag ?? null, isWritable: true },
-    challengerStats: { value: input.challengerStats ?? null, isWritable: true },
-    opponentStats: { value: input.opponentStats ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    treasury: { value: input.treasury ?? null, isWritable: true },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		settler: { value: input.settler ?? null, isWritable: true },
+		wager: { value: input.wager ?? null, isWritable: true },
+		escrow: { value: input.escrow ?? null, isWritable: true },
+		challenger: { value: input.challenger ?? null, isWritable: true },
+		opponent: { value: input.opponent ?? null, isWritable: true },
+		challengerBag: { value: input.challengerBag ?? null, isWritable: true },
+		challengerStats: { value: input.challengerStats ?? null, isWritable: true },
+		opponentStats: { value: input.opponentStats ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		treasury: { value: input.treasury ?? null, isWritable: true },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Resolve default values.
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.settler),
-      getAccountMeta(accounts.wager),
-      getAccountMeta(accounts.escrow),
-      getAccountMeta(accounts.challenger),
-      getAccountMeta(accounts.opponent),
-      getAccountMeta(accounts.challengerBag),
-      getAccountMeta(accounts.challengerStats),
-      getAccountMeta(accounts.opponentStats),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.treasury),
-      getAccountMeta(accounts.systemProgram),
-    ],
-    data: getSettleWagerInstructionDataEncoder().encode({}),
-    programAddress,
-  } as SettleWagerInstruction<
-    TProgramAddress,
-    TAccountSettler,
-    TAccountWager,
-    TAccountEscrow,
-    TAccountChallenger,
-    TAccountOpponent,
-    TAccountChallengerBag,
-    TAccountChallengerStats,
-    TAccountOpponentStats,
-    TAccountConfig,
-    TAccountTreasury,
-    TAccountSystemProgram
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.settler),
+			getAccountMeta(accounts.wager),
+			getAccountMeta(accounts.escrow),
+			getAccountMeta(accounts.challenger),
+			getAccountMeta(accounts.opponent),
+			getAccountMeta(accounts.challengerBag),
+			getAccountMeta(accounts.challengerStats),
+			getAccountMeta(accounts.opponentStats),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.treasury),
+			getAccountMeta(accounts.systemProgram),
+		],
+		data: getSettleWagerInstructionDataEncoder().encode({}),
+		programAddress,
+	} as SettleWagerInstruction<
+		TProgramAddress,
+		TAccountSettler,
+		TAccountWager,
+		TAccountEscrow,
+		TAccountChallenger,
+		TAccountOpponent,
+		TAccountChallengerBag,
+		TAccountChallengerStats,
+		TAccountOpponentStats,
+		TAccountConfig,
+		TAccountTreasury,
+		TAccountSystemProgram
+	>);
 }
 
 export type ParsedSettleWagerInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    /** Anyone can call settlement once VRF result is available */
-    settler: TAccountMetas[0];
-    wager: TAccountMetas[1];
-    escrow: TAccountMetas[2];
-    challenger: TAccountMetas[3];
-    opponent: TAccountMetas[4];
-    challengerBag: TAccountMetas[5];
-    challengerStats: TAccountMetas[6];
-    opponentStats: TAccountMetas[7];
-    config: TAccountMetas[8];
-    treasury: TAccountMetas[9];
-    systemProgram: TAccountMetas[10];
-  };
-  data: SettleWagerInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		/** Anyone can call settlement once VRF result is available */
+		settler: TAccountMetas[0];
+		wager: TAccountMetas[1];
+		escrow: TAccountMetas[2];
+		challenger: TAccountMetas[3];
+		opponent: TAccountMetas[4];
+		challengerBag: TAccountMetas[5];
+		challengerStats: TAccountMetas[6];
+		opponentStats: TAccountMetas[7];
+		config: TAccountMetas[8];
+		treasury: TAccountMetas[9];
+		systemProgram: TAccountMetas[10];
+	};
+	data: SettleWagerInstructionData;
 };
 
 export function parseSettleWagerInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSettleWagerInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 11) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      settler: getNextAccount(),
-      wager: getNextAccount(),
-      escrow: getNextAccount(),
-      challenger: getNextAccount(),
-      opponent: getNextAccount(),
-      challengerBag: getNextAccount(),
-      challengerStats: getNextAccount(),
-      opponentStats: getNextAccount(),
-      config: getNextAccount(),
-      treasury: getNextAccount(),
-      systemProgram: getNextAccount(),
-    },
-    data: getSettleWagerInstructionDataDecoder().decode(instruction.data),
-  };
+	if (instruction.accounts.length < 11) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: {
+			settler: getNextAccount(),
+			wager: getNextAccount(),
+			escrow: getNextAccount(),
+			challenger: getNextAccount(),
+			opponent: getNextAccount(),
+			challengerBag: getNextAccount(),
+			challengerStats: getNextAccount(),
+			opponentStats: getNextAccount(),
+			config: getNextAccount(),
+			treasury: getNextAccount(),
+			systemProgram: getNextAccount(),
+		},
+		data: getSettleWagerInstructionDataDecoder().decode(instruction.data),
+	};
 }

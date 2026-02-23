@@ -26,7 +26,7 @@ import { useCountdown } from "../../../hooks/useCountdown";
 import {
 	playClickSound,
 	playErrorSound,
-} from "../../../services/DiceDuelAudioService";
+} from "../../../services/DragonDiceAudioService";
 
 type TxState = "idle" | "confirming" | "success" | "error";
 
@@ -63,7 +63,7 @@ export const AcceptWagerSvm: React.FC<AcceptWagerSvmProps> = ({
 
 			setTxState("success");
 			// No inline notification — server-driven wager_accepted event
-			// in DiceDuelUIContainer handles the "Challenge Accepted!" toast.
+			// in DragonDiceUIContainer handles the "Challenge Accepted!" toast.
 
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.inventoryWagers.all(),
@@ -80,7 +80,7 @@ export const AcceptWagerSvm: React.FC<AcceptWagerSvmProps> = ({
 				type: "error",
 				title: "Error",
 				message: `Accept failed: ${decoded.message}`,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 			setTimeout(() => setTxState("idle"), 3000);
 		}

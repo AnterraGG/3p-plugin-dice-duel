@@ -26,9 +26,6 @@ import {
 } from "#generated/clients/svm/dice-duel/accounts";
 import { WagerStatus as CodamaWagerStatus } from "#generated/clients/svm/dice-duel/types";
 import {
-	getConfigUpdatedDecoder,
-	getDiceBagMintedDecoder,
-	getDiceBagUsedDecoder,
 	getVrfTimeoutRefundDecoder,
 	getWagerAcceptedDecoder,
 	getWagerCancelledDecoder,
@@ -217,8 +214,6 @@ const EVT_DISC = {
 	WagerExpiredEvent: hexToBytes("ac7b790000fd8dc3"),
 	VrfTimeoutRefund: hexToBytes("e3dd521cfe679619"),
 	DiceBagMinted: hexToBytes("6d01d97611b3ac11"),
-	DiceBagUsed: hexToBytes("46c4758e317b1ca0"),
-	ConfigUpdated: hexToBytes("28f1e67a0b13c6c2"),
 } as const;
 
 // ─── Program Descriptor ────────────────────────────────────────────────────
@@ -260,9 +255,6 @@ export const diceDuelProgram = defineProgram("DiceDuel", {
 		WagerCancelled: { discriminator: EVT_DISC.WagerCancelled, decoder: getWagerCancelledDecoder },
 		WagerExpiredEvent: { discriminator: EVT_DISC.WagerExpiredEvent, decoder: getWagerExpiredEventDecoder },
 		VrfTimeoutRefund: { discriminator: EVT_DISC.VrfTimeoutRefund, decoder: getVrfTimeoutRefundDecoder },
-		DiceBagMinted: { discriminator: EVT_DISC.DiceBagMinted, decoder: getDiceBagMintedDecoder },
-		DiceBagUsed: { discriminator: EVT_DISC.DiceBagUsed, decoder: getDiceBagUsedDecoder },
-		ConfigUpdated: { discriminator: EVT_DISC.ConfigUpdated, decoder: getConfigUpdatedDecoder },
 	},
 	pdas: { findWagerPda, findDiceBagPda, findStatsPda },
 });

@@ -26,7 +26,7 @@ import {
 	playClickSound,
 	playCoinSound,
 	playErrorSound,
-} from "../../../services/DiceDuelAudioService";
+} from "../../../services/DragonDiceAudioService";
 import styles from "./SvmInventory.module.scss";
 
 interface SvmWagerSlotProps {
@@ -191,7 +191,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 		try {
 			await cancelWager.execute({ nonce: BigInt(wager.nonce) });
 			// No inline notification — server-driven wager_cancelled event
-			// in DiceDuelUIContainer handles the toast + sound.
+			// in DragonDiceUIContainer handles the toast + sound.
 			invalidateQueries();
 		} catch (e: any) {
 			const decoded = logDiceDuelError("cancelWager", e);
@@ -200,7 +200,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 				type: "error",
 				title: "Error",
 				message: `Cancel failed: ${decoded.message}`,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 		}
 		setActionState("idle");
@@ -215,7 +215,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 				nonce: BigInt(wager.nonce),
 			});
 			// No inline notification — server-driven wager_expired event
-			// in DiceDuelUIContainer handles the toast.
+			// in DragonDiceUIContainer handles the toast.
 			invalidateQueries();
 		} catch (e: any) {
 			const decoded = logDiceDuelError("claimExpired", e);
@@ -224,7 +224,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 				type: "error",
 				title: "Error",
 				message: `Claim failed: ${decoded.message}`,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 		}
 		setActionState("idle");
@@ -236,7 +236,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 				type: "error",
 				title: "Error",
 				message: "Game config not loaded yet. Try again.",
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 			return;
 		}
@@ -250,7 +250,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 			});
 			playCoinSound();
 			// No inline notification — the server-driven wager_claimed event
-			// in DiceDuelUIContainer handles the "Winnings Claimed" toast
+			// in DragonDiceUIContainer handles the "Winnings Claimed" toast
 			// with the actual payout amount from the chain.
 			invalidateQueries();
 		} catch (e: any) {
@@ -260,7 +260,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 				type: "error",
 				title: "Error",
 				message: `Claim failed: ${decoded.message}`,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 		}
 		setActionState("idle");
@@ -282,7 +282,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 				nonce: BigInt(wager.nonce),
 			});
 			// No inline notification — server-driven wager_vrf_timeout event
-			// in DiceDuelUIContainer handles the toast.
+			// in DragonDiceUIContainer handles the toast.
 			invalidateQueries();
 		} catch (e: any) {
 			const decoded = logDiceDuelError("claimVrfTimeout", e);
@@ -291,7 +291,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 				type: "error",
 				title: "Error",
 				message: `Claim failed: ${decoded.message}`,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 		}
 		setActionState("idle");

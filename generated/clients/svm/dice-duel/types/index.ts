@@ -6,9 +6,7 @@
  * @see https://github.com/codama-idl/codama
  */
 
-export * from "./configUpdated";
 export * from "./diceBagMinted";
-export * from "./diceBagUsed";
 export * from "./vrfTimeoutRefund";
 export * from "./wagerAccepted";
 export * from "./wagerCancelled";

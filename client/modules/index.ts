@@ -1,1 +1,1 @@
-export { DiceDuelModule } from "./DiceDuelModule";
+export { DragonDiceModule } from "./DragonDiceModule";

@@ -33,7 +33,7 @@ async function main() {
 		"http://localhost:7899",
 		"confirmed",
 	);
-	const keyPath = process.env.SOLANA_KEYPAIR || (process.env.HOME + "/.config/solana/id.json");
+	const keyPath = "/home/node/.config/solana/id.json";
 	const secretKey = new Uint8Array(
 		JSON.parse(fs.readFileSync(keyPath, "utf8")),
 	);

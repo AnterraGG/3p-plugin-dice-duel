@@ -7,68 +7,68 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU64Decoder,
+	getU64Encoder,
 } from "@solana/kit";
 
 export type WinningsClaimed = {
-  winner: Address;
-  challenger: Address;
-  amount: bigint;
-  fee: bigint;
-  payout: bigint;
-  nonce: bigint;
-  settledAt: bigint;
+	winner: Address;
+	challenger: Address;
+	amount: bigint;
+	fee: bigint;
+	payout: bigint;
+	nonce: bigint;
+	settledAt: bigint;
 };
 
 export type WinningsClaimedArgs = {
-  winner: Address;
-  challenger: Address;
-  amount: number | bigint;
-  fee: number | bigint;
-  payout: number | bigint;
-  nonce: number | bigint;
-  settledAt: number | bigint;
+	winner: Address;
+	challenger: Address;
+	amount: number | bigint;
+	fee: number | bigint;
+	payout: number | bigint;
+	nonce: number | bigint;
+	settledAt: number | bigint;
 };
 
 export function getWinningsClaimedEncoder(): FixedSizeEncoder<WinningsClaimedArgs> {
-  return getStructEncoder([
-    ["winner", getAddressEncoder()],
-    ["challenger", getAddressEncoder()],
-    ["amount", getU64Encoder()],
-    ["fee", getU64Encoder()],
-    ["payout", getU64Encoder()],
-    ["nonce", getU64Encoder()],
-    ["settledAt", getI64Encoder()],
-  ]);
+	return getStructEncoder([
+		["winner", getAddressEncoder()],
+		["challenger", getAddressEncoder()],
+		["amount", getU64Encoder()],
+		["fee", getU64Encoder()],
+		["payout", getU64Encoder()],
+		["nonce", getU64Encoder()],
+		["settledAt", getI64Encoder()],
+	]);
 }
 
 export function getWinningsClaimedDecoder(): FixedSizeDecoder<WinningsClaimed> {
-  return getStructDecoder([
-    ["winner", getAddressDecoder()],
-    ["challenger", getAddressDecoder()],
-    ["amount", getU64Decoder()],
-    ["fee", getU64Decoder()],
-    ["payout", getU64Decoder()],
-    ["nonce", getU64Decoder()],
-    ["settledAt", getI64Decoder()],
-  ]);
+	return getStructDecoder([
+		["winner", getAddressDecoder()],
+		["challenger", getAddressDecoder()],
+		["amount", getU64Decoder()],
+		["fee", getU64Decoder()],
+		["payout", getU64Decoder()],
+		["nonce", getU64Decoder()],
+		["settledAt", getI64Decoder()],
+	]);
 }
 
 export function getWinningsClaimedCodec(): FixedSizeCodec<
-  WinningsClaimedArgs,
-  WinningsClaimed
+	WinningsClaimedArgs,
+	WinningsClaimed
 > {
-  return combineCodec(getWinningsClaimedEncoder(), getWinningsClaimedDecoder());
+	return combineCodec(getWinningsClaimedEncoder(), getWinningsClaimedDecoder());
 }

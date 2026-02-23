@@ -7,173 +7,173 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressDecoder,
-  getAddressEncoder,
-  getBooleanDecoder,
-  getBooleanEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU16Decoder,
-  getU16Encoder,
-  getU64Decoder,
-  getU64Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type Account,
-  type Address,
-  type EncodedAccount,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
-  type ReadonlyUint8Array,
+	type Account,
+	type Address,
+	type EncodedAccount,
+	type FetchAccountConfig,
+	type FetchAccountsConfig,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	type MaybeAccount,
+	type MaybeEncodedAccount,
+	type ReadonlyUint8Array,
+	assertAccountExists,
+	assertAccountsExist,
+	combineCodec,
+	decodeAccount,
+	fetchEncodedAccount,
+	fetchEncodedAccounts,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressDecoder,
+	getAddressEncoder,
+	getBooleanDecoder,
+	getBooleanEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU16Decoder,
+	getU16Encoder,
+	getU64Decoder,
+	getU64Encoder,
+	transformEncoder,
 } from "@solana/kit";
 
 export const GAME_CONFIG_DISCRIMINATOR = new Uint8Array([
-  45, 146, 146, 33, 170, 69, 96, 133,
+	45, 146, 146, 33, 170, 69, 96, 133,
 ]);
 
 export function getGameConfigDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(GAME_CONFIG_DISCRIMINATOR);
+	return fixEncoderSize(getBytesEncoder(), 8).encode(GAME_CONFIG_DISCRIMINATOR);
 }
 
 export type GameConfig = {
-  discriminator: ReadonlyUint8Array;
-  admin: Address;
-  treasury: Address;
-  feeBps: number;
-  mintPrice: bigint;
-  initialUses: number;
-  isPaused: boolean;
-  wagerExpirySeconds: bigint;
-  vrfTimeoutSeconds: bigint;
-  bump: number;
+	discriminator: ReadonlyUint8Array;
+	admin: Address;
+	treasury: Address;
+	feeBps: number;
+	mintPrice: bigint;
+	initialUses: number;
+	isPaused: boolean;
+	wagerExpirySeconds: bigint;
+	vrfTimeoutSeconds: bigint;
+	bump: number;
 };
 
 export type GameConfigArgs = {
-  admin: Address;
-  treasury: Address;
-  feeBps: number;
-  mintPrice: number | bigint;
-  initialUses: number;
-  isPaused: boolean;
-  wagerExpirySeconds: number | bigint;
-  vrfTimeoutSeconds: number | bigint;
-  bump: number;
+	admin: Address;
+	treasury: Address;
+	feeBps: number;
+	mintPrice: number | bigint;
+	initialUses: number;
+	isPaused: boolean;
+	wagerExpirySeconds: number | bigint;
+	vrfTimeoutSeconds: number | bigint;
+	bump: number;
 };
 
 /** Gets the encoder for {@link GameConfigArgs} account data. */
 export function getGameConfigEncoder(): FixedSizeEncoder<GameConfigArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["admin", getAddressEncoder()],
-      ["treasury", getAddressEncoder()],
-      ["feeBps", getU16Encoder()],
-      ["mintPrice", getU64Encoder()],
-      ["initialUses", getU8Encoder()],
-      ["isPaused", getBooleanEncoder()],
-      ["wagerExpirySeconds", getI64Encoder()],
-      ["vrfTimeoutSeconds", getI64Encoder()],
-      ["bump", getU8Encoder()],
-    ]),
-    (value) => ({ ...value, discriminator: GAME_CONFIG_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			["admin", getAddressEncoder()],
+			["treasury", getAddressEncoder()],
+			["feeBps", getU16Encoder()],
+			["mintPrice", getU64Encoder()],
+			["initialUses", getU8Encoder()],
+			["isPaused", getBooleanEncoder()],
+			["wagerExpirySeconds", getI64Encoder()],
+			["vrfTimeoutSeconds", getI64Encoder()],
+			["bump", getU8Encoder()],
+		]),
+		(value) => ({ ...value, discriminator: GAME_CONFIG_DISCRIMINATOR }),
+	);
 }
 
 /** Gets the decoder for {@link GameConfig} account data. */
 export function getGameConfigDecoder(): FixedSizeDecoder<GameConfig> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["admin", getAddressDecoder()],
-    ["treasury", getAddressDecoder()],
-    ["feeBps", getU16Decoder()],
-    ["mintPrice", getU64Decoder()],
-    ["initialUses", getU8Decoder()],
-    ["isPaused", getBooleanDecoder()],
-    ["wagerExpirySeconds", getI64Decoder()],
-    ["vrfTimeoutSeconds", getI64Decoder()],
-    ["bump", getU8Decoder()],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		["admin", getAddressDecoder()],
+		["treasury", getAddressDecoder()],
+		["feeBps", getU16Decoder()],
+		["mintPrice", getU64Decoder()],
+		["initialUses", getU8Decoder()],
+		["isPaused", getBooleanDecoder()],
+		["wagerExpirySeconds", getI64Decoder()],
+		["vrfTimeoutSeconds", getI64Decoder()],
+		["bump", getU8Decoder()],
+	]);
 }
 
 /** Gets the codec for {@link GameConfig} account data. */
 export function getGameConfigCodec(): FixedSizeCodec<
-  GameConfigArgs,
-  GameConfig
+	GameConfigArgs,
+	GameConfig
 > {
-  return combineCodec(getGameConfigEncoder(), getGameConfigDecoder());
+	return combineCodec(getGameConfigEncoder(), getGameConfigDecoder());
 }
 
 export function decodeGameConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress>,
 ): Account<GameConfig, TAddress>;
 export function decodeGameConfig<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+	encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<GameConfig, TAddress>;
 export function decodeGameConfig<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<GameConfig, TAddress> | MaybeAccount<GameConfig, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getGameConfigDecoder(),
-  );
+	return decodeAccount(
+		encodedAccount as MaybeEncodedAccount<TAddress>,
+		getGameConfigDecoder(),
+	);
 }
 
 export async function fetchGameConfig<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<Account<GameConfig, TAddress>> {
-  const maybeAccount = await fetchMaybeGameConfig(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+	const maybeAccount = await fetchMaybeGameConfig(rpc, address, config);
+	assertAccountExists(maybeAccount);
+	return maybeAccount;
 }
 
 export async function fetchMaybeGameConfig<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<MaybeAccount<GameConfig, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodeGameConfig(maybeAccount);
+	const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+	return decodeGameConfig(maybeAccount);
 }
 
 export async function fetchAllGameConfig(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<Account<GameConfig>[]> {
-  const maybeAccounts = await fetchAllMaybeGameConfig(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+	const maybeAccounts = await fetchAllMaybeGameConfig(rpc, addresses, config);
+	assertAccountsExist(maybeAccounts);
+	return maybeAccounts;
 }
 
 export async function fetchAllMaybeGameConfig(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<GameConfig>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map((maybeAccount) => decodeGameConfig(maybeAccount));
+	const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+	return maybeAccounts.map((maybeAccount) => decodeGameConfig(maybeAccount));
 }
 
 export function getGameConfigSize(): number {
-  return 101;
+	return 101;
 }

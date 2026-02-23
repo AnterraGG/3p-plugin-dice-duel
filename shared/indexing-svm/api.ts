@@ -61,7 +61,7 @@ function toCompact(w: {
 }
 
 export const svmApi = defineResourceApi({
-	basePath: "/dice-duel/svm",
+	basePath: "/dragon-dice/svm",
 	resources: {
 		diceBags: {
 			name: "dice-bags",

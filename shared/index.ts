@@ -1,9 +1,9 @@
 /**
- * Dice Duel Plugin - Shared Entry (3p SDK version)
+ * Dragon Dice Plugin - Shared Entry (3p SDK version)
  */
 
 // Chain config
-export { diceDuelChains } from "./chains";
+export { dragonDiceChains } from "./chains";
 
 // Token constants & utilities
 export { SUPPORTED_TOKENS, type SupportedTokenSymbol } from "./constants";

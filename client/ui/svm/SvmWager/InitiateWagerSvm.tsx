@@ -27,7 +27,7 @@ import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
 import {
 	playClickSound,
 	playErrorSound,
-} from "../../../services/DiceDuelAudioService";
+} from "../../../services/DragonDiceAudioService";
 
 type TxState = "idle" | "confirming" | "success" | "error";
 
@@ -102,7 +102,7 @@ export const InitiateWagerSvm: React.FC<InitiateWagerSvmProps> = ({
 
 			setTxState("success");
 			// No inline notification — server-driven wager_received event
-			// in DiceDuelUIContainer handles the "Wager Sent!" toast for initiator.
+			// in DragonDiceUIContainer handles the "Wager Sent!" toast for initiator.
 
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.inventoryWagers.all(),
@@ -129,7 +129,7 @@ export const InitiateWagerSvm: React.FC<InitiateWagerSvmProps> = ({
 				type: "error",
 				title: "Error",
 				message: `Wager failed: ${msg}`,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 			setTimeout(() => setTxState("idle"), 3000);
 		}

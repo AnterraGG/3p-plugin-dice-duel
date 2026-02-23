@@ -7,54 +7,54 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU64Decoder,
+	getU64Encoder,
 } from "@solana/kit";
 
 export type WagerAccepted = {
-  challenger: Address;
-  opponent: Address;
-  amount: bigint;
-  nonce: bigint;
+	challenger: Address;
+	opponent: Address;
+	amount: bigint;
+	nonce: bigint;
 };
 
 export type WagerAcceptedArgs = {
-  challenger: Address;
-  opponent: Address;
-  amount: number | bigint;
-  nonce: number | bigint;
+	challenger: Address;
+	opponent: Address;
+	amount: number | bigint;
+	nonce: number | bigint;
 };
 
 export function getWagerAcceptedEncoder(): FixedSizeEncoder<WagerAcceptedArgs> {
-  return getStructEncoder([
-    ["challenger", getAddressEncoder()],
-    ["opponent", getAddressEncoder()],
-    ["amount", getU64Encoder()],
-    ["nonce", getU64Encoder()],
-  ]);
+	return getStructEncoder([
+		["challenger", getAddressEncoder()],
+		["opponent", getAddressEncoder()],
+		["amount", getU64Encoder()],
+		["nonce", getU64Encoder()],
+	]);
 }
 
 export function getWagerAcceptedDecoder(): FixedSizeDecoder<WagerAccepted> {
-  return getStructDecoder([
-    ["challenger", getAddressDecoder()],
-    ["opponent", getAddressDecoder()],
-    ["amount", getU64Decoder()],
-    ["nonce", getU64Decoder()],
-  ]);
+	return getStructDecoder([
+		["challenger", getAddressDecoder()],
+		["opponent", getAddressDecoder()],
+		["amount", getU64Decoder()],
+		["nonce", getU64Decoder()],
+	]);
 }
 
 export function getWagerAcceptedCodec(): FixedSizeCodec<
-  WagerAcceptedArgs,
-  WagerAccepted
+	WagerAcceptedArgs,
+	WagerAccepted
 > {
-  return combineCodec(getWagerAcceptedEncoder(), getWagerAcceptedDecoder());
+	return combineCodec(getWagerAcceptedEncoder(), getWagerAcceptedDecoder());
 }

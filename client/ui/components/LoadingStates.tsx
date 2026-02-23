@@ -1,5 +1,5 @@
 /**
- * Loading state components with Dice Duel theming
+ * Loading state components with Dragon Dice theming
  */
 
 import { Typography } from "@townexchange/tex-ui-kit";

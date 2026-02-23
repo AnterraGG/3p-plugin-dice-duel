@@ -3,11 +3,11 @@ import {
 	requireSvmCluster,
 } from "@townexchange/3p-plugin-sdk/shared";
 
-export const DICE_DUEL_SVM_CLUSTER = "devnet" as const;
+export const DRAGON_DICE_SVM_CLUSTER = "devnet" as const;
 
-export const diceDuelChains = definePluginChains({
+export const dragonDiceChains = definePluginChains({
 	required: [
-		requireSvmCluster(DICE_DUEL_SVM_CLUSTER, {
+		requireSvmCluster(DRAGON_DICE_SVM_CLUSTER, {
 			name: "Solana Devnet",
 		}),
 	],

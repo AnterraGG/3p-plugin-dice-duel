@@ -7,353 +7,354 @@
  */
 
 import {
-  addDecoderSizePrefix,
-  addEncoderSizePrefix,
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getBooleanDecoder,
-  getBooleanEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getProgramDerivedAddress,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  getUtf8Decoder,
-  getUtf8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
-  type WritableSignerAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type Codec,
+	type Decoder,
+	type Encoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type ReadonlyAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	type WritableSignerAccount,
+	addDecoderSizePrefix,
+	addEncoderSizePrefix,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getBooleanDecoder,
+	getBooleanEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getProgramDerivedAddress,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU32Decoder,
+	getU32Encoder,
+	getUtf8Decoder,
+	getUtf8Encoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
 import {
-  expectSome,
-  getAccountMetaFactory,
-  type ResolvedAccount,
+	type ResolvedAccount,
+	expectSome,
+	getAccountMetaFactory,
 } from "../shared";
 
 export const REGISTER_GAME_TYPE_DISCRIMINATOR = new Uint8Array([
-  25, 96, 131, 147, 164, 128, 35, 21,
+	25, 96, 131, 147, 164, 128, 35, 21,
 ]);
 
 export function getRegisterGameTypeDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    REGISTER_GAME_TYPE_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		REGISTER_GAME_TYPE_DISCRIMINATOR,
+	);
 }
 
 export type RegisterGameTypeInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountAdmin extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountGameType extends string | AccountMeta<string> = string,
-  TAccountSystemProgram extends string | AccountMeta<string> =
-    "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string | AccountMeta<string> = string,
+	TAccountConfig extends string | AccountMeta<string> = string,
+	TAccountGameType extends string | AccountMeta<string> = string,
+	TAccountSystemProgram extends
+		| string
+		| AccountMeta<string> = "11111111111111111111111111111111",
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountAdmin extends string
-        ? WritableSignerAccount<TAccountAdmin> &
-            AccountSignerMeta<TAccountAdmin>
-        : TAccountAdmin,
-      TAccountConfig extends string
-        ? ReadonlyAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountGameType extends string
-        ? WritableAccount<TAccountGameType>
-        : TAccountGameType,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountAdmin extends string
+				? WritableSignerAccount<TAccountAdmin> &
+						AccountSignerMeta<TAccountAdmin>
+				: TAccountAdmin,
+			TAccountConfig extends string
+				? ReadonlyAccount<TAccountConfig>
+				: TAccountConfig,
+			TAccountGameType extends string
+				? WritableAccount<TAccountGameType>
+				: TAccountGameType,
+			TAccountSystemProgram extends string
+				? ReadonlyAccount<TAccountSystemProgram>
+				: TAccountSystemProgram,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type RegisterGameTypeInstructionData = {
-  discriminator: ReadonlyUint8Array;
-  id: number;
-  name: string;
-  enabled: boolean;
+	discriminator: ReadonlyUint8Array;
+	id: number;
+	name: string;
+	enabled: boolean;
 };
 
 export type RegisterGameTypeInstructionDataArgs = {
-  id: number;
-  name: string;
-  enabled: boolean;
+	id: number;
+	name: string;
+	enabled: boolean;
 };
 
 export function getRegisterGameTypeInstructionDataEncoder(): Encoder<RegisterGameTypeInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["id", getU8Encoder()],
-      ["name", addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
-      ["enabled", getBooleanEncoder()],
-    ]),
-    (value) => ({ ...value, discriminator: REGISTER_GAME_TYPE_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			["id", getU8Encoder()],
+			["name", addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())],
+			["enabled", getBooleanEncoder()],
+		]),
+		(value) => ({ ...value, discriminator: REGISTER_GAME_TYPE_DISCRIMINATOR }),
+	);
 }
 
 export function getRegisterGameTypeInstructionDataDecoder(): Decoder<RegisterGameTypeInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["id", getU8Decoder()],
-    ["name", addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
-    ["enabled", getBooleanDecoder()],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		["id", getU8Decoder()],
+		["name", addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())],
+		["enabled", getBooleanDecoder()],
+	]);
 }
 
 export function getRegisterGameTypeInstructionDataCodec(): Codec<
-  RegisterGameTypeInstructionDataArgs,
-  RegisterGameTypeInstructionData
+	RegisterGameTypeInstructionDataArgs,
+	RegisterGameTypeInstructionData
 > {
-  return combineCodec(
-    getRegisterGameTypeInstructionDataEncoder(),
-    getRegisterGameTypeInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getRegisterGameTypeInstructionDataEncoder(),
+		getRegisterGameTypeInstructionDataDecoder(),
+	);
 }
 
 export type RegisterGameTypeAsyncInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
-  TAccountGameType extends string = string,
-  TAccountSystemProgram extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
+	TAccountGameType extends string = string,
+	TAccountSystemProgram extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config?: Address<TAccountConfig>;
-  gameType?: Address<TAccountGameType>;
-  systemProgram?: Address<TAccountSystemProgram>;
-  id: RegisterGameTypeInstructionDataArgs["id"];
-  name: RegisterGameTypeInstructionDataArgs["name"];
-  enabled: RegisterGameTypeInstructionDataArgs["enabled"];
+	admin: TransactionSigner<TAccountAdmin>;
+	config?: Address<TAccountConfig>;
+	gameType?: Address<TAccountGameType>;
+	systemProgram?: Address<TAccountSystemProgram>;
+	id: RegisterGameTypeInstructionDataArgs["id"];
+	name: RegisterGameTypeInstructionDataArgs["name"];
+	enabled: RegisterGameTypeInstructionDataArgs["enabled"];
 };
 
 export async function getRegisterGameTypeInstructionAsync<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TAccountGameType extends string,
-  TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TAccountGameType extends string,
+	TAccountSystemProgram extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: RegisterGameTypeAsyncInput<
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: RegisterGameTypeAsyncInput<
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType,
+		TAccountSystemProgram
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): Promise<
-  RegisterGameTypeInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType,
-    TAccountSystemProgram
-  >
+	RegisterGameTypeInstruction<
+		TProgramAddress,
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType,
+		TAccountSystemProgram
+	>
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    gameType: { value: input.gameType ?? null, isWritable: true },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		gameType: { value: input.gameType ?? null, isWritable: true },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Original args.
-  const args = { ...input };
+	// Original args.
+	const args = { ...input };
 
-  // Resolve default values.
-  if (!accounts.config.value) {
-    accounts.config.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
-      ],
-    });
-  }
-  if (!accounts.gameType.value) {
-    accounts.gameType.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(
-          new Uint8Array([103, 97, 109, 101, 95, 116, 121, 112, 101]),
-        ),
-        getU8Encoder().encode(expectSome(args.id)),
-      ],
-    });
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.config.value) {
+		accounts.config.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
+			],
+		});
+	}
+	if (!accounts.gameType.value) {
+		accounts.gameType.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(
+					new Uint8Array([103, 97, 109, 101, 95, 116, 121, 112, 101]),
+				),
+				getU8Encoder().encode(expectSome(args.id)),
+			],
+		});
+	}
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.admin),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.gameType),
-      getAccountMeta(accounts.systemProgram),
-    ],
-    data: getRegisterGameTypeInstructionDataEncoder().encode(
-      args as RegisterGameTypeInstructionDataArgs,
-    ),
-    programAddress,
-  } as RegisterGameTypeInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType,
-    TAccountSystemProgram
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.admin),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.gameType),
+			getAccountMeta(accounts.systemProgram),
+		],
+		data: getRegisterGameTypeInstructionDataEncoder().encode(
+			args as RegisterGameTypeInstructionDataArgs,
+		),
+		programAddress,
+	} as RegisterGameTypeInstruction<
+		TProgramAddress,
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType,
+		TAccountSystemProgram
+	>);
 }
 
 export type RegisterGameTypeInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
-  TAccountGameType extends string = string,
-  TAccountSystemProgram extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
+	TAccountGameType extends string = string,
+	TAccountSystemProgram extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config: Address<TAccountConfig>;
-  gameType: Address<TAccountGameType>;
-  systemProgram?: Address<TAccountSystemProgram>;
-  id: RegisterGameTypeInstructionDataArgs["id"];
-  name: RegisterGameTypeInstructionDataArgs["name"];
-  enabled: RegisterGameTypeInstructionDataArgs["enabled"];
+	admin: TransactionSigner<TAccountAdmin>;
+	config: Address<TAccountConfig>;
+	gameType: Address<TAccountGameType>;
+	systemProgram?: Address<TAccountSystemProgram>;
+	id: RegisterGameTypeInstructionDataArgs["id"];
+	name: RegisterGameTypeInstructionDataArgs["name"];
+	enabled: RegisterGameTypeInstructionDataArgs["enabled"];
 };
 
 export function getRegisterGameTypeInstruction<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TAccountGameType extends string,
-  TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TAccountGameType extends string,
+	TAccountSystemProgram extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: RegisterGameTypeInput<
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: RegisterGameTypeInput<
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType,
+		TAccountSystemProgram
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): RegisterGameTypeInstruction<
-  TProgramAddress,
-  TAccountAdmin,
-  TAccountConfig,
-  TAccountGameType,
-  TAccountSystemProgram
+	TProgramAddress,
+	TAccountAdmin,
+	TAccountConfig,
+	TAccountGameType,
+	TAccountSystemProgram
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    gameType: { value: input.gameType ?? null, isWritable: true },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		gameType: { value: input.gameType ?? null, isWritable: true },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Original args.
-  const args = { ...input };
+	// Original args.
+	const args = { ...input };
 
-  // Resolve default values.
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.admin),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.gameType),
-      getAccountMeta(accounts.systemProgram),
-    ],
-    data: getRegisterGameTypeInstructionDataEncoder().encode(
-      args as RegisterGameTypeInstructionDataArgs,
-    ),
-    programAddress,
-  } as RegisterGameTypeInstruction<
-    TProgramAddress,
-    TAccountAdmin,
-    TAccountConfig,
-    TAccountGameType,
-    TAccountSystemProgram
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.admin),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.gameType),
+			getAccountMeta(accounts.systemProgram),
+		],
+		data: getRegisterGameTypeInstructionDataEncoder().encode(
+			args as RegisterGameTypeInstructionDataArgs,
+		),
+		programAddress,
+	} as RegisterGameTypeInstruction<
+		TProgramAddress,
+		TAccountAdmin,
+		TAccountConfig,
+		TAccountGameType,
+		TAccountSystemProgram
+	>);
 }
 
 export type ParsedRegisterGameTypeInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    admin: TAccountMetas[0];
-    config: TAccountMetas[1];
-    gameType: TAccountMetas[2];
-    systemProgram: TAccountMetas[3];
-  };
-  data: RegisterGameTypeInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		admin: TAccountMetas[0];
+		config: TAccountMetas[1];
+		gameType: TAccountMetas[2];
+		systemProgram: TAccountMetas[3];
+	};
+	data: RegisterGameTypeInstructionData;
 };
 
 export function parseRegisterGameTypeInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedRegisterGameTypeInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 4) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      admin: getNextAccount(),
-      config: getNextAccount(),
-      gameType: getNextAccount(),
-      systemProgram: getNextAccount(),
-    },
-    data: getRegisterGameTypeInstructionDataDecoder().decode(instruction.data),
-  };
+	if (instruction.accounts.length < 4) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: {
+			admin: getNextAccount(),
+			config: getNextAccount(),
+			gameType: getNextAccount(),
+			systemProgram: getNextAccount(),
+		},
+		data: getRegisterGameTypeInstructionDataDecoder().decode(instruction.data),
+	};
 }

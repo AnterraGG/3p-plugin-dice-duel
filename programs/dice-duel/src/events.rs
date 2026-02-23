@@ -8,18 +8,6 @@ pub struct DiceBagMinted {
 }
 
 #[event]
-pub struct DiceBagUsed {
-    pub mint: Pubkey,
-    pub owner: Pubkey,
-    pub uses_remaining: u8,
-}
-
-#[event]
-pub struct ConfigUpdated {
-    pub admin: Pubkey,
-}
-
-#[event]
 pub struct WagerInitiated {
     pub challenger: Pubkey,
     pub opponent: Pubkey,

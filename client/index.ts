@@ -1,5 +1,5 @@
 /**
- * Dice Duel Client Plugin — Entry Point (3p SDK version)
+ * Dragon Dice Client Plugin — Entry Point (3p SDK version)
  *
  * Key changes from internal:
  * - defineClientPlugin from 3p-plugin-sdk/client instead of plugin-sdk/client
@@ -8,54 +8,54 @@
 
 import { defineClientPlugin } from "@townexchange/3p-plugin-sdk/client";
 import { getTokenTextures } from "@townexchange/token-icons";
-import { diceDuelChains } from "../shared/chains";
+import { dragonDiceChains } from "../shared/chains";
 import {
 	CHALLENGE_TEXTURE_KEY,
 	CHALLENGE_TEXTURE_PATH,
 	DICE_TEXTURE_PATHS,
 } from "../shared/constants";
-import { manifest as diceDuelManifest } from "../shared/manifest";
-import { registerDiceDuelNotificationHandler } from "./handlers";
-import { DiceDuelModule } from "./modules/DiceDuelModule";
-import { registerDiceDuelWindows } from "./register-windows";
-import { initDiceDuelAudio } from "./services/DiceDuelAudioService";
-import { DiceDuelUIContainer } from "./ui";
+import { manifest as dragonDiceManifest } from "../shared/manifest";
+import { registerDragonDiceNotificationHandler } from "./handlers";
+import { DragonDiceModule } from "./modules/DragonDiceModule";
+import { registerDragonDiceWindows } from "./register-windows";
+import { initDragonDiceAudio } from "./services/DragonDiceAudioService";
+import { DragonDiceUIContainer } from "./ui";
 
 // ============================================================================
 // Plugin Definition
 // ============================================================================
 
-export const DiceDuelClientPlugin = defineClientPlugin({
-	id: "dice-duel",
-	name: "Dice Duel",
+export const DragonDiceClientPlugin = defineClientPlugin({
+	id: "dragon-dice",
+	name: "Dragon Dice",
 	version: "1.0.0",
 	sdkVersion: "1.0.0",
-	modules: [DiceDuelModule], // ECS module for visual effects
+	modules: [DragonDiceModule], // ECS module for visual effects
 	ui: [
 		{
-			id: "dice-duel-hud",
+			id: "dragon-dice-hud",
 			slot: "game-hud",
-			component: DiceDuelUIContainer,
+			component: DragonDiceUIContainer,
 			priority: 90, // Below BombaPerp (100)
 		},
 	],
 	capabilities: ["rendering", "network"],
-	chains: diceDuelChains,
-	manifest: diceDuelManifest,
+	chains: dragonDiceChains,
+	manifest: dragonDiceManifest,
 	onLoad: async (ctx) => {
 		// Register all windows with the window manager
-		registerDiceDuelWindows();
+		registerDragonDiceWindows();
 
 		// Register notification packet handler.
 		// Query invalidation on incoming notifications is handled here via ctx.queries,
 		// which the bridge wires to the app's QueryClient singleton.
-		registerDiceDuelNotificationHandler(ctx);
+		registerDragonDiceNotificationHandler(ctx);
 
 		// Initialize audio (async, non-blocking)
 		const audio = ctx.services.audio;
 		if (audio) {
-			initDiceDuelAudio(audio).catch((err) => {
-				console.warn("[DiceDuel] Audio init failed (non-fatal):", err);
+			initDragonDiceAudio(audio).catch((err) => {
+				console.warn("[DragonDice] Audio init failed (non-fatal):", err);
 			});
 		}
 
@@ -82,7 +82,7 @@ export const DiceDuelClientPlugin = defineClientPlugin({
 
 		if (textureLoads.length > 0) {
 			Promise.all(textureLoads).catch((err) => {
-				console.warn("[DiceDuel] Texture preload failed (non-fatal):", err);
+				console.warn("[DragonDice] Texture preload failed (non-fatal):", err);
 			});
 		}
 	},
@@ -110,7 +110,7 @@ export type { DecodedAnchorError } from "./hooks";
 
 // ─── UI Components ─────────────────────────────────────────────────────────
 
-export { DiceDuelUIContainer } from "./ui";
+export { DragonDiceUIContainer } from "./ui";
 export { SvmShop } from "./ui";
 export {
 	SvmInventory,
@@ -131,18 +131,18 @@ export {
 
 // ─── Window Registration ───────────────────────────────────────────────────
 
-export { registerDiceDuelWindows } from "./register-windows";
+export { registerDragonDiceWindows } from "./register-windows";
 
 // ─── Handlers ────────────────────────────────────────────────────────────────
 
-export { registerDiceDuelNotificationHandler } from "./handlers";
+export { registerDragonDiceNotificationHandler } from "./handlers";
 
 // ─── Store ──────────────────────────────────────────────────────────────────
 
 export {
-	useDiceDuelNotificationStore,
-	type DiceDuelNotification,
-	useDiceDuelGameStore,
+	useDragonDiceNotificationStore,
+	type DragonDiceNotification,
+	useDragonDiceGameStore,
 	type DiceRollAnimation,
 	type CelebrationEffect,
 	type ChallengeIndicator,
@@ -150,12 +150,12 @@ export {
 
 // ─── Modules ────────────────────────────────────────────────────────────────
 
-export { DiceDuelModule } from "./modules";
+export { DragonDiceModule } from "./modules";
 
 // ─── Audio ──────────────────────────────────────────────────────────────────
 
 export {
-	initDiceDuelAudio,
+	initDragonDiceAudio,
 	playClickSound,
 	playErrorSound,
 	playChallengeSound,
@@ -164,7 +164,7 @@ export {
 	playWinSound,
 	playLoseSound,
 	playCoinSound,
-} from "./services/DiceDuelAudioService";
+} from "./services/DragonDiceAudioService";
 
 // ─── API ───────────────────────────────────────────────────────────────────
 

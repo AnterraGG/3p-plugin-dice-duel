@@ -1,28 +1,28 @@
 /**
- * Dice Duel Audio Constants — copied as-is (no internal imports)
+ * Dragon Dice Audio Constants — copied as-is (no internal imports)
  */
 
-export const DICE_DUEL_AUDIO = {
-	CHALLENGE: "dice_duel_challenge",
-	ROLL: "dice_duel_roll",
-	LAND: "dice_duel_land",
-	WIN: "dice_duel_win",
-	LOSE: "dice_duel_lose",
-	COIN: "dice_duel_coin",
-	CLICK: "dice_duel_click",
+export const DRAGON_DICE_AUDIO = {
+	CHALLENGE: "dragon_dice_challenge",
+	ROLL: "dragon_dice_roll",
+	LAND: "dragon_dice_land",
+	WIN: "dragon_dice_win",
+	LOSE: "dragon_dice_lose",
+	COIN: "dragon_dice_coin",
+	CLICK: "dragon_dice_click",
 } as const;
 
-export const DICE_DUEL_AUDIO_PATHS: Record<string, string> = {
-	[DICE_DUEL_AUDIO.CHALLENGE]:
-		"/assets/features/dice-duel/dice_duel_challenge.wav",
-	[DICE_DUEL_AUDIO.ROLL]: "/assets/features/dice-duel/dice_duel_roll.wav",
-	[DICE_DUEL_AUDIO.LAND]: "/assets/features/dice-duel/dice_duel_land.wav",
-	[DICE_DUEL_AUDIO.WIN]: "/assets/features/dice-duel/dice_duel_win.wav",
-	[DICE_DUEL_AUDIO.LOSE]: "/assets/features/dice-duel/dice_duel_lose.wav",
-	[DICE_DUEL_AUDIO.COIN]: "/assets/features/dice-duel/dice_duel_coin.wav",
-	[DICE_DUEL_AUDIO.CLICK]:
-		"/assets/features/dice-duel/dice_duel_click.wav",
+export const DRAGON_DICE_AUDIO_PATHS: Record<string, string> = {
+	[DRAGON_DICE_AUDIO.CHALLENGE]:
+		"/assets/features/dragon-dice/dragon_dice_challenge.wav",
+	[DRAGON_DICE_AUDIO.ROLL]: "/assets/features/dragon-dice/dragon_dice_roll.wav",
+	[DRAGON_DICE_AUDIO.LAND]: "/assets/features/dragon-dice/dragon_dice_land.wav",
+	[DRAGON_DICE_AUDIO.WIN]: "/assets/features/dragon-dice/dragon_dice_win.wav",
+	[DRAGON_DICE_AUDIO.LOSE]: "/assets/features/dragon-dice/dragon_dice_lose.wav",
+	[DRAGON_DICE_AUDIO.COIN]: "/assets/features/dragon-dice/dragon_dice_coin.wav",
+	[DRAGON_DICE_AUDIO.CLICK]:
+		"/assets/features/dragon-dice/dragon_dice_click.wav",
 };
 
-export type DiceDuelAudioKey =
-	(typeof DICE_DUEL_AUDIO)[keyof typeof DICE_DUEL_AUDIO];
+export type DragonDiceAudioKey =
+	(typeof DRAGON_DICE_AUDIO)[keyof typeof DRAGON_DICE_AUDIO];

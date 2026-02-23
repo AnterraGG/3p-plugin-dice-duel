@@ -35,7 +35,6 @@ export const wagerTable = defineTable("plugin_dice_svm_wager", {
 
 export const diceBagTable = defineTable("plugin_dice_svm_dice_bag", {
 	mint: { type: "string", primaryKey: true }, // NFT mint (base58)
-	address: { type: "string", index: true }, // On-chain PDA (derived from ["dice_bag", mint])
 	programId: { type: "string", index: true },
 	owner: { type: "string", index: true },
 	usesRemaining: { type: "int" },
@@ -83,9 +82,9 @@ export const wagerEventLog = defineTable("plugin_dice_svm_wager_events", {
 	programId: { type: "string", index: true },
 	eventType: { type: "string", index: true },
 	wagerAddress: { type: "string", index: true },
-	challenger: { type: "string", index: true, optional: true },
-	opponent: { type: "string", index: true, optional: true },
-	amount: { type: "bigint", optional: true },
+	challenger: { type: "string", index: true },
+	opponent: { type: "string", index: true },
+	amount: { type: "bigint" },
 	createdAt: { type: "bigint" }, // unix epoch seconds
 	slot: { type: "bigint" },
 	data: { type: "json", optional: true },

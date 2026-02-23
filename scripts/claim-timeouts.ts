@@ -62,7 +62,7 @@ async function main() {
 	});
 
 	const adminKey = new Uint8Array(
-		JSON.parse(fs.readFileSync(process.env.SOLANA_KEYPAIR || (process.env.HOME + "/.config/solana/id.json"), "utf8")),
+		JSON.parse(fs.readFileSync("/home/node/.config/solana/id.json", "utf8")),
 	);
 	const admin = await createKeyPairSignerFromBytes(adminKey);
 

@@ -19,16 +19,16 @@ import {
 import {
 	CHALLENGE_TEXTURE_KEY,
 	CHALLENGE_TEXTURE_PATH,
-	DICE_DUEL_ANIMATION,
-	DICE_DUEL_DEPTHS,
-	DICE_DUEL_SCALES,
+	DRAGON_DICE_ANIMATION,
+	DRAGON_DICE_DEPTHS,
+	DRAGON_DICE_SCALES,
 } from "../../shared/constants";
 import {
 	registerCleanupCallback,
 	setLocalPlayerEntityId,
 	setLocalPlayerPosition,
 } from "../state";
-import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
+import { useDragonDiceGameStore } from "../store/dragonDiceGameStore";
 
 interface IndicatorVisual {
 	spriteEid: number;
@@ -70,7 +70,7 @@ export function createChallengeIndicatorSystem() {
 			cleanupRegistered = true;
 		}
 
-		const store = useDiceDuelGameStore.getState();
+		const store = useDragonDiceGameStore.getState();
 		const activeWagerIds = new Set<string>();
 
 		for (const [wagerId, indicator] of store.challengeIndicators) {
@@ -107,8 +107,8 @@ export function createChallengeIndicatorSystem() {
 					worldY: Position.worldY[entityId] - 40,
 					textureKey: CHALLENGE_TEXTURE_KEY,
 					texturePath: CHALLENGE_TEXTURE_PATH,
-					depth: DICE_DUEL_DEPTHS.CHALLENGE_INDICATOR,
-					scale: DICE_DUEL_SCALES.CHALLENGE_INDICATOR,
+					depth: DRAGON_DICE_DEPTHS.CHALLENGE_INDICATOR,
+					scale: DRAGON_DICE_SCALES.CHALLENGE_INDICATOR,
 					originX: 0.5,
 					originY: 1,
 				});
@@ -125,7 +125,7 @@ export function createChallengeIndicatorSystem() {
 			const pulse =
 				1 +
 				Math.sin(
-					(elapsed / DICE_DUEL_ANIMATION.CHALLENGE_PULSE_SPEED) * Math.PI * 2,
+					(elapsed / DRAGON_DICE_ANIMATION.CHALLENGE_PULSE_SPEED) * Math.PI * 2,
 				) *
 					0.15;
 			const bounce = Math.sin((elapsed / 300) * Math.PI * 2) * 5;
@@ -133,7 +133,7 @@ export function createChallengeIndicatorSystem() {
 			Position.worldX[visual.spriteEid] = targetWorldX;
 			Position.worldY[visual.spriteEid] = targetWorldY - 40 + bounce;
 			Sprite.scale[visual.spriteEid] =
-				DICE_DUEL_SCALES.CHALLENGE_INDICATOR * pulse;
+				DRAGON_DICE_SCALES.CHALLENGE_INDICATOR * pulse;
 			Sprite.visible[visual.spriteEid] = 1;
 		}
 

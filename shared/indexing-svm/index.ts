@@ -15,7 +15,7 @@ export {
 export { hourlyWagerStats, dailyWagerStats } from "./aggregates";
 
 // ─── Plugin Descriptor (new unified entry point) ──────────────────────────
-export { diceDuelSvmPlugin } from "./plugin";
+export { dragonDiceSvmPlugin } from "./plugin";
 
 // ─── Individual exports (for direct access if needed) ─────────────────────
 export {

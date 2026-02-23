@@ -1,5 +1,5 @@
 /**
- * SvmShop — SVM mint shop for Dice Duel.
+ * SvmShop — SVM mint shop for Dragon Dice.
  *
  * Mints a DiceBag NFT via the on-chain mint_dice_bag instruction.
  * Generates a fresh keypair for the mint account and passes it as an
@@ -37,7 +37,7 @@ import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
 import {
 	playClickSound,
 	playErrorSound,
-} from "../../../services/DiceDuelAudioService";
+} from "../../../services/DragonDiceAudioService";
 import styles from "./SvmShop.module.scss";
 
 type TransactionState = "idle" | "confirming" | "success" | "error";
@@ -120,7 +120,7 @@ export const SvmShop = () => {
 
 			setTxState("success");
 			// No inline notification — server-driven dice_bag_minted event
-			// in DiceDuelUIContainer handles the toast + sound.
+			// in DragonDiceUIContainer handles the toast + sound.
 
 			// SOL balance updates immediately (no indexer dependency)
 			queryClient.invalidateQueries({ queryKey: ["svm-sol-balance"] });
@@ -139,7 +139,7 @@ export const SvmShop = () => {
 				type: "error",
 				title: "Mint Failed",
 				message: decoded.message,
-				channel: "dice-duel",
+				channel: "dragon-dice",
 			});
 		}
 	};

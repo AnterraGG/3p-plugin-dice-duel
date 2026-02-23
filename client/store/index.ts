@@ -1,11 +1,11 @@
 export {
-	useDiceDuelNotificationStore,
-	type DiceDuelNotification,
-} from "./diceDuelNotificationStore";
+	useDragonDiceNotificationStore,
+	type DragonDiceNotification,
+} from "./dragonDiceNotificationStore";
 
 export {
-	useDiceDuelGameStore,
+	useDragonDiceGameStore,
 	type DiceRollAnimation,
 	type CelebrationEffect,
 	type ChallengeIndicator,
-} from "./diceDuelGameStore";
+} from "./dragonDiceGameStore";

@@ -7,549 +7,549 @@
  */
 
 import {
-  assertIsInstructionWithAccounts,
-  containsBytes,
-  fixEncoderSize,
-  getBytesEncoder,
-  type Address,
-  type Instruction,
-  type InstructionWithData,
-  type ReadonlyUint8Array,
+	type Address,
+	type Instruction,
+	type InstructionWithData,
+	type ReadonlyUint8Array,
+	assertIsInstructionWithAccounts,
+	containsBytes,
+	fixEncoderSize,
+	getBytesEncoder,
 } from "@solana/kit";
 import {
-  parseAcceptWagerInstruction,
-  parseCancelWagerInstruction,
-  parseClaimExpiredInstruction,
-  parseClaimVrfTimeoutInstruction,
-  parseClaimWinningsInstruction,
-  parseCleanupStaleWagerInstruction,
-  parseConsumeRandomnessInstruction,
-  parseConsumeRandomnessMinimalInstruction,
-  parseConsumeRandomnessResolvedInstruction,
-  parseInitializeInstruction,
-  parseInitiateWagerInstruction,
-  parseMintDiceBagInstruction,
-  parsePauseInstruction,
-  parseRegisterGameTypeInstruction,
-  parseSettleWagerInstruction,
-  parseUnpauseInstruction,
-  parseUpdateConfigInstruction,
-  parseUpdateGameTypeInstruction,
-  type ParsedAcceptWagerInstruction,
-  type ParsedCancelWagerInstruction,
-  type ParsedClaimExpiredInstruction,
-  type ParsedClaimVrfTimeoutInstruction,
-  type ParsedClaimWinningsInstruction,
-  type ParsedCleanupStaleWagerInstruction,
-  type ParsedConsumeRandomnessInstruction,
-  type ParsedConsumeRandomnessMinimalInstruction,
-  type ParsedConsumeRandomnessResolvedInstruction,
-  type ParsedInitializeInstruction,
-  type ParsedInitiateWagerInstruction,
-  type ParsedMintDiceBagInstruction,
-  type ParsedPauseInstruction,
-  type ParsedRegisterGameTypeInstruction,
-  type ParsedSettleWagerInstruction,
-  type ParsedUnpauseInstruction,
-  type ParsedUpdateConfigInstruction,
-  type ParsedUpdateGameTypeInstruction,
+	type ParsedAcceptWagerInstruction,
+	type ParsedCancelWagerInstruction,
+	type ParsedClaimExpiredInstruction,
+	type ParsedClaimVrfTimeoutInstruction,
+	type ParsedClaimWinningsInstruction,
+	type ParsedCleanupStaleWagerInstruction,
+	type ParsedConsumeRandomnessInstruction,
+	type ParsedConsumeRandomnessMinimalInstruction,
+	type ParsedConsumeRandomnessResolvedInstruction,
+	type ParsedInitializeInstruction,
+	type ParsedInitiateWagerInstruction,
+	type ParsedMintDiceBagInstruction,
+	type ParsedPauseInstruction,
+	type ParsedRegisterGameTypeInstruction,
+	type ParsedSettleWagerInstruction,
+	type ParsedUnpauseInstruction,
+	type ParsedUpdateConfigInstruction,
+	type ParsedUpdateGameTypeInstruction,
+	parseAcceptWagerInstruction,
+	parseCancelWagerInstruction,
+	parseClaimExpiredInstruction,
+	parseClaimVrfTimeoutInstruction,
+	parseClaimWinningsInstruction,
+	parseCleanupStaleWagerInstruction,
+	parseConsumeRandomnessInstruction,
+	parseConsumeRandomnessMinimalInstruction,
+	parseConsumeRandomnessResolvedInstruction,
+	parseInitializeInstruction,
+	parseInitiateWagerInstruction,
+	parseMintDiceBagInstruction,
+	parsePauseInstruction,
+	parseRegisterGameTypeInstruction,
+	parseSettleWagerInstruction,
+	parseUnpauseInstruction,
+	parseUpdateConfigInstruction,
+	parseUpdateGameTypeInstruction,
 } from "../instructions";
 
 export const DICE_DUEL_PROGRAM_ADDRESS =
-  "7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM" as Address<"7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM">;
+	"D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof" as Address<"D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof">;
 
 export enum DiceDuelAccount {
-  DiceBag,
-  GameConfig,
-  GameType,
-  PlayerStats,
-  Wager,
+	DiceBag = 0,
+	GameConfig = 1,
+	GameType = 2,
+	PlayerStats = 3,
+	Wager = 4,
 }
 
 export function identifyDiceDuelAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+	account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
 ): DiceDuelAccount {
-  const data = "data" in account ? account.data : account;
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([248, 248, 136, 8, 17, 97, 117, 157]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelAccount.DiceBag;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([45, 146, 146, 33, 170, 69, 96, 133]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelAccount.GameConfig;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([208, 255, 116, 236, 234, 71, 80, 34]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelAccount.GameType;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([169, 146, 242, 176, 102, 118, 231, 172]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelAccount.PlayerStats;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([3, 110, 53, 190, 113, 31, 230, 40]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelAccount.Wager;
-  }
-  throw new Error(
-    "The provided account could not be identified as a diceDuel account.",
-  );
+	const data = "data" in account ? account.data : account;
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([248, 248, 136, 8, 17, 97, 117, 157]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelAccount.DiceBag;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([45, 146, 146, 33, 170, 69, 96, 133]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelAccount.GameConfig;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([208, 255, 116, 236, 234, 71, 80, 34]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelAccount.GameType;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([169, 146, 242, 176, 102, 118, 231, 172]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelAccount.PlayerStats;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([3, 110, 53, 190, 113, 31, 230, 40]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelAccount.Wager;
+	}
+	throw new Error(
+		"The provided account could not be identified as a diceDuel account.",
+	);
 }
 
 export enum DiceDuelInstruction {
-  AcceptWager,
-  CancelWager,
-  ClaimExpired,
-  ClaimVrfTimeout,
-  ClaimWinnings,
-  CleanupStaleWager,
-  ConsumeRandomness,
-  ConsumeRandomnessMinimal,
-  ConsumeRandomnessResolved,
-  Initialize,
-  InitiateWager,
-  MintDiceBag,
-  Pause,
-  RegisterGameType,
-  SettleWager,
-  Unpause,
-  UpdateConfig,
-  UpdateGameType,
+	AcceptWager = 0,
+	CancelWager = 1,
+	ClaimExpired = 2,
+	ClaimVrfTimeout = 3,
+	ClaimWinnings = 4,
+	CleanupStaleWager = 5,
+	ConsumeRandomness = 6,
+	ConsumeRandomnessMinimal = 7,
+	ConsumeRandomnessResolved = 8,
+	Initialize = 9,
+	InitiateWager = 10,
+	MintDiceBag = 11,
+	Pause = 12,
+	RegisterGameType = 13,
+	SettleWager = 14,
+	Unpause = 15,
+	UpdateConfig = 16,
+	UpdateGameType = 17,
 }
 
 export function identifyDiceDuelInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
+	instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
 ): DiceDuelInstruction {
-  const data = "data" in instruction ? instruction.data : instruction;
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([214, 18, 178, 214, 203, 22, 50, 119]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.AcceptWager;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([57, 92, 124, 123, 216, 16, 37, 148]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.CancelWager;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([124, 78, 197, 187, 210, 66, 255, 1]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.ClaimExpired;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([187, 216, 207, 151, 241, 76, 240, 164]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.ClaimVrfTimeout;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([161, 215, 24, 59, 14, 236, 242, 221]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.ClaimWinnings;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([91, 79, 225, 111, 98, 183, 190, 208]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.CleanupStaleWager;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([190, 217, 49, 162, 99, 26, 73, 234]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.ConsumeRandomness;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([134, 130, 24, 11, 244, 65, 71, 231]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.ConsumeRandomnessMinimal;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([16, 31, 74, 24, 208, 41, 157, 96]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.ConsumeRandomnessResolved;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([175, 175, 109, 31, 13, 152, 155, 237]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.Initialize;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([40, 119, 19, 242, 58, 154, 81, 226]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.InitiateWager;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([204, 69, 239, 46, 175, 111, 64, 73]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.MintDiceBag;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([211, 22, 221, 251, 74, 121, 193, 47]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.Pause;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([25, 96, 131, 147, 164, 128, 35, 21]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.RegisterGameType;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([161, 242, 169, 152, 172, 163, 161, 104]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.SettleWager;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([169, 144, 4, 38, 10, 141, 188, 255]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.Unpause;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([29, 158, 252, 191, 10, 83, 219, 99]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.UpdateConfig;
-  }
-  if (
-    containsBytes(
-      data,
-      fixEncoderSize(getBytesEncoder(), 8).encode(
-        new Uint8Array([53, 145, 193, 121, 128, 45, 224, 38]),
-      ),
-      0,
-    )
-  ) {
-    return DiceDuelInstruction.UpdateGameType;
-  }
-  throw new Error(
-    "The provided instruction could not be identified as a diceDuel instruction.",
-  );
+	const data = "data" in instruction ? instruction.data : instruction;
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([214, 18, 178, 214, 203, 22, 50, 119]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.AcceptWager;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([57, 92, 124, 123, 216, 16, 37, 148]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.CancelWager;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([124, 78, 197, 187, 210, 66, 255, 1]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.ClaimExpired;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([187, 216, 207, 151, 241, 76, 240, 164]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.ClaimVrfTimeout;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([161, 215, 24, 59, 14, 236, 242, 221]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.ClaimWinnings;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([91, 79, 225, 111, 98, 183, 190, 208]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.CleanupStaleWager;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([190, 217, 49, 162, 99, 26, 73, 234]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.ConsumeRandomness;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([134, 130, 24, 11, 244, 65, 71, 231]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.ConsumeRandomnessMinimal;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([16, 31, 74, 24, 208, 41, 157, 96]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.ConsumeRandomnessResolved;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([175, 175, 109, 31, 13, 152, 155, 237]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.Initialize;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([40, 119, 19, 242, 58, 154, 81, 226]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.InitiateWager;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([204, 69, 239, 46, 175, 111, 64, 73]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.MintDiceBag;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([211, 22, 221, 251, 74, 121, 193, 47]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.Pause;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([25, 96, 131, 147, 164, 128, 35, 21]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.RegisterGameType;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([161, 242, 169, 152, 172, 163, 161, 104]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.SettleWager;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([169, 144, 4, 38, 10, 141, 188, 255]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.Unpause;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([29, 158, 252, 191, 10, 83, 219, 99]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.UpdateConfig;
+	}
+	if (
+		containsBytes(
+			data,
+			fixEncoderSize(getBytesEncoder(), 8).encode(
+				new Uint8Array([53, 145, 193, 121, 128, 45, 224, 38]),
+			),
+			0,
+		)
+	) {
+		return DiceDuelInstruction.UpdateGameType;
+	}
+	throw new Error(
+		"The provided instruction could not be identified as a diceDuel instruction.",
+	);
 }
 
 export type ParsedDiceDuelInstruction<
-  TProgram extends string = "7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM",
+	TProgram extends string = "D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof",
 > =
-  | ({
-      instructionType: DiceDuelInstruction.AcceptWager;
-    } & ParsedAcceptWagerInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.CancelWager;
-    } & ParsedCancelWagerInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.ClaimExpired;
-    } & ParsedClaimExpiredInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.ClaimVrfTimeout;
-    } & ParsedClaimVrfTimeoutInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.ClaimWinnings;
-    } & ParsedClaimWinningsInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.CleanupStaleWager;
-    } & ParsedCleanupStaleWagerInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.ConsumeRandomness;
-    } & ParsedConsumeRandomnessInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.ConsumeRandomnessMinimal;
-    } & ParsedConsumeRandomnessMinimalInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.ConsumeRandomnessResolved;
-    } & ParsedConsumeRandomnessResolvedInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.Initialize;
-    } & ParsedInitializeInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.InitiateWager;
-    } & ParsedInitiateWagerInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.MintDiceBag;
-    } & ParsedMintDiceBagInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.Pause;
-    } & ParsedPauseInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.RegisterGameType;
-    } & ParsedRegisterGameTypeInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.SettleWager;
-    } & ParsedSettleWagerInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.Unpause;
-    } & ParsedUnpauseInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.UpdateConfig;
-    } & ParsedUpdateConfigInstruction<TProgram>)
-  | ({
-      instructionType: DiceDuelInstruction.UpdateGameType;
-    } & ParsedUpdateGameTypeInstruction<TProgram>);
+	| ({
+			instructionType: DiceDuelInstruction.AcceptWager;
+	  } & ParsedAcceptWagerInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.CancelWager;
+	  } & ParsedCancelWagerInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.ClaimExpired;
+	  } & ParsedClaimExpiredInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.ClaimVrfTimeout;
+	  } & ParsedClaimVrfTimeoutInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.ClaimWinnings;
+	  } & ParsedClaimWinningsInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.CleanupStaleWager;
+	  } & ParsedCleanupStaleWagerInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.ConsumeRandomness;
+	  } & ParsedConsumeRandomnessInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.ConsumeRandomnessMinimal;
+	  } & ParsedConsumeRandomnessMinimalInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.ConsumeRandomnessResolved;
+	  } & ParsedConsumeRandomnessResolvedInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.Initialize;
+	  } & ParsedInitializeInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.InitiateWager;
+	  } & ParsedInitiateWagerInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.MintDiceBag;
+	  } & ParsedMintDiceBagInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.Pause;
+	  } & ParsedPauseInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.RegisterGameType;
+	  } & ParsedRegisterGameTypeInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.SettleWager;
+	  } & ParsedSettleWagerInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.Unpause;
+	  } & ParsedUnpauseInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.UpdateConfig;
+	  } & ParsedUpdateConfigInstruction<TProgram>)
+	| ({
+			instructionType: DiceDuelInstruction.UpdateGameType;
+	  } & ParsedUpdateGameTypeInstruction<TProgram>);
 
 export function parseDiceDuelInstruction<TProgram extends string>(
-  instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
 ): ParsedDiceDuelInstruction<TProgram> {
-  const instructionType = identifyDiceDuelInstruction(instruction);
-  switch (instructionType) {
-    case DiceDuelInstruction.AcceptWager: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.AcceptWager,
-        ...parseAcceptWagerInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.CancelWager: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.CancelWager,
-        ...parseCancelWagerInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.ClaimExpired: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.ClaimExpired,
-        ...parseClaimExpiredInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.ClaimVrfTimeout: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.ClaimVrfTimeout,
-        ...parseClaimVrfTimeoutInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.ClaimWinnings: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.ClaimWinnings,
-        ...parseClaimWinningsInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.CleanupStaleWager: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.CleanupStaleWager,
-        ...parseCleanupStaleWagerInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.ConsumeRandomness: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.ConsumeRandomness,
-        ...parseConsumeRandomnessInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.ConsumeRandomnessMinimal: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.ConsumeRandomnessMinimal,
-        ...parseConsumeRandomnessMinimalInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.ConsumeRandomnessResolved: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.ConsumeRandomnessResolved,
-        ...parseConsumeRandomnessResolvedInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.Initialize: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.Initialize,
-        ...parseInitializeInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.InitiateWager: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.InitiateWager,
-        ...parseInitiateWagerInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.MintDiceBag: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.MintDiceBag,
-        ...parseMintDiceBagInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.Pause: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.Pause,
-        ...parsePauseInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.RegisterGameType: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.RegisterGameType,
-        ...parseRegisterGameTypeInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.SettleWager: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.SettleWager,
-        ...parseSettleWagerInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.Unpause: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.Unpause,
-        ...parseUnpauseInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.UpdateConfig: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.UpdateConfig,
-        ...parseUpdateConfigInstruction(instruction),
-      };
-    }
-    case DiceDuelInstruction.UpdateGameType: {
-      assertIsInstructionWithAccounts(instruction);
-      return {
-        instructionType: DiceDuelInstruction.UpdateGameType,
-        ...parseUpdateGameTypeInstruction(instruction),
-      };
-    }
-    default:
-      throw new Error(
-        `Unrecognized instruction type: ${instructionType as string}`,
-      );
-  }
+	const instructionType = identifyDiceDuelInstruction(instruction);
+	switch (instructionType) {
+		case DiceDuelInstruction.AcceptWager: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.AcceptWager,
+				...parseAcceptWagerInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.CancelWager: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.CancelWager,
+				...parseCancelWagerInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.ClaimExpired: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.ClaimExpired,
+				...parseClaimExpiredInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.ClaimVrfTimeout: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.ClaimVrfTimeout,
+				...parseClaimVrfTimeoutInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.ClaimWinnings: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.ClaimWinnings,
+				...parseClaimWinningsInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.CleanupStaleWager: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.CleanupStaleWager,
+				...parseCleanupStaleWagerInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.ConsumeRandomness: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.ConsumeRandomness,
+				...parseConsumeRandomnessInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.ConsumeRandomnessMinimal: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.ConsumeRandomnessMinimal,
+				...parseConsumeRandomnessMinimalInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.ConsumeRandomnessResolved: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.ConsumeRandomnessResolved,
+				...parseConsumeRandomnessResolvedInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.Initialize: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.Initialize,
+				...parseInitializeInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.InitiateWager: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.InitiateWager,
+				...parseInitiateWagerInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.MintDiceBag: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.MintDiceBag,
+				...parseMintDiceBagInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.Pause: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.Pause,
+				...parsePauseInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.RegisterGameType: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.RegisterGameType,
+				...parseRegisterGameTypeInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.SettleWager: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.SettleWager,
+				...parseSettleWagerInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.Unpause: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.Unpause,
+				...parseUnpauseInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.UpdateConfig: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.UpdateConfig,
+				...parseUpdateConfigInstruction(instruction),
+			};
+		}
+		case DiceDuelInstruction.UpdateGameType: {
+			assertIsInstructionWithAccounts(instruction);
+			return {
+				instructionType: DiceDuelInstruction.UpdateGameType,
+				...parseUpdateGameTypeInstruction(instruction),
+			};
+		}
+		default:
+			throw new Error(
+				`Unrecognized instruction type: ${instructionType as string}`,
+			);
+	}
 }

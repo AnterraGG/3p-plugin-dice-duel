@@ -1,1 +1,1 @@
-export { registerDiceDuelNotificationHandler } from "./notificationHandler";
+export { registerDragonDiceNotificationHandler } from "./notificationHandler";

@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::constants::*;
 use crate::errors::DiceDuelError;
-use crate::events::{DiceBagUsed, WagerResolvedEvent};
+use crate::events::WagerResolvedEvent;
 use crate::state::{DiceBag, PlayerStats, Wager, WagerStatus};
 
 /// VRF callback that determines the winner and updates stats in one shot.
@@ -142,13 +142,6 @@ pub fn handle_consume_randomness_resolved(
     }
 
     // NO pending_nonce changes — Active→Resolved, pending already cleared in accept_wager
-
-    // Emit DiceBagUsed after bag stats update
-    emit!(DiceBagUsed {
-        mint: challenger_bag.mint,
-        owner: challenger_bag.owner,
-        uses_remaining: challenger_bag.uses_remaining,
-    });
 
     msg!("VRF resolved - result: {}, winner: {}", result, winner_key);
 

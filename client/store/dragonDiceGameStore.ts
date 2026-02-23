@@ -1,5 +1,5 @@
 /**
- * Dice Duel Game Store
+ * Dragon Dice Game Store
  *
  * Pure Zustand store — no internal imports. Copied as-is.
  */
@@ -46,7 +46,7 @@ export interface BalanceFloat {
 
 // ─── Store Interface ───────────────────────────────────────────────────────
 
-interface DiceDuelGameStore {
+interface DragonDiceGameStore {
 	diceRolls: Map<string, DiceRollAnimation>;
 	celebrations: Map<string, CelebrationEffect>;
 	challengeIndicators: Map<string, ChallengeIndicator>;
@@ -83,7 +83,7 @@ interface DiceDuelGameStore {
 
 // ─── Store Implementation ──────────────────────────────────────────────────
 
-export const useDiceDuelGameStore = create<DiceDuelGameStore>(
+export const useDragonDiceGameStore = create<DragonDiceGameStore>(
 	(set, _get) => ({
 		diceRolls: new Map(),
 		celebrations: new Map(),

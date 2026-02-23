@@ -7,17 +7,17 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU8Decoder,
-  getU8Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
 } from "@solana/kit";
 
 export type DiceBagMinted = { player: Address; mint: Address; uses: number };
@@ -25,24 +25,24 @@ export type DiceBagMinted = { player: Address; mint: Address; uses: number };
 export type DiceBagMintedArgs = DiceBagMinted;
 
 export function getDiceBagMintedEncoder(): FixedSizeEncoder<DiceBagMintedArgs> {
-  return getStructEncoder([
-    ["player", getAddressEncoder()],
-    ["mint", getAddressEncoder()],
-    ["uses", getU8Encoder()],
-  ]);
+	return getStructEncoder([
+		["player", getAddressEncoder()],
+		["mint", getAddressEncoder()],
+		["uses", getU8Encoder()],
+	]);
 }
 
 export function getDiceBagMintedDecoder(): FixedSizeDecoder<DiceBagMinted> {
-  return getStructDecoder([
-    ["player", getAddressDecoder()],
-    ["mint", getAddressDecoder()],
-    ["uses", getU8Decoder()],
-  ]);
+	return getStructDecoder([
+		["player", getAddressDecoder()],
+		["mint", getAddressDecoder()],
+		["uses", getU8Decoder()],
+	]);
 }
 
 export function getDiceBagMintedCodec(): FixedSizeCodec<
-  DiceBagMintedArgs,
-  DiceBagMinted
+	DiceBagMintedArgs,
+	DiceBagMinted
 > {
-  return combineCodec(getDiceBagMintedEncoder(), getDiceBagMintedDecoder());
+	return combineCodec(getDiceBagMintedEncoder(), getDiceBagMintedDecoder());
 }

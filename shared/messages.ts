@@ -1,5 +1,5 @@
 /**
- * Dice Duel Messages
+ * Dragon Dice Messages
  *
  * Replaces packets.ts — uses definePluginMessage instead of defineServerPacket.
  * The engine handles binary serialization internally.
@@ -44,7 +44,7 @@ export const WagerNotification = definePluginMessage("server-to-client", {
  * - wager_expired: wager expired without acceptance, challenger refunded
  * - wager_vrf_timeout: VRF timed out, both players refunded
  */
-export type DiceDuelNotificationType =
+export type DragonDiceNotificationType =
 	| "wager_received"
 	| "wager_accepted"
 	| "wager_ready_to_claim"

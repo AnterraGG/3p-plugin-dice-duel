@@ -7,178 +7,178 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressDecoder,
-  getAddressEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getI32Decoder,
-  getI32Encoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  getU64Decoder,
-  getU64Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type Account,
-  type Address,
-  type Codec,
-  type Decoder,
-  type EncodedAccount,
-  type Encoder,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
-  type Option,
-  type OptionOrNullable,
-  type ReadonlyUint8Array,
+	type Account,
+	type Address,
+	type Codec,
+	type Decoder,
+	type EncodedAccount,
+	type Encoder,
+	type FetchAccountConfig,
+	type FetchAccountsConfig,
+	type MaybeAccount,
+	type MaybeEncodedAccount,
+	type Option,
+	type OptionOrNullable,
+	type ReadonlyUint8Array,
+	assertAccountExists,
+	assertAccountsExist,
+	combineCodec,
+	decodeAccount,
+	fetchEncodedAccount,
+	fetchEncodedAccounts,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressDecoder,
+	getAddressEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getI32Decoder,
+	getI32Encoder,
+	getOptionDecoder,
+	getOptionEncoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU32Decoder,
+	getU32Encoder,
+	getU64Decoder,
+	getU64Encoder,
+	transformEncoder,
 } from "@solana/kit";
 
 export const PLAYER_STATS_DISCRIMINATOR = new Uint8Array([
-  169, 146, 242, 176, 102, 118, 231, 172,
+	169, 146, 242, 176, 102, 118, 231, 172,
 ]);
 
 export function getPlayerStatsDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    PLAYER_STATS_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		PLAYER_STATS_DISCRIMINATOR,
+	);
 }
 
 export type PlayerStats = {
-  discriminator: ReadonlyUint8Array;
-  player: Address;
-  totalGames: number;
-  wins: number;
-  losses: number;
-  solWagered: bigint;
-  solWon: bigint;
-  currentStreak: number;
-  bestStreak: number;
-  wagerNonce: bigint;
-  pendingNonce: Option<bigint>;
-  bump: number;
+	discriminator: ReadonlyUint8Array;
+	player: Address;
+	totalGames: number;
+	wins: number;
+	losses: number;
+	solWagered: bigint;
+	solWon: bigint;
+	currentStreak: number;
+	bestStreak: number;
+	wagerNonce: bigint;
+	pendingNonce: Option<bigint>;
+	bump: number;
 };
 
 export type PlayerStatsArgs = {
-  player: Address;
-  totalGames: number;
-  wins: number;
-  losses: number;
-  solWagered: number | bigint;
-  solWon: number | bigint;
-  currentStreak: number;
-  bestStreak: number;
-  wagerNonce: number | bigint;
-  pendingNonce: OptionOrNullable<number | bigint>;
-  bump: number;
+	player: Address;
+	totalGames: number;
+	wins: number;
+	losses: number;
+	solWagered: number | bigint;
+	solWon: number | bigint;
+	currentStreak: number;
+	bestStreak: number;
+	wagerNonce: number | bigint;
+	pendingNonce: OptionOrNullable<number | bigint>;
+	bump: number;
 };
 
 /** Gets the encoder for {@link PlayerStatsArgs} account data. */
 export function getPlayerStatsEncoder(): Encoder<PlayerStatsArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["player", getAddressEncoder()],
-      ["totalGames", getU32Encoder()],
-      ["wins", getU32Encoder()],
-      ["losses", getU32Encoder()],
-      ["solWagered", getU64Encoder()],
-      ["solWon", getU64Encoder()],
-      ["currentStreak", getI32Encoder()],
-      ["bestStreak", getU32Encoder()],
-      ["wagerNonce", getU64Encoder()],
-      ["pendingNonce", getOptionEncoder(getU64Encoder())],
-      ["bump", getU8Encoder()],
-    ]),
-    (value) => ({ ...value, discriminator: PLAYER_STATS_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			["player", getAddressEncoder()],
+			["totalGames", getU32Encoder()],
+			["wins", getU32Encoder()],
+			["losses", getU32Encoder()],
+			["solWagered", getU64Encoder()],
+			["solWon", getU64Encoder()],
+			["currentStreak", getI32Encoder()],
+			["bestStreak", getU32Encoder()],
+			["wagerNonce", getU64Encoder()],
+			["pendingNonce", getOptionEncoder(getU64Encoder())],
+			["bump", getU8Encoder()],
+		]),
+		(value) => ({ ...value, discriminator: PLAYER_STATS_DISCRIMINATOR }),
+	);
 }
 
 /** Gets the decoder for {@link PlayerStats} account data. */
 export function getPlayerStatsDecoder(): Decoder<PlayerStats> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["player", getAddressDecoder()],
-    ["totalGames", getU32Decoder()],
-    ["wins", getU32Decoder()],
-    ["losses", getU32Decoder()],
-    ["solWagered", getU64Decoder()],
-    ["solWon", getU64Decoder()],
-    ["currentStreak", getI32Decoder()],
-    ["bestStreak", getU32Decoder()],
-    ["wagerNonce", getU64Decoder()],
-    ["pendingNonce", getOptionDecoder(getU64Decoder())],
-    ["bump", getU8Decoder()],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		["player", getAddressDecoder()],
+		["totalGames", getU32Decoder()],
+		["wins", getU32Decoder()],
+		["losses", getU32Decoder()],
+		["solWagered", getU64Decoder()],
+		["solWon", getU64Decoder()],
+		["currentStreak", getI32Decoder()],
+		["bestStreak", getU32Decoder()],
+		["wagerNonce", getU64Decoder()],
+		["pendingNonce", getOptionDecoder(getU64Decoder())],
+		["bump", getU8Decoder()],
+	]);
 }
 
 /** Gets the codec for {@link PlayerStats} account data. */
 export function getPlayerStatsCodec(): Codec<PlayerStatsArgs, PlayerStats> {
-  return combineCodec(getPlayerStatsEncoder(), getPlayerStatsDecoder());
+	return combineCodec(getPlayerStatsEncoder(), getPlayerStatsDecoder());
 }
 
 export function decodePlayerStats<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress>,
 ): Account<PlayerStats, TAddress>;
 export function decodePlayerStats<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+	encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<PlayerStats, TAddress>;
 export function decodePlayerStats<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<PlayerStats, TAddress> | MaybeAccount<PlayerStats, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getPlayerStatsDecoder(),
-  );
+	return decodeAccount(
+		encodedAccount as MaybeEncodedAccount<TAddress>,
+		getPlayerStatsDecoder(),
+	);
 }
 
 export async function fetchPlayerStats<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<Account<PlayerStats, TAddress>> {
-  const maybeAccount = await fetchMaybePlayerStats(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+	const maybeAccount = await fetchMaybePlayerStats(rpc, address, config);
+	assertAccountExists(maybeAccount);
+	return maybeAccount;
 }
 
 export async function fetchMaybePlayerStats<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<MaybeAccount<PlayerStats, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodePlayerStats(maybeAccount);
+	const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+	return decodePlayerStats(maybeAccount);
 }
 
 export async function fetchAllPlayerStats(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<Account<PlayerStats>[]> {
-  const maybeAccounts = await fetchAllMaybePlayerStats(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+	const maybeAccounts = await fetchAllMaybePlayerStats(rpc, addresses, config);
+	assertAccountsExist(maybeAccounts);
+	return maybeAccounts;
 }
 
 export async function fetchAllMaybePlayerStats(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<PlayerStats>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map((maybeAccount) => decodePlayerStats(maybeAccount));
+	const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+	return maybeAccounts.map((maybeAccount) => decodePlayerStats(maybeAccount));
 }

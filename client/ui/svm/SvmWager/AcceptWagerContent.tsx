@@ -11,7 +11,7 @@ export default function AcceptWagerContent({
 }) {
 	return (
 		<GameWindow
-			id="dice-duel:incoming-wager"
+			id="dragon-dice:incoming-wager"
 			title="Dice Duel — Incoming"
 			size="md"
 			isOpen

@@ -7,204 +7,204 @@
  */
 
 import {
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getBytesDecoder,
-  getBytesEncoder,
-  getProgramDerivedAddress,
-  getStructDecoder,
-  getStructEncoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type ReadonlySignerAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getBytesDecoder,
+	getBytesEncoder,
+	getProgramDerivedAddress,
+	getStructDecoder,
+	getStructEncoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
-import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
+import { type ResolvedAccount, getAccountMetaFactory } from "../shared";
 
 export const UNPAUSE_DISCRIMINATOR = new Uint8Array([
-  169, 144, 4, 38, 10, 141, 188, 255,
+	169, 144, 4, 38, 10, 141, 188, 255,
 ]);
 
 export function getUnpauseDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(UNPAUSE_DISCRIMINATOR);
+	return fixEncoderSize(getBytesEncoder(), 8).encode(UNPAUSE_DISCRIMINATOR);
 }
 
 export type UnpauseInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountAdmin extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string | AccountMeta<string> = string,
+	TAccountConfig extends string | AccountMeta<string> = string,
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountAdmin extends string
-        ? ReadonlySignerAccount<TAccountAdmin> &
-            AccountSignerMeta<TAccountAdmin>
-        : TAccountAdmin,
-      TAccountConfig extends string
-        ? WritableAccount<TAccountConfig>
-        : TAccountConfig,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountAdmin extends string
+				? ReadonlySignerAccount<TAccountAdmin> &
+						AccountSignerMeta<TAccountAdmin>
+				: TAccountAdmin,
+			TAccountConfig extends string
+				? WritableAccount<TAccountConfig>
+				: TAccountConfig,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type UnpauseInstructionData = { discriminator: ReadonlyUint8Array };
 
 export type UnpauseInstructionDataArgs = {};
 
 export function getUnpauseInstructionDataEncoder(): FixedSizeEncoder<UnpauseInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: UNPAUSE_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
+		(value) => ({ ...value, discriminator: UNPAUSE_DISCRIMINATOR }),
+	);
 }
 
 export function getUnpauseInstructionDataDecoder(): FixedSizeDecoder<UnpauseInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+	]);
 }
 
 export function getUnpauseInstructionDataCodec(): FixedSizeCodec<
-  UnpauseInstructionDataArgs,
-  UnpauseInstructionData
+	UnpauseInstructionDataArgs,
+	UnpauseInstructionData
 > {
-  return combineCodec(
-    getUnpauseInstructionDataEncoder(),
-    getUnpauseInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getUnpauseInstructionDataEncoder(),
+		getUnpauseInstructionDataDecoder(),
+	);
 }
 
 export type UnpauseAsyncInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config?: Address<TAccountConfig>;
+	admin: TransactionSigner<TAccountAdmin>;
+	config?: Address<TAccountConfig>;
 };
 
 export async function getUnpauseInstructionAsync<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: UnpauseAsyncInput<TAccountAdmin, TAccountConfig>,
-  config?: { programAddress?: TProgramAddress },
+	input: UnpauseAsyncInput<TAccountAdmin, TAccountConfig>,
+	config?: { programAddress?: TProgramAddress },
 ): Promise<UnpauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>> {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: false },
-    config: { value: input.config ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: false },
+		config: { value: input.config ?? null, isWritable: true },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Resolve default values.
-  if (!accounts.config.value) {
-    accounts.config.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
-      ],
-    });
-  }
+	// Resolve default values.
+	if (!accounts.config.value) {
+		accounts.config.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
+			],
+		});
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
-    data: getUnpauseInstructionDataEncoder().encode({}),
-    programAddress,
-  } as UnpauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
+		data: getUnpauseInstructionDataEncoder().encode({}),
+		programAddress,
+	} as UnpauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
 }
 
 export type UnpauseInput<
-  TAccountAdmin extends string = string,
-  TAccountConfig extends string = string,
+	TAccountAdmin extends string = string,
+	TAccountConfig extends string = string,
 > = {
-  admin: TransactionSigner<TAccountAdmin>;
-  config: Address<TAccountConfig>;
+	admin: TransactionSigner<TAccountAdmin>;
+	config: Address<TAccountConfig>;
 };
 
 export function getUnpauseInstruction<
-  TAccountAdmin extends string,
-  TAccountConfig extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountAdmin extends string,
+	TAccountConfig extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: UnpauseInput<TAccountAdmin, TAccountConfig>,
-  config?: { programAddress?: TProgramAddress },
+	input: UnpauseInput<TAccountAdmin, TAccountConfig>,
+	config?: { programAddress?: TProgramAddress },
 ): UnpauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig> {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    admin: { value: input.admin ?? null, isWritable: false },
-    config: { value: input.config ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		admin: { value: input.admin ?? null, isWritable: false },
+		config: { value: input.config ?? null, isWritable: true },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
-    data: getUnpauseInstructionDataEncoder().encode({}),
-    programAddress,
-  } as UnpauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [getAccountMeta(accounts.admin), getAccountMeta(accounts.config)],
+		data: getUnpauseInstructionDataEncoder().encode({}),
+		programAddress,
+	} as UnpauseInstruction<TProgramAddress, TAccountAdmin, TAccountConfig>);
 }
 
 export type ParsedUnpauseInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    admin: TAccountMetas[0];
-    config: TAccountMetas[1];
-  };
-  data: UnpauseInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		admin: TAccountMetas[0];
+		config: TAccountMetas[1];
+	};
+	data: UnpauseInstructionData;
 };
 
 export function parseUnpauseInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedUnpauseInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 2) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: { admin: getNextAccount(), config: getNextAccount() },
-    data: getUnpauseInstructionDataDecoder().decode(instruction.data),
-  };
+	if (instruction.accounts.length < 2) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: { admin: getNextAccount(), config: getNextAccount() },
+		data: getUnpauseInstructionDataDecoder().decode(instruction.data),
+	};
 }

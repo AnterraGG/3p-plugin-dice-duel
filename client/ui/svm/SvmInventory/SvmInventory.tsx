@@ -1,5 +1,5 @@
 /**
- * SvmInventory — SVM-specific inventory panel for Dice Duel.
+ * SvmInventory — SVM-specific inventory panel for Dragon Dice.
  *
  * Matches the EVM EvmInventory layout and interactions:
  * - Left-click a dice bag → enter selection mode → click a player to challenge
@@ -102,7 +102,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 			<Panel padding="compact" className={className} style={{ width: 220 }}>
 				<Stack gap={2}>
 					<Typography variant="gold" size="sm">
-						Dice Duel
+						Dragon Dice
 					</Typography>
 					<Typography
 						variant="muted"
@@ -237,7 +237,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 		>
 			<Stack gap={2}>
 				<Typography variant="gold" size="sm">
-					Dice Duel
+					Dragon Dice
 				</Typography>
 
 					{/* Stuck pending wager warning — indexer missed creation, on-chain state is ahead */}

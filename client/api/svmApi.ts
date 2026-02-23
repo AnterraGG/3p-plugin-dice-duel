@@ -75,7 +75,7 @@ export function fetchInventoryWagers(
 	api: IndexerApiClient,
 	address: string,
 ): Promise<SvmInventoryWagersResponse> {
-	return trackedGet(api, `/dice-duel/svm/wagers/${address}/inventory`);
+	return trackedGet(api, `/dragon-dice/svm/wagers/${address}/inventory`);
 }
 
 export function fetchWagerHistory(
@@ -87,34 +87,34 @@ export function fetchWagerHistory(
 	if (opts?.limit) params.limit = String(opts.limit);
 	if (opts?.cursor) params.cursor = opts.cursor;
 	if (opts?.sort) params.sort = opts.sort;
-	return trackedGet(api, `/dice-duel/svm/wagers/${address}/history`, params);
+	return trackedGet(api, `/dragon-dice/svm/wagers/${address}/history`, params);
 }
 
 export function fetchWagerDetail(
 	api: IndexerApiClient,
 	wagerAddress: string,
 ): Promise<{ wager: SvmWager }> {
-	return trackedGet(api, `/dice-duel/svm/wagers/detail/${wagerAddress}`);
+	return trackedGet(api, `/dragon-dice/svm/wagers/detail/${wagerAddress}`);
 }
 
 export function fetchSvmDiceBags(
 	api: IndexerApiClient,
 	address: string,
 ): Promise<{ diceBags: SvmDiceBag[] }> {
-	return trackedGet(api, `/dice-duel/svm/dice-bags/${address}`);
+	return trackedGet(api, `/dragon-dice/svm/dice-bags/${address}`);
 }
 
 export function fetchSvmPlayerStats(
 	api: IndexerApiClient,
 	address: string,
 ): Promise<{ stats: SvmPlayerStats | null }> {
-	return trackedGet(api, `/dice-duel/svm/stats/${address}`);
+	return trackedGet(api, `/dragon-dice/svm/stats/${address}`);
 }
 
 export function fetchSvmGameConfig(
 	api: IndexerApiClient,
 ): Promise<{ config: SvmGameConfig }> {
-	return trackedGet(api, "/dice-duel/svm/config");
+	return trackedGet(api, "/dragon-dice/svm/config");
 }
 
 // fetchPriorityFees moved to @townexchange/3p-plugin-sdk/client

@@ -16,7 +16,7 @@ import {
 } from "@solana/web3.js";
 
 const PROGRAM_ID = new PublicKey(
-	"7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM",
+	"D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof",
 );
 const VRF_PROGRAM_ID = new PublicKey(
 	"Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz",
@@ -29,7 +29,8 @@ const SLOT_HASHES = new PublicKey(
 	"SysvarS1otHashes111111111111111111111111111",
 );
 const TREASURY = new PublicKey("BLq7QBexFpPDg2WMu4JaL67X7SEdnyvXGtcoEvdncq4m");
-const RPC = process.env.HELIUS_RPC_URL || "https://api.devnet.solana.com";
+const RPC =
+	"https://devnet.helius-rpc.com/?api-key=e97f43d4-ee09-4081-8260-6bfd0fb78fb7";
 
 function disc(name: string): Buffer {
 	return Buffer.from(
@@ -48,7 +49,7 @@ async function main() {
 	const conn = new Connection(RPC, "confirmed");
 	const adminKey = JSON.parse(
 		fs.readFileSync(
-			process.env.ADMIN_KEYPAIR_PATH || (process.env.HOME + "/.config/solana/id.json"),
+			"/home/node/.openclaw/secrets/devnet-keypairs/admin.json",
 			"utf8",
 		),
 	);

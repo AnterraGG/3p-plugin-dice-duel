@@ -1,12 +1,12 @@
 /**
- * Dice Duel Notification Store
+ * Dragon Dice Notification Store
  *
  * Pure Zustand store — no internal imports.
  */
 
 import { create } from "zustand";
 
-export type DiceDuelNotification =
+export type DragonDiceNotification =
 	| {
 			type: "dice_minted";
 			diceId: number;
@@ -67,20 +67,20 @@ export type DiceDuelNotification =
 			wagerAddress?: string;
 	  };
 
-interface DiceDuelNotificationStore {
-	notifications: DiceDuelNotification[];
-	addNotification: (notification: DiceDuelNotification) => void;
+interface DragonDiceNotificationStore {
+	notifications: DragonDiceNotification[];
+	addNotification: (notification: DragonDiceNotification) => void;
 	clearNotification: (index: number) => void;
 	clearAllNotifications: () => void;
 	reset: () => void;
 }
 
 const INITIAL_STATE = {
-	notifications: [] as DiceDuelNotification[],
+	notifications: [] as DragonDiceNotification[],
 };
 
 /** Generate a dedup key for a notification. Same wager+type = duplicate. */
-function getNotificationKey(n: DiceDuelNotification): string {
+function getNotificationKey(n: DragonDiceNotification): string {
 	switch (n.type) {
 		case "dice_minted":
 			return `dice_minted:${n.diceId}`;
@@ -97,8 +97,8 @@ function getNotificationKey(n: DiceDuelNotification): string {
 const recentKeys = new Set<string>();
 const DEDUP_WINDOW_MS = 30_000;
 
-export const useDiceDuelNotificationStore =
-	create<DiceDuelNotificationStore>((set) => ({
+export const useDragonDiceNotificationStore =
+	create<DragonDiceNotificationStore>((set) => ({
 		...INITIAL_STATE,
 		addNotification: (notification) => {
 			const key = getNotificationKey(notification);

@@ -3,10 +3,10 @@ import type {
 	SvmIndexingHandlerContext,
 } from "@townexchange/3p-plugin-sdk/indexer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { diceDuelSvmPlugin } from "../plugin";
+import { dragonDiceSvmPlugin } from "../plugin";
 
 // Get compiled handlers from the unified plugin descriptor
-const svmHandlers = diceDuelSvmPlugin.svmHandlers;
+const svmHandlers = dragonDiceSvmPlugin.svmHandlers;
 
 // ─── Mock DB ───────────────────────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ describe("svmHandlers descriptor", () => {
 });
 
 describe("anchorEventHandlers", () => {
-	const anchorHandlers = diceDuelSvmPlugin.anchorEventHandlers;
+	const anchorHandlers = dragonDiceSvmPlugin.anchorEventHandlers;
 
 	it("has anchor event handlers populated", () => {
 		expect(anchorHandlers).toBeDefined();
@@ -100,8 +100,8 @@ describe("anchorEventHandlers", () => {
 		}
 	});
 
-	it("has exactly 10 anchor event handlers (7 wager + 2 dice bag + 1 config)", () => {
-		expect(Object.keys(anchorHandlers).length).toBe(10);
+	it("has exactly 7 anchor event handlers", () => {
+		expect(Object.keys(anchorHandlers).length).toBe(7);
 	});
 });
 
@@ -126,16 +126,16 @@ describe("DiceDuel:Wager handler", () => {
 		await handler(ctx);
 
 		const db = (ctx as any)._mockDb;
-		// Columns handler does upsert on creation
+		// Should call upsert (wager) + insertOrIgnore (event log)
 		expect(db.upsert).toHaveBeenCalledTimes(1);
-		// onSynced computes expiresAt and updates
-		expect(db.update).toHaveBeenCalled();
-		// wager_initiated event + event log entry are published via
-		// the WagerInitiated anchor event handler, not columns handler
-		expect(ctx.publishEvent).not.toHaveBeenCalled();
+		expect(db.insertOrIgnore).toHaveBeenCalledTimes(1);
+		// Dual-path: account-state-diff also publishes for redundancy (client dedup handles it)
+		expect(ctx.publishEvent).toHaveBeenCalledWith(
+			expect.objectContaining({ eventType: "wager_initiated" }),
+		);
 	});
 
-	it("detects Pending→Active transition and updates DB", async () => {
+	it("detects Pending→Active transition (defers publish to anchor event)", async () => {
 		const ctx = createMockContext("DiceDuel:Wager", {
 			previousState: {
 				status: "Pending",
@@ -143,7 +143,6 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 0n,
-				createdAt: 1700000000n,
 			},
 			currentState: {
 				status: "Active",
@@ -151,7 +150,6 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 0n,
-				createdAt: 1700000000n,
 			},
 		});
 
@@ -159,11 +157,13 @@ describe("DiceDuel:Wager handler", () => {
 
 		const db = (ctx as any)._mockDb;
 		expect(db.update).toHaveBeenCalled();
-		// wager_accepted notification is published via WagerAccepted
-		// anchor event handler, not the columns handler
+		// Dual-path: account-state-diff also publishes for redundancy (client dedup handles it)
+		expect(ctx.publishEvent).toHaveBeenCalledWith(
+			expect.objectContaining({ eventType: "wager_accepted" }),
+		);
 	});
 
-	it("detects Active→Resolved transition and updates DB", async () => {
+	it("detects Active→Resolved transition (defers publish to anchor event)", async () => {
 		const ctx = createMockContext("DiceDuel:Wager", {
 			previousState: {
 				status: "Active",
@@ -171,7 +171,6 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 5n,
-				createdAt: 1700000000n,
 			},
 			currentState: {
 				status: "Resolved",
@@ -181,7 +180,6 @@ describe("DiceDuel:Wager handler", () => {
 				nonce: 5n,
 				vrfResult: 4,
 				winner: "C1",
-				createdAt: 1700000000n,
 			},
 		});
 
@@ -189,11 +187,14 @@ describe("DiceDuel:Wager handler", () => {
 
 		const db = (ctx as any)._mockDb;
 		expect(db.update).toHaveBeenCalled();
-		// wager_resolved notification + event log entry are published via
-		// WagerResolvedEvent anchor event handler, not the columns handler
+		expect(db.insertOrIgnore).toHaveBeenCalled(); // event log
+		// Dual-path: account-state-diff also publishes for redundancy (client dedup handles it)
+		expect(ctx.publishEvent).toHaveBeenCalledWith(
+			expect.objectContaining({ eventType: "wager_resolved" }),
+		);
 	});
 
-	it("detects cancellation and updates DB", async () => {
+	it("detects cancellation (defers publish to anchor event)", async () => {
 		const ctx = createMockContext("DiceDuel:Wager", {
 			previousState: {
 				status: "Pending",
@@ -201,7 +202,6 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 1n,
-				createdAt: 1700000000n,
 			},
 			currentState: {
 				status: "Cancelled",
@@ -209,18 +209,19 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 1n,
-				createdAt: 1700000000n,
 			},
 		});
 
 		await handler(ctx);
 		const db = (ctx as any)._mockDb;
 		expect(db.update).toHaveBeenCalled();
-		// wager_cancelled notification is published via WagerCancelled
-		// anchor event handler (closure), not the columns handler
+		// Dual-path: account-state-diff also publishes for redundancy (client dedup handles it)
+		expect(ctx.publishEvent).toHaveBeenCalledWith(
+			expect.objectContaining({ eventType: "wager_cancelled" }),
+		);
 	});
 
-	it("handles account closure (returns early — closure logic is in anchor event handlers)", async () => {
+	it("handles account closure (Resolved→closed = Settled)", async () => {
 		const ctx = createMockContext("DiceDuel:Wager", {
 			previousState: {
 				status: "Resolved",
@@ -230,7 +231,6 @@ describe("DiceDuel:Wager handler", () => {
 				nonce: 5n,
 				vrfResult: 4,
 				winner: "C1",
-				createdAt: 1700000000n,
 			},
 			currentState: null,
 		});
@@ -238,16 +238,15 @@ describe("DiceDuel:Wager handler", () => {
 		await handler(ctx);
 
 		const db = (ctx as any)._mockDb;
-		// Account closure in columns handler only fires onTransition hook
-		// (which wager handler doesn't define). Actual closure logic runs
-		// via anchor event handlers (WinningsClaimed closure event).
-		expect(db.update).not.toHaveBeenCalled();
-		expect(db.upsert).not.toHaveBeenCalled();
+		expect(db.update).toHaveBeenCalled();
+		expect(ctx.publishEvent).toHaveBeenCalledWith(
+			expect.objectContaining({ eventType: "winnings_claimed" }),
+		);
 	});
 
-	it("handles account closure race condition (no-op in columns handler)", async () => {
-		// WinningsClaimed closure anchor event handles the actual state update.
-		// The columns handler just returns early on closure.
+	it("handles account closure with winner set even if previousStatus is not Resolved (race condition)", async () => {
+		// Simulates race condition: WinningsClaimed anchor event arrives before
+		// the Active→Resolved account-diff is processed
 		const ctx = createMockContext("DiceDuel:Wager", {
 			previousState: {
 				status: "Active",
@@ -255,8 +254,7 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 5n,
-				winner: "C1",
-				createdAt: 1700000000n,
+				winner: "C1", // winner set from WinningsClaimed toState merge
 			},
 			currentState: null,
 		});
@@ -264,13 +262,14 @@ describe("DiceDuel:Wager handler", () => {
 		await handler(ctx);
 
 		const db = (ctx as any)._mockDb;
-		expect(db.update).not.toHaveBeenCalled();
+		expect(db.update).toHaveBeenCalled();
+		// Should detect as claim (winner is set), not cancel
+		expect(ctx.publishEvent).toHaveBeenCalledWith(
+			expect.objectContaining({ eventType: "winnings_claimed" }),
+		);
 	});
 
-	it("updates columns even when status unchanged (idempotent sync)", async () => {
-		// When status hasn't changed, the compiled handler still syncs all
-		// columns to DB (non-status-change path). This ensures any field
-		// that changed outside of status transitions is captured.
+	it("does nothing when status unchanged", async () => {
 		const ctx = createMockContext("DiceDuel:Wager", {
 			previousState: {
 				status: "Pending",
@@ -278,7 +277,6 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 0n,
-				createdAt: 1700000000n,
 			},
 			currentState: {
 				status: "Pending",
@@ -286,17 +284,14 @@ describe("DiceDuel:Wager handler", () => {
 				opponent: "O1",
 				amount: 1000n,
 				nonce: 0n,
-				createdAt: 1700000000n,
 			},
 		});
 
 		await handler(ctx);
 
 		const db = (ctx as any)._mockDb;
-		// Non-status-change path does a full column sync
-		expect(db.update).toHaveBeenCalled();
-		expect(db.upsert).not.toHaveBeenCalled();
-		// No events published — that's the anchor event handlers' job
+		expect(db.update).not.toHaveBeenCalled();
+		expect(db.insert).not.toHaveBeenCalled();
 		expect(ctx.publishEvent).not.toHaveBeenCalled();
 	});
 });
@@ -304,7 +299,7 @@ describe("DiceDuel:Wager handler", () => {
 describe("DiceDuel:DiceBag handler", () => {
 	const handler = svmHandlers.handlers["DiceDuel:DiceBag"];
 
-	it("upserts new dice bag on creation (publish happens via anchor event)", async () => {
+	it("upserts new dice bag and publishes mint event", async () => {
 		const ctx = createMockContext("DiceDuel:DiceBag", {
 			currentState: {
 				mint: "Mint1",
@@ -320,12 +315,13 @@ describe("DiceDuel:DiceBag handler", () => {
 
 		const db = (ctx as any)._mockDb;
 		expect(db.upsert).toHaveBeenCalled();
-		// dice_bag_minted notification is published by the DiceBagMinted
-		// anchor event handler, not the columns handler
-		expect(ctx.publishEvent).not.toHaveBeenCalled();
+		expect(ctx.publishEvent).toHaveBeenCalledWith({
+			eventType: "dice_bag_minted",
+			data: { player: "Owner1", mint: "Mint1" },
+		});
 	});
 
-	it("upserts on cache miss without publishing", async () => {
+	it("upserts on cache miss without publishing dice_bag_minted", async () => {
 		const ctx = createMockContext("DiceDuel:DiceBag", {
 			currentState: {
 				mint: "Mint1",
@@ -348,10 +344,11 @@ describe("DiceDuel:DiceBag handler", () => {
 		await handler(ctx);
 
 		expect(db.upsert).toHaveBeenCalled();
+		// Should NOT publish dice_bag_minted — this is a cache miss, not a real mint
 		expect(ctx.publishEvent).not.toHaveBeenCalled();
 	});
 
-	it("updates dice bag when uses change (publish happens via anchor event)", async () => {
+	it("updates stats when uses change and publishes dice_bag_updated", async () => {
 		const ctx = createMockContext("DiceDuel:DiceBag", {
 			previousState: {
 				mint: "M1",
@@ -375,9 +372,10 @@ describe("DiceDuel:DiceBag handler", () => {
 
 		const db = (ctx as any)._mockDb;
 		expect(db.update).toHaveBeenCalled();
-		// dice_bag_updated notification is published by the DiceBagUsed
-		// anchor event handler, not the columns handler
-		expect(ctx.publishEvent).not.toHaveBeenCalled();
+		expect(ctx.publishEvent).toHaveBeenCalledWith({
+			eventType: "dice_bag_updated",
+			data: { player: "O1", mint: "M1", usesRemaining: 4 },
+		});
 	});
 });
 
@@ -469,7 +467,7 @@ describe("DiceDuel:PlayerStats handler", () => {
 describe("DiceDuel:GameConfig handler", () => {
 	const handler = svmHandlers.handlers["DiceDuel:GameConfig"];
 
-	it("upserts new config on creation (config_updated published via anchor event)", async () => {
+	it("inserts new config and publishes config_updated", async () => {
 		const ctx = createMockContext("DiceDuel:GameConfig", {
 			currentState: {
 				admin: "Admin1",
@@ -484,10 +482,9 @@ describe("DiceDuel:GameConfig handler", () => {
 		});
 
 		await handler(ctx);
-		const db = (ctx as any)._mockDb;
-		expect(db.upsert).toHaveBeenCalled();
-		// config_updated notification is published by the ConfigUpdated
-		// anchor event handler, not the columns handler
-		expect(ctx.publishEvent).not.toHaveBeenCalled();
+		expect((ctx as any)._mockDb.insert).toHaveBeenCalled();
+		expect(ctx.publishEvent).toHaveBeenCalledWith(
+			expect.objectContaining({ eventType: "config_updated" }),
+		);
 	});
 });

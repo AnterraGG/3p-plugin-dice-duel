@@ -2,8 +2,8 @@
 target/release/
 target/debug/
 target/deploy/*.so
-target/deploy/*-keypair.json
 
+# Keep target/deploy keypair (program identity) — tracked intentionally
 # Keep target/idl/ OR use shared/idl/ as canonical (we use shared/idl/)
 target/idl/
 

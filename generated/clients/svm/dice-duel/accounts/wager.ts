@@ -7,210 +7,210 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressDecoder,
-  getAddressEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getOptionDecoder,
-  getOptionEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU32Decoder,
-  getU32Encoder,
-  getU64Decoder,
-  getU64Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type Account,
-  type Address,
-  type Codec,
-  type Decoder,
-  type EncodedAccount,
-  type Encoder,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
-  type Option,
-  type OptionOrNullable,
-  type ReadonlyUint8Array,
+	type Account,
+	type Address,
+	type Codec,
+	type Decoder,
+	type EncodedAccount,
+	type Encoder,
+	type FetchAccountConfig,
+	type FetchAccountsConfig,
+	type MaybeAccount,
+	type MaybeEncodedAccount,
+	type Option,
+	type OptionOrNullable,
+	type ReadonlyUint8Array,
+	assertAccountExists,
+	assertAccountsExist,
+	combineCodec,
+	decodeAccount,
+	fetchEncodedAccount,
+	fetchEncodedAccounts,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressDecoder,
+	getAddressEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getOptionDecoder,
+	getOptionEncoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU8Decoder,
+	getU8Encoder,
+	getU32Decoder,
+	getU32Encoder,
+	getU64Decoder,
+	getU64Encoder,
+	transformEncoder,
 } from "@solana/kit";
 import {
-  getWagerStatusDecoder,
-  getWagerStatusEncoder,
-  type WagerStatus,
-  type WagerStatusArgs,
+	type WagerStatus,
+	type WagerStatusArgs,
+	getWagerStatusDecoder,
+	getWagerStatusEncoder,
 } from "../types";
 
 export const WAGER_DISCRIMINATOR = new Uint8Array([
-  3, 110, 53, 190, 113, 31, 230, 40,
+	3, 110, 53, 190, 113, 31, 230, 40,
 ]);
 
 export function getWagerDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(WAGER_DISCRIMINATOR);
+	return fixEncoderSize(getBytesEncoder(), 8).encode(WAGER_DISCRIMINATOR);
 }
 
 export type Wager = {
-  discriminator: ReadonlyUint8Array;
-  challenger: Address;
-  opponent: Address;
-  challengerBag: Address;
-  amount: bigint;
-  gameType: number;
-  challengerChoice: number;
-  status: WagerStatus;
-  nonce: bigint;
-  vrfRequestedAt: bigint;
-  vrfFulfilledAt: Option<bigint>;
-  vrfResult: Option<number>;
-  winner: Option<Address>;
-  createdAt: bigint;
-  settledAt: Option<bigint>;
-  threshold: number;
-  payoutMultiplierBps: number;
-  escrowBump: number;
-  bump: number;
+	discriminator: ReadonlyUint8Array;
+	challenger: Address;
+	opponent: Address;
+	challengerBag: Address;
+	amount: bigint;
+	gameType: number;
+	challengerChoice: number;
+	status: WagerStatus;
+	nonce: bigint;
+	vrfRequestedAt: bigint;
+	vrfFulfilledAt: Option<bigint>;
+	vrfResult: Option<number>;
+	winner: Option<Address>;
+	createdAt: bigint;
+	settledAt: Option<bigint>;
+	threshold: number;
+	payoutMultiplierBps: number;
+	escrowBump: number;
+	bump: number;
 };
 
 export type WagerArgs = {
-  challenger: Address;
-  opponent: Address;
-  challengerBag: Address;
-  amount: number | bigint;
-  gameType: number;
-  challengerChoice: number;
-  status: WagerStatusArgs;
-  nonce: number | bigint;
-  vrfRequestedAt: number | bigint;
-  vrfFulfilledAt: OptionOrNullable<number | bigint>;
-  vrfResult: OptionOrNullable<number>;
-  winner: OptionOrNullable<Address>;
-  createdAt: number | bigint;
-  settledAt: OptionOrNullable<number | bigint>;
-  threshold: number;
-  payoutMultiplierBps: number;
-  escrowBump: number;
-  bump: number;
+	challenger: Address;
+	opponent: Address;
+	challengerBag: Address;
+	amount: number | bigint;
+	gameType: number;
+	challengerChoice: number;
+	status: WagerStatusArgs;
+	nonce: number | bigint;
+	vrfRequestedAt: number | bigint;
+	vrfFulfilledAt: OptionOrNullable<number | bigint>;
+	vrfResult: OptionOrNullable<number>;
+	winner: OptionOrNullable<Address>;
+	createdAt: number | bigint;
+	settledAt: OptionOrNullable<number | bigint>;
+	threshold: number;
+	payoutMultiplierBps: number;
+	escrowBump: number;
+	bump: number;
 };
 
 /** Gets the encoder for {@link WagerArgs} account data. */
 export function getWagerEncoder(): Encoder<WagerArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
-      ["challenger", getAddressEncoder()],
-      ["opponent", getAddressEncoder()],
-      ["challengerBag", getAddressEncoder()],
-      ["amount", getU64Encoder()],
-      ["gameType", getU8Encoder()],
-      ["challengerChoice", getU8Encoder()],
-      ["status", getWagerStatusEncoder()],
-      ["nonce", getU64Encoder()],
-      ["vrfRequestedAt", getI64Encoder()],
-      ["vrfFulfilledAt", getOptionEncoder(getI64Encoder())],
-      ["vrfResult", getOptionEncoder(getU8Encoder())],
-      ["winner", getOptionEncoder(getAddressEncoder())],
-      ["createdAt", getI64Encoder()],
-      ["settledAt", getOptionEncoder(getI64Encoder())],
-      ["threshold", getU8Encoder()],
-      ["payoutMultiplierBps", getU32Encoder()],
-      ["escrowBump", getU8Encoder()],
-      ["bump", getU8Encoder()],
-    ]),
-    (value) => ({ ...value, discriminator: WAGER_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([
+			["discriminator", fixEncoderSize(getBytesEncoder(), 8)],
+			["challenger", getAddressEncoder()],
+			["opponent", getAddressEncoder()],
+			["challengerBag", getAddressEncoder()],
+			["amount", getU64Encoder()],
+			["gameType", getU8Encoder()],
+			["challengerChoice", getU8Encoder()],
+			["status", getWagerStatusEncoder()],
+			["nonce", getU64Encoder()],
+			["vrfRequestedAt", getI64Encoder()],
+			["vrfFulfilledAt", getOptionEncoder(getI64Encoder())],
+			["vrfResult", getOptionEncoder(getU8Encoder())],
+			["winner", getOptionEncoder(getAddressEncoder())],
+			["createdAt", getI64Encoder()],
+			["settledAt", getOptionEncoder(getI64Encoder())],
+			["threshold", getU8Encoder()],
+			["payoutMultiplierBps", getU32Encoder()],
+			["escrowBump", getU8Encoder()],
+			["bump", getU8Encoder()],
+		]),
+		(value) => ({ ...value, discriminator: WAGER_DISCRIMINATOR }),
+	);
 }
 
 /** Gets the decoder for {@link Wager} account data. */
 export function getWagerDecoder(): Decoder<Wager> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-    ["challenger", getAddressDecoder()],
-    ["opponent", getAddressDecoder()],
-    ["challengerBag", getAddressDecoder()],
-    ["amount", getU64Decoder()],
-    ["gameType", getU8Decoder()],
-    ["challengerChoice", getU8Decoder()],
-    ["status", getWagerStatusDecoder()],
-    ["nonce", getU64Decoder()],
-    ["vrfRequestedAt", getI64Decoder()],
-    ["vrfFulfilledAt", getOptionDecoder(getI64Decoder())],
-    ["vrfResult", getOptionDecoder(getU8Decoder())],
-    ["winner", getOptionDecoder(getAddressDecoder())],
-    ["createdAt", getI64Decoder()],
-    ["settledAt", getOptionDecoder(getI64Decoder())],
-    ["threshold", getU8Decoder()],
-    ["payoutMultiplierBps", getU32Decoder()],
-    ["escrowBump", getU8Decoder()],
-    ["bump", getU8Decoder()],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+		["challenger", getAddressDecoder()],
+		["opponent", getAddressDecoder()],
+		["challengerBag", getAddressDecoder()],
+		["amount", getU64Decoder()],
+		["gameType", getU8Decoder()],
+		["challengerChoice", getU8Decoder()],
+		["status", getWagerStatusDecoder()],
+		["nonce", getU64Decoder()],
+		["vrfRequestedAt", getI64Decoder()],
+		["vrfFulfilledAt", getOptionDecoder(getI64Decoder())],
+		["vrfResult", getOptionDecoder(getU8Decoder())],
+		["winner", getOptionDecoder(getAddressDecoder())],
+		["createdAt", getI64Decoder()],
+		["settledAt", getOptionDecoder(getI64Decoder())],
+		["threshold", getU8Decoder()],
+		["payoutMultiplierBps", getU32Decoder()],
+		["escrowBump", getU8Decoder()],
+		["bump", getU8Decoder()],
+	]);
 }
 
 /** Gets the codec for {@link Wager} account data. */
 export function getWagerCodec(): Codec<WagerArgs, Wager> {
-  return combineCodec(getWagerEncoder(), getWagerDecoder());
+	return combineCodec(getWagerEncoder(), getWagerDecoder());
 }
 
 export function decodeWager<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress>,
 ): Account<Wager, TAddress>;
 export function decodeWager<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+	encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<Wager, TAddress>;
 export function decodeWager<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+	encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Wager, TAddress> | MaybeAccount<Wager, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getWagerDecoder(),
-  );
+	return decodeAccount(
+		encodedAccount as MaybeEncodedAccount<TAddress>,
+		getWagerDecoder(),
+	);
 }
 
 export async function fetchWager<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<Account<Wager, TAddress>> {
-  const maybeAccount = await fetchMaybeWager(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+	const maybeAccount = await fetchMaybeWager(rpc, address, config);
+	assertAccountExists(maybeAccount);
+	return maybeAccount;
 }
 
 export async function fetchMaybeWager<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+	rpc: Parameters<typeof fetchEncodedAccount>[0],
+	address: Address<TAddress>,
+	config?: FetchAccountConfig,
 ): Promise<MaybeAccount<Wager, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodeWager(maybeAccount);
+	const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+	return decodeWager(maybeAccount);
 }
 
 export async function fetchAllWager(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<Account<Wager>[]> {
-  const maybeAccounts = await fetchAllMaybeWager(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+	const maybeAccounts = await fetchAllMaybeWager(rpc, addresses, config);
+	assertAccountsExist(maybeAccounts);
+	return maybeAccounts;
 }
 
 export async function fetchAllMaybeWager(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+	rpc: Parameters<typeof fetchEncodedAccounts>[0],
+	addresses: Array<Address>,
+	config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<Wager>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map((maybeAccount) => decodeWager(maybeAccount));
+	const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+	return maybeAccounts.map((maybeAccount) => decodeWager(maybeAccount));
 }

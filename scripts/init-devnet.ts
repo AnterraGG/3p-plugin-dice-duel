@@ -24,15 +24,9 @@ import {
 // ─── Config ────────────────────────────────────────────────────────────
 
 const TREASURY = new PublicKey("BLq7QBexFpPDg2WMu4JaL67X7SEdnyvXGtcoEvdncq4m");
-
-// Program ID from IDL (single source of truth — flows from Anchor.toml → IDL → codegen)
-const idl = JSON.parse(
-	fs.readFileSync(
-		path.join(path.dirname(new URL(import.meta.url).pathname), "../generated/idl/dice_duel.json"),
-		"utf8",
-	),
+const PROGRAM_ID = new PublicKey(
+	"D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof",
 );
-const PROGRAM_ID = new PublicKey(idl.address);
 const DEVNET_RPC = "https://api.devnet.solana.com";
 
 const FEE_BPS = 500;
@@ -128,7 +122,7 @@ const [gameTypePda] = PublicKey.findProgramAddressSync(
 async function main() {
 	const connection = new Connection(DEVNET_RPC, "confirmed");
 
-	const keyPath = process.env.SOLANA_KEYPAIR || path.join(
+	const keyPath = path.join(
 		process.env.HOME || "/home/node",
 		".config/solana/id.json",
 	);

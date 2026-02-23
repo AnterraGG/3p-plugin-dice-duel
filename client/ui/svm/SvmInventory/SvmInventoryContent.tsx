@@ -10,8 +10,8 @@ export default function SvmInventoryContent({
 }: { onClose: () => void }) {
 	return (
 		<GameWindow
-			id="dice-duel:inventory"
-			title="Dice Duel"
+			id="dragon-dice:inventory"
+			title="Dragon Dice"
 			size="sm"
 			isOpen
 			onClose={onClose}

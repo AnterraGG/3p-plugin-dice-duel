@@ -7,386 +7,388 @@
  */
 
 import {
-  combineCodec,
-  fixDecoderSize,
-  fixEncoderSize,
-  getAddressEncoder,
-  getBytesDecoder,
-  getBytesEncoder,
-  getProgramDerivedAddress,
-  getStructDecoder,
-  getStructEncoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
-  type WritableSignerAccount,
+	type AccountMeta,
+	type AccountSignerMeta,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	type Instruction,
+	type InstructionWithAccounts,
+	type InstructionWithData,
+	type ReadonlyAccount,
+	type ReadonlyUint8Array,
+	type TransactionSigner,
+	type WritableAccount,
+	type WritableSignerAccount,
+	combineCodec,
+	fixDecoderSize,
+	fixEncoderSize,
+	getAddressEncoder,
+	getBytesDecoder,
+	getBytesEncoder,
+	getProgramDerivedAddress,
+	getStructDecoder,
+	getStructEncoder,
+	transformEncoder,
 } from "@solana/kit";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "../programs";
 import {
-  expectAddress,
-  getAccountMetaFactory,
-  type ResolvedAccount,
+	type ResolvedAccount,
+	expectAddress,
+	getAccountMetaFactory,
 } from "../shared";
 
 export const MINT_DICE_BAG_DISCRIMINATOR = new Uint8Array([
-  204, 69, 239, 46, 175, 111, 64, 73,
+	204, 69, 239, 46, 175, 111, 64, 73,
 ]);
 
 export function getMintDiceBagDiscriminatorBytes() {
-  return fixEncoderSize(getBytesEncoder(), 8).encode(
-    MINT_DICE_BAG_DISCRIMINATOR,
-  );
+	return fixEncoderSize(getBytesEncoder(), 8).encode(
+		MINT_DICE_BAG_DISCRIMINATOR,
+	);
 }
 
 export type MintDiceBagInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountPlayer extends string | AccountMeta<string> = string,
-  TAccountConfig extends string | AccountMeta<string> = string,
-  TAccountMint extends string | AccountMeta<string> = string,
-  TAccountDiceBag extends string | AccountMeta<string> = string,
-  TAccountTreasury extends string | AccountMeta<string> = string,
-  TAccountMplCoreProgram extends string | AccountMeta<string> =
-    "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
-  TAccountSystemProgram extends string | AccountMeta<string> =
-    "11111111111111111111111111111111",
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountPlayer extends string | AccountMeta<string> = string,
+	TAccountConfig extends string | AccountMeta<string> = string,
+	TAccountMint extends string | AccountMeta<string> = string,
+	TAccountDiceBag extends string | AccountMeta<string> = string,
+	TAccountTreasury extends string | AccountMeta<string> = string,
+	TAccountMplCoreProgram extends
+		| string
+		| AccountMeta<string> = "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
+	TAccountSystemProgram extends
+		| string
+		| AccountMeta<string> = "11111111111111111111111111111111",
+	TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountPlayer extends string
-        ? WritableSignerAccount<TAccountPlayer> &
-            AccountSignerMeta<TAccountPlayer>
-        : TAccountPlayer,
-      TAccountConfig extends string
-        ? ReadonlyAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountMint extends string
-        ? WritableSignerAccount<TAccountMint> & AccountSignerMeta<TAccountMint>
-        : TAccountMint,
-      TAccountDiceBag extends string
-        ? WritableAccount<TAccountDiceBag>
-        : TAccountDiceBag,
-      TAccountTreasury extends string
-        ? WritableAccount<TAccountTreasury>
-        : TAccountTreasury,
-      TAccountMplCoreProgram extends string
-        ? ReadonlyAccount<TAccountMplCoreProgram>
-        : TAccountMplCoreProgram,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
-      ...TRemainingAccounts,
-    ]
-  >;
+	InstructionWithData<ReadonlyUint8Array> &
+	InstructionWithAccounts<
+		[
+			TAccountPlayer extends string
+				? WritableSignerAccount<TAccountPlayer> &
+						AccountSignerMeta<TAccountPlayer>
+				: TAccountPlayer,
+			TAccountConfig extends string
+				? ReadonlyAccount<TAccountConfig>
+				: TAccountConfig,
+			TAccountMint extends string
+				? WritableSignerAccount<TAccountMint> & AccountSignerMeta<TAccountMint>
+				: TAccountMint,
+			TAccountDiceBag extends string
+				? WritableAccount<TAccountDiceBag>
+				: TAccountDiceBag,
+			TAccountTreasury extends string
+				? WritableAccount<TAccountTreasury>
+				: TAccountTreasury,
+			TAccountMplCoreProgram extends string
+				? ReadonlyAccount<TAccountMplCoreProgram>
+				: TAccountMplCoreProgram,
+			TAccountSystemProgram extends string
+				? ReadonlyAccount<TAccountSystemProgram>
+				: TAccountSystemProgram,
+			...TRemainingAccounts,
+		]
+	>;
 
 export type MintDiceBagInstructionData = { discriminator: ReadonlyUint8Array };
 
 export type MintDiceBagInstructionDataArgs = {};
 
 export function getMintDiceBagInstructionDataEncoder(): FixedSizeEncoder<MintDiceBagInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
-    (value) => ({ ...value, discriminator: MINT_DICE_BAG_DISCRIMINATOR }),
-  );
+	return transformEncoder(
+		getStructEncoder([["discriminator", fixEncoderSize(getBytesEncoder(), 8)]]),
+		(value) => ({ ...value, discriminator: MINT_DICE_BAG_DISCRIMINATOR }),
+	);
 }
 
 export function getMintDiceBagInstructionDataDecoder(): FixedSizeDecoder<MintDiceBagInstructionData> {
-  return getStructDecoder([
-    ["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
-  ]);
+	return getStructDecoder([
+		["discriminator", fixDecoderSize(getBytesDecoder(), 8)],
+	]);
 }
 
 export function getMintDiceBagInstructionDataCodec(): FixedSizeCodec<
-  MintDiceBagInstructionDataArgs,
-  MintDiceBagInstructionData
+	MintDiceBagInstructionDataArgs,
+	MintDiceBagInstructionData
 > {
-  return combineCodec(
-    getMintDiceBagInstructionDataEncoder(),
-    getMintDiceBagInstructionDataDecoder(),
-  );
+	return combineCodec(
+		getMintDiceBagInstructionDataEncoder(),
+		getMintDiceBagInstructionDataDecoder(),
+	);
 }
 
 export type MintDiceBagAsyncInput<
-  TAccountPlayer extends string = string,
-  TAccountConfig extends string = string,
-  TAccountMint extends string = string,
-  TAccountDiceBag extends string = string,
-  TAccountTreasury extends string = string,
-  TAccountMplCoreProgram extends string = string,
-  TAccountSystemProgram extends string = string,
+	TAccountPlayer extends string = string,
+	TAccountConfig extends string = string,
+	TAccountMint extends string = string,
+	TAccountDiceBag extends string = string,
+	TAccountTreasury extends string = string,
+	TAccountMplCoreProgram extends string = string,
+	TAccountSystemProgram extends string = string,
 > = {
-  player: TransactionSigner<TAccountPlayer>;
-  config?: Address<TAccountConfig>;
-  mint: TransactionSigner<TAccountMint>;
-  diceBag?: Address<TAccountDiceBag>;
-  treasury: Address<TAccountTreasury>;
-  mplCoreProgram?: Address<TAccountMplCoreProgram>;
-  systemProgram?: Address<TAccountSystemProgram>;
+	player: TransactionSigner<TAccountPlayer>;
+	config?: Address<TAccountConfig>;
+	mint: TransactionSigner<TAccountMint>;
+	diceBag?: Address<TAccountDiceBag>;
+	treasury: Address<TAccountTreasury>;
+	mplCoreProgram?: Address<TAccountMplCoreProgram>;
+	systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export async function getMintDiceBagInstructionAsync<
-  TAccountPlayer extends string,
-  TAccountConfig extends string,
-  TAccountMint extends string,
-  TAccountDiceBag extends string,
-  TAccountTreasury extends string,
-  TAccountMplCoreProgram extends string,
-  TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountPlayer extends string,
+	TAccountConfig extends string,
+	TAccountMint extends string,
+	TAccountDiceBag extends string,
+	TAccountTreasury extends string,
+	TAccountMplCoreProgram extends string,
+	TAccountSystemProgram extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: MintDiceBagAsyncInput<
-    TAccountPlayer,
-    TAccountConfig,
-    TAccountMint,
-    TAccountDiceBag,
-    TAccountTreasury,
-    TAccountMplCoreProgram,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: MintDiceBagAsyncInput<
+		TAccountPlayer,
+		TAccountConfig,
+		TAccountMint,
+		TAccountDiceBag,
+		TAccountTreasury,
+		TAccountMplCoreProgram,
+		TAccountSystemProgram
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): Promise<
-  MintDiceBagInstruction<
-    TProgramAddress,
-    TAccountPlayer,
-    TAccountConfig,
-    TAccountMint,
-    TAccountDiceBag,
-    TAccountTreasury,
-    TAccountMplCoreProgram,
-    TAccountSystemProgram
-  >
+	MintDiceBagInstruction<
+		TProgramAddress,
+		TAccountPlayer,
+		TAccountConfig,
+		TAccountMint,
+		TAccountDiceBag,
+		TAccountTreasury,
+		TAccountMplCoreProgram,
+		TAccountSystemProgram
+	>
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    player: { value: input.player ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    mint: { value: input.mint ?? null, isWritable: true },
-    diceBag: { value: input.diceBag ?? null, isWritable: true },
-    treasury: { value: input.treasury ?? null, isWritable: true },
-    mplCoreProgram: { value: input.mplCoreProgram ?? null, isWritable: false },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		player: { value: input.player ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		mint: { value: input.mint ?? null, isWritable: true },
+		diceBag: { value: input.diceBag ?? null, isWritable: true },
+		treasury: { value: input.treasury ?? null, isWritable: true },
+		mplCoreProgram: { value: input.mplCoreProgram ?? null, isWritable: false },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Resolve default values.
-  if (!accounts.config.value) {
-    accounts.config.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
-      ],
-    });
-  }
-  if (!accounts.diceBag.value) {
-    accounts.diceBag.value = await getProgramDerivedAddress({
-      programAddress,
-      seeds: [
-        getBytesEncoder().encode(
-          new Uint8Array([100, 105, 99, 101, 95, 98, 97, 103]),
-        ),
-        getAddressEncoder().encode(expectAddress(accounts.mint.value)),
-      ],
-    });
-  }
-  if (!accounts.mplCoreProgram.value) {
-    accounts.mplCoreProgram.value =
-      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d" as Address<"CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d">;
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.config.value) {
+		accounts.config.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(new Uint8Array([99, 111, 110, 102, 105, 103])),
+			],
+		});
+	}
+	if (!accounts.diceBag.value) {
+		accounts.diceBag.value = await getProgramDerivedAddress({
+			programAddress,
+			seeds: [
+				getBytesEncoder().encode(
+					new Uint8Array([100, 105, 99, 101, 95, 98, 97, 103]),
+				),
+				getAddressEncoder().encode(expectAddress(accounts.mint.value)),
+			],
+		});
+	}
+	if (!accounts.mplCoreProgram.value) {
+		accounts.mplCoreProgram.value =
+			"CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d" as Address<"CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d">;
+	}
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.player),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.mint),
-      getAccountMeta(accounts.diceBag),
-      getAccountMeta(accounts.treasury),
-      getAccountMeta(accounts.mplCoreProgram),
-      getAccountMeta(accounts.systemProgram),
-    ],
-    data: getMintDiceBagInstructionDataEncoder().encode({}),
-    programAddress,
-  } as MintDiceBagInstruction<
-    TProgramAddress,
-    TAccountPlayer,
-    TAccountConfig,
-    TAccountMint,
-    TAccountDiceBag,
-    TAccountTreasury,
-    TAccountMplCoreProgram,
-    TAccountSystemProgram
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.player),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.mint),
+			getAccountMeta(accounts.diceBag),
+			getAccountMeta(accounts.treasury),
+			getAccountMeta(accounts.mplCoreProgram),
+			getAccountMeta(accounts.systemProgram),
+		],
+		data: getMintDiceBagInstructionDataEncoder().encode({}),
+		programAddress,
+	} as MintDiceBagInstruction<
+		TProgramAddress,
+		TAccountPlayer,
+		TAccountConfig,
+		TAccountMint,
+		TAccountDiceBag,
+		TAccountTreasury,
+		TAccountMplCoreProgram,
+		TAccountSystemProgram
+	>);
 }
 
 export type MintDiceBagInput<
-  TAccountPlayer extends string = string,
-  TAccountConfig extends string = string,
-  TAccountMint extends string = string,
-  TAccountDiceBag extends string = string,
-  TAccountTreasury extends string = string,
-  TAccountMplCoreProgram extends string = string,
-  TAccountSystemProgram extends string = string,
+	TAccountPlayer extends string = string,
+	TAccountConfig extends string = string,
+	TAccountMint extends string = string,
+	TAccountDiceBag extends string = string,
+	TAccountTreasury extends string = string,
+	TAccountMplCoreProgram extends string = string,
+	TAccountSystemProgram extends string = string,
 > = {
-  player: TransactionSigner<TAccountPlayer>;
-  config: Address<TAccountConfig>;
-  mint: TransactionSigner<TAccountMint>;
-  diceBag: Address<TAccountDiceBag>;
-  treasury: Address<TAccountTreasury>;
-  mplCoreProgram?: Address<TAccountMplCoreProgram>;
-  systemProgram?: Address<TAccountSystemProgram>;
+	player: TransactionSigner<TAccountPlayer>;
+	config: Address<TAccountConfig>;
+	mint: TransactionSigner<TAccountMint>;
+	diceBag: Address<TAccountDiceBag>;
+	treasury: Address<TAccountTreasury>;
+	mplCoreProgram?: Address<TAccountMplCoreProgram>;
+	systemProgram?: Address<TAccountSystemProgram>;
 };
 
 export function getMintDiceBagInstruction<
-  TAccountPlayer extends string,
-  TAccountConfig extends string,
-  TAccountMint extends string,
-  TAccountDiceBag extends string,
-  TAccountTreasury extends string,
-  TAccountMplCoreProgram extends string,
-  TAccountSystemProgram extends string,
-  TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountPlayer extends string,
+	TAccountConfig extends string,
+	TAccountMint extends string,
+	TAccountDiceBag extends string,
+	TAccountTreasury extends string,
+	TAccountMplCoreProgram extends string,
+	TAccountSystemProgram extends string,
+	TProgramAddress extends Address = typeof DICE_DUEL_PROGRAM_ADDRESS,
 >(
-  input: MintDiceBagInput<
-    TAccountPlayer,
-    TAccountConfig,
-    TAccountMint,
-    TAccountDiceBag,
-    TAccountTreasury,
-    TAccountMplCoreProgram,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress },
+	input: MintDiceBagInput<
+		TAccountPlayer,
+		TAccountConfig,
+		TAccountMint,
+		TAccountDiceBag,
+		TAccountTreasury,
+		TAccountMplCoreProgram,
+		TAccountSystemProgram
+	>,
+	config?: { programAddress?: TProgramAddress },
 ): MintDiceBagInstruction<
-  TProgramAddress,
-  TAccountPlayer,
-  TAccountConfig,
-  TAccountMint,
-  TAccountDiceBag,
-  TAccountTreasury,
-  TAccountMplCoreProgram,
-  TAccountSystemProgram
+	TProgramAddress,
+	TAccountPlayer,
+	TAccountConfig,
+	TAccountMint,
+	TAccountDiceBag,
+	TAccountTreasury,
+	TAccountMplCoreProgram,
+	TAccountSystemProgram
 > {
-  // Program address.
-  const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
+	// Program address.
+	const programAddress = config?.programAddress ?? DICE_DUEL_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    player: { value: input.player ?? null, isWritable: true },
-    config: { value: input.config ?? null, isWritable: false },
-    mint: { value: input.mint ?? null, isWritable: true },
-    diceBag: { value: input.diceBag ?? null, isWritable: true },
-    treasury: { value: input.treasury ?? null, isWritable: true },
-    mplCoreProgram: { value: input.mplCoreProgram ?? null, isWritable: false },
-    systemProgram: { value: input.systemProgram ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+	// Original accounts.
+	const originalAccounts = {
+		player: { value: input.player ?? null, isWritable: true },
+		config: { value: input.config ?? null, isWritable: false },
+		mint: { value: input.mint ?? null, isWritable: true },
+		diceBag: { value: input.diceBag ?? null, isWritable: true },
+		treasury: { value: input.treasury ?? null, isWritable: true },
+		mplCoreProgram: { value: input.mplCoreProgram ?? null, isWritable: false },
+		systemProgram: { value: input.systemProgram ?? null, isWritable: false },
+	};
+	const accounts = originalAccounts as Record<
+		keyof typeof originalAccounts,
+		ResolvedAccount
+	>;
 
-  // Resolve default values.
-  if (!accounts.mplCoreProgram.value) {
-    accounts.mplCoreProgram.value =
-      "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d" as Address<"CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d">;
-  }
-  if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
-  }
+	// Resolve default values.
+	if (!accounts.mplCoreProgram.value) {
+		accounts.mplCoreProgram.value =
+			"CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d" as Address<"CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d">;
+	}
+	if (!accounts.systemProgram.value) {
+		accounts.systemProgram.value =
+			"11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
+	}
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.player),
-      getAccountMeta(accounts.config),
-      getAccountMeta(accounts.mint),
-      getAccountMeta(accounts.diceBag),
-      getAccountMeta(accounts.treasury),
-      getAccountMeta(accounts.mplCoreProgram),
-      getAccountMeta(accounts.systemProgram),
-    ],
-    data: getMintDiceBagInstructionDataEncoder().encode({}),
-    programAddress,
-  } as MintDiceBagInstruction<
-    TProgramAddress,
-    TAccountPlayer,
-    TAccountConfig,
-    TAccountMint,
-    TAccountDiceBag,
-    TAccountTreasury,
-    TAccountMplCoreProgram,
-    TAccountSystemProgram
-  >);
+	const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
+	return Object.freeze({
+		accounts: [
+			getAccountMeta(accounts.player),
+			getAccountMeta(accounts.config),
+			getAccountMeta(accounts.mint),
+			getAccountMeta(accounts.diceBag),
+			getAccountMeta(accounts.treasury),
+			getAccountMeta(accounts.mplCoreProgram),
+			getAccountMeta(accounts.systemProgram),
+		],
+		data: getMintDiceBagInstructionDataEncoder().encode({}),
+		programAddress,
+	} as MintDiceBagInstruction<
+		TProgramAddress,
+		TAccountPlayer,
+		TAccountConfig,
+		TAccountMint,
+		TAccountDiceBag,
+		TAccountTreasury,
+		TAccountMplCoreProgram,
+		TAccountSystemProgram
+	>);
 }
 
 export type ParsedMintDiceBagInstruction<
-  TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+	TProgram extends string = typeof DICE_DUEL_PROGRAM_ADDRESS,
+	TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    player: TAccountMetas[0];
-    config: TAccountMetas[1];
-    mint: TAccountMetas[2];
-    diceBag: TAccountMetas[3];
-    treasury: TAccountMetas[4];
-    mplCoreProgram: TAccountMetas[5];
-    systemProgram: TAccountMetas[6];
-  };
-  data: MintDiceBagInstructionData;
+	programAddress: Address<TProgram>;
+	accounts: {
+		player: TAccountMetas[0];
+		config: TAccountMetas[1];
+		mint: TAccountMetas[2];
+		diceBag: TAccountMetas[3];
+		treasury: TAccountMetas[4];
+		mplCoreProgram: TAccountMetas[5];
+		systemProgram: TAccountMetas[6];
+	};
+	data: MintDiceBagInstructionData;
 };
 
 export function parseMintDiceBagInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
+	TProgram extends string,
+	TAccountMetas extends readonly AccountMeta[],
 >(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+	instruction: Instruction<TProgram> &
+		InstructionWithAccounts<TAccountMetas> &
+		InstructionWithData<ReadonlyUint8Array>,
 ): ParsedMintDiceBagInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 7) {
-    // TODO: Coded error.
-    throw new Error("Not enough accounts");
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      player: getNextAccount(),
-      config: getNextAccount(),
-      mint: getNextAccount(),
-      diceBag: getNextAccount(),
-      treasury: getNextAccount(),
-      mplCoreProgram: getNextAccount(),
-      systemProgram: getNextAccount(),
-    },
-    data: getMintDiceBagInstructionDataDecoder().decode(instruction.data),
-  };
+	if (instruction.accounts.length < 7) {
+		// TODO: Coded error.
+		throw new Error("Not enough accounts");
+	}
+	let accountIndex = 0;
+	const getNextAccount = () => {
+		const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+		accountIndex += 1;
+		return accountMeta;
+	};
+	return {
+		programAddress: instruction.programAddress,
+		accounts: {
+			player: getNextAccount(),
+			config: getNextAccount(),
+			mint: getNextAccount(),
+			diceBag: getNextAccount(),
+			treasury: getNextAccount(),
+			mplCoreProgram: getNextAccount(),
+			systemProgram: getNextAccount(),
+		},
+		data: getMintDiceBagInstructionDataDecoder().decode(instruction.data),
+	};
 }

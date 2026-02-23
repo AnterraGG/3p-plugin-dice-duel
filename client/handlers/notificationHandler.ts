@@ -1,5 +1,5 @@
 /**
- * Dice Duel Notification Handler (3p SDK version)
+ * Dragon Dice Notification Handler (3p SDK version)
  *
  * Receives server→client WagerNotification and DiceBagNotification messages,
  * dispatches them to the notification store, and invalidates relevant queries
@@ -12,9 +12,9 @@
 import type { PluginLoadContext } from "@townexchange/3p-plugin-sdk/client";
 import { DiceBagNotification, WagerNotification } from "../../shared/messages";
 import { queryKeys } from "../hooks/svm/queries-indexed";
-import { useDiceDuelNotificationStore } from "../store/diceDuelNotificationStore";
+import { useDragonDiceNotificationStore } from "../store/dragonDiceNotificationStore";
 
-const LOG = "[DiceDuel:NotificationHandler]";
+const LOG = "[DragonDice:NotificationHandler]";
 
 /** Invalidate inventory wagers (actionable state changed). */
 function invalidateInventory(ctx: PluginLoadContext): void {
@@ -37,11 +37,11 @@ function invalidateDiceQueries(ctx: PluginLoadContext): void {
 	ctx.queries.invalidate(queryKeys.diceBags.all());
 }
 
-export function registerDiceDuelNotificationHandler(
+export function registerDragonDiceNotificationHandler(
 	ctx: PluginLoadContext,
 ): void {
 	ctx.messages.on(WagerNotification, (packet) => {
-		const store = useDiceDuelNotificationStore.getState();
+		const store = useDragonDiceNotificationStore.getState();
 		console.log(
 			`${LOG} Received: ${packet.notificationType} wagerId=${packet.wagerId}`,
 		);
@@ -142,7 +142,7 @@ export function registerDiceDuelNotificationHandler(
 
 	// ── Dice Bag Notifications ──────────────────────────────────────────────
 	ctx.messages.on(DiceBagNotification, (packet) => {
-		const store = useDiceDuelNotificationStore.getState();
+		const store = useDragonDiceNotificationStore.getState();
 		console.log(
 			`${LOG} Received dice bag event: ${packet.notificationType} mint=${packet.mint}`,
 		);

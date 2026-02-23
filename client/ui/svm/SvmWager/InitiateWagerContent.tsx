@@ -14,7 +14,7 @@ export default function InitiateWagerContent({
 }) {
 	return (
 		<GameWindow
-			id="dice-duel:initiate-wager"
+			id="dragon-dice:initiate-wager"
 			title="Dice Duel — Challenge"
 			size="md"
 			isOpen

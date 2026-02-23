@@ -7,59 +7,59 @@
  */
 
 import {
-  combineCodec,
-  getAddressDecoder,
-  getAddressEncoder,
-  getI64Decoder,
-  getI64Encoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type Address,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getAddressDecoder,
+	getAddressEncoder,
+	getI64Decoder,
+	getI64Encoder,
+	getStructDecoder,
+	getStructEncoder,
+	getU64Decoder,
+	getU64Encoder,
 } from "@solana/kit";
 
 export type WagerExpiredEvent = {
-  challenger: Address;
-  opponent: Address;
-  nonce: bigint;
-  settledAt: bigint;
+	challenger: Address;
+	opponent: Address;
+	nonce: bigint;
+	settledAt: bigint;
 };
 
 export type WagerExpiredEventArgs = {
-  challenger: Address;
-  opponent: Address;
-  nonce: number | bigint;
-  settledAt: number | bigint;
+	challenger: Address;
+	opponent: Address;
+	nonce: number | bigint;
+	settledAt: number | bigint;
 };
 
 export function getWagerExpiredEventEncoder(): FixedSizeEncoder<WagerExpiredEventArgs> {
-  return getStructEncoder([
-    ["challenger", getAddressEncoder()],
-    ["opponent", getAddressEncoder()],
-    ["nonce", getU64Encoder()],
-    ["settledAt", getI64Encoder()],
-  ]);
+	return getStructEncoder([
+		["challenger", getAddressEncoder()],
+		["opponent", getAddressEncoder()],
+		["nonce", getU64Encoder()],
+		["settledAt", getI64Encoder()],
+	]);
 }
 
 export function getWagerExpiredEventDecoder(): FixedSizeDecoder<WagerExpiredEvent> {
-  return getStructDecoder([
-    ["challenger", getAddressDecoder()],
-    ["opponent", getAddressDecoder()],
-    ["nonce", getU64Decoder()],
-    ["settledAt", getI64Decoder()],
-  ]);
+	return getStructDecoder([
+		["challenger", getAddressDecoder()],
+		["opponent", getAddressDecoder()],
+		["nonce", getU64Decoder()],
+		["settledAt", getI64Decoder()],
+	]);
 }
 
 export function getWagerExpiredEventCodec(): FixedSizeCodec<
-  WagerExpiredEventArgs,
-  WagerExpiredEvent
+	WagerExpiredEventArgs,
+	WagerExpiredEvent
 > {
-  return combineCodec(
-    getWagerExpiredEventEncoder(),
-    getWagerExpiredEventDecoder(),
-  );
+	return combineCodec(
+		getWagerExpiredEventEncoder(),
+		getWagerExpiredEventDecoder(),
+	);
 }

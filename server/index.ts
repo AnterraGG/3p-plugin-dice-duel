@@ -1,5 +1,5 @@
 /**
- * Dice Duel Server Plugin (3p SDK version)
+ * Dragon Dice Server Plugin (3p SDK version)
  *
  * Handles onchain events from the SVM indexer and routes
  * notifications to the appropriate connected players.
@@ -13,7 +13,7 @@ import type { OnchainEvent } from "@townexchange/3p-plugin-sdk/shared";
 import { PluginAnimationType } from "@townexchange/3p-plugin-sdk/shared";
 import { formatSol } from "@townexchange/3p-plugin-sdk/shared";
 import type {
-	DiceDuelEventMap,
+	DragonDiceEventMap,
 	WagerStatusEventData,
 } from "../shared/event-data";
 import { manifest } from "../shared/manifest";
@@ -25,7 +25,7 @@ import {
 
 // ─── Plugin Definition ──────────────────────────────────────────────────────
 
-export const diceDuelServerPlugin = defineServerPlugin({
+export const dragonDiceServerPlugin = defineServerPlugin({
 	id: manifest.id,
 	name: manifest.name,
 	outboundMessages: [WagerNotification, DiceBagNotification],
@@ -110,7 +110,7 @@ export const diceDuelServerPlugin = defineServerPlugin({
 
 		// ─── Event Handlers ───────────────────────────────────────────
 
-		return defineEventHandlers<DiceDuelEventMap>({
+		return defineEventHandlers<DragonDiceEventMap>({
 			wager_initiated(event) {
 				const { challenger, opponent, amount, wagerAddress } = event.data;
 				if (!challenger || !opponent) return;

@@ -1,2948 +1,2170 @@
 {
-  "address": "7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM",
-  "metadata": {
-    "name": "dice_duel",
-    "version": "0.1.0",
-    "spec": "0.1.0",
-    "description": "DiceDuel - Peer-to-peer dice wagering on Solana"
-  },
-  "instructions": [
-    {
-      "name": "accept_wager",
-      "discriminator": [
-        214,
-        18,
-        178,
-        214,
-        203,
-        22,
-        50,
-        119
-      ],
-      "accounts": [
-        {
-          "name": "opponent",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "wager"
-          ]
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              },
-              {
-                "kind": "account",
-                "path": "wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger",
-          "relations": [
-            "wager"
-          ]
-        },
-        {
-          "name": "challenger_bag",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  99,
-                  101,
-                  95,
-                  98,
-                  97,
-                  103
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger_bag.mint",
-                "account": "DiceBag"
-              }
-            ]
-          },
-          "relations": [
-            "wager"
-          ]
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_stats",
-          "docs": [
-            "Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).",
-            "NOT init_if_needed — prevents opponent from paying rent for challenger's stats."
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "opponent_stats",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "opponent"
-              }
-            ]
-          }
-        },
-        {
-          "name": "oracle_queue",
-          "writable": true,
-          "address": "Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh"
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "program_identity",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  105,
-                  100,
-                  101,
-                  110,
-                  116,
-                  105,
-                  116,
-                  121
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "vrf_program",
-          "address": "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz"
-        },
-        {
-          "name": "slot_hashes",
-          "address": "SysvarS1otHashes111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "cancel_wager",
-      "discriminator": [
-        57,
-        92,
-        124,
-        123,
-        216,
-        16,
-        37,
-        148
-      ],
-      "accounts": [
-        {
-          "name": "challenger",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "wager"
-          ]
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger"
-              },
-              {
-                "kind": "account",
-                "path": "wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_stats",
-          "docs": [
-            "Challenger's PlayerStats — guaranteed to exist from initiate_wager."
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger"
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "claim_expired",
-      "discriminator": [
-        124,
-        78,
-        197,
-        187,
-        210,
-        66,
-        255,
-        1
-      ],
-      "accounts": [
-        {
-          "name": "caller",
-          "signer": true
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              },
-              {
-                "kind": "account",
-                "path": "wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger",
-          "writable": true
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_stats",
-          "docs": [
-            "Challenger's PlayerStats — guaranteed to exist from initiate_wager."
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "claim_vrf_timeout",
-      "discriminator": [
-        187,
-        216,
-        207,
-        151,
-        241,
-        76,
-        240,
-        164
-      ],
-      "accounts": [
-        {
-          "name": "caller",
-          "signer": true
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              },
-              {
-                "kind": "account",
-                "path": "wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger",
-          "writable": true
-        },
-        {
-          "name": "opponent",
-          "writable": true
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "claim_winnings",
-      "discriminator": [
-        161,
-        215,
-        24,
-        59,
-        14,
-        236,
-        242,
-        221
-      ],
-      "accounts": [
-        {
-          "name": "claimer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              },
-              {
-                "kind": "account",
-                "path": "wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger",
-          "writable": true
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "treasury",
-          "writable": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "cleanup_stale_wager",
-      "discriminator": [
-        91,
-        79,
-        225,
-        111,
-        98,
-        183,
-        190,
-        208
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "docs": [
-            "Anyone can call this — permissionless"
-          ],
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "wager",
-          "docs": [
-            "The stale wager to close. Must be Pending + nonce stale.",
-            "`close = challenger` zeroes the discriminator (prevents resurrection) and sends rent to challenger."
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              },
-              {
-                "kind": "account",
-                "path": "wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_stats",
-          "docs": [
-            "Challenger's PlayerStats — used to verify staleness"
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger",
-          "writable": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "consume_randomness",
-      "discriminator": [
-        190,
-        217,
-        49,
-        162,
-        99,
-        26,
-        73,
-        234
-      ],
-      "accounts": [
-        {
-          "name": "vrf_program_identity",
-          "docs": [
-            "SECURITY: Validates callback is from the real VRF program.",
-            "In test builds, any signer is accepted to enable integration testing",
-            "of the settlement path without a real VRF oracle."
-          ],
-          "signer": true,
-          "address": "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw"
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger",
-          "writable": true
-        },
-        {
-          "name": "opponent",
-          "writable": true
-        },
-        {
-          "name": "challenger_bag",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  99,
-                  101,
-                  95,
-                  98,
-                  97,
-                  103
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger_bag",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_stats",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "opponent_stats",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.opponent",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "treasury",
-          "writable": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "randomness",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "consume_randomness_minimal",
-      "discriminator": [
-        134,
-        130,
-        24,
-        11,
-        244,
-        65,
-        71,
-        231
-      ],
-      "accounts": [
-        {
-          "name": "vrf_program_identity",
-          "docs": [
-            "SECURITY: Validates callback is from the real VRF program.",
-            "In test builds, any signer is accepted to enable integration testing",
-            "of the settlement path without a real VRF oracle."
-          ],
-          "signer": true,
-          "address": "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw"
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        }
-      ],
-      "args": [
-        {
-          "name": "randomness",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "consume_randomness_resolved",
-      "discriminator": [
-        16,
-        31,
-        74,
-        24,
-        208,
-        41,
-        157,
-        96
-      ],
-      "accounts": [
-        {
-          "name": "vrf_program_identity",
-          "signer": true,
-          "address": "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw"
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              },
-              {
-                "kind": "account",
-                "path": "wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_stats",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "opponent_stats",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.opponent",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_bag",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  99,
-                  101,
-                  95,
-                  98,
-                  97,
-                  103
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger_bag.mint",
-                "account": "DiceBag"
-              }
-            ]
-          }
-        }
-      ],
-      "args": [
-        {
-          "name": "randomness",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "admin",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "config",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "treasury",
-          "type": "pubkey"
-        },
-        {
-          "name": "fee_bps",
-          "type": "u16"
-        },
-        {
-          "name": "mint_price",
-          "type": "u64"
-        },
-        {
-          "name": "initial_uses",
-          "type": "u8"
-        },
-        {
-          "name": "wager_expiry_seconds",
-          "type": "i64"
-        },
-        {
-          "name": "vrf_timeout_seconds",
-          "type": "i64"
-        }
-      ]
-    },
-    {
-      "name": "initiate_wager",
-      "discriminator": [
-        40,
-        119,
-        19,
-        242,
-        58,
-        154,
-        81,
-        226
-      ],
-      "accounts": [
-        {
-          "name": "challenger",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "challenger_bag",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  99,
-                  101,
-                  95,
-                  98,
-                  97,
-                  103
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger_bag.mint",
-                "account": "DiceBag"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger_stats",
-          "docs": [
-            "Challenger's PlayerStats — init_if_needed for first-time players.",
-            "Required to read/write wager_nonce and pending_nonce."
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger"
-              }
-            ]
-          }
-        },
-        {
-          "name": "wager",
-          "docs": [
-            "New wager account — unique PDA with nonce.",
-            "Uses `init` (NOT init_if_needed) — every wager is unique.",
-            "PDA seeds use the current wager_nonce value (before increment in handler)."
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger"
-              },
-              {
-                "kind": "account",
-                "path": "challenger_stats.wager_nonce",
-                "account": "PlayerStats"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "game_type_account",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  97,
-                  109,
-                  101,
-                  95,
-                  116,
-                  121,
-                  112,
-                  101
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "game_type"
-              }
-            ]
-          }
-        },
-        {
-          "name": "prev_wager",
-          "docs": [
-            "Optional: previous stale pending wager to close and reclaim rent.",
-            "REQUIRED when challenger_stats.pending_nonce.is_some()."
-          ],
-          "writable": true,
-          "optional": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "challenger"
-              },
-              {
-                "kind": "account",
-                "path": "prev_wager.nonce",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "prev_escrow",
-          "docs": [
-            "Optional: previous wager's escrow to refund.",
-            "Required when prev_wager is provided."
-          ],
-          "writable": true,
-          "optional": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "prev_wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "opponent",
-          "type": "pubkey"
-        },
-        {
-          "name": "amount",
-          "type": "u64"
-        },
-        {
-          "name": "game_type",
-          "type": "u8"
-        },
-        {
-          "name": "challenger_choice",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "mint_dice_bag",
-      "discriminator": [
-        204,
-        69,
-        239,
-        46,
-        175,
-        111,
-        64,
-        73
-      ],
-      "accounts": [
-        {
-          "name": "player",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "mint",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "dice_bag",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  105,
-                  99,
-                  101,
-                  95,
-                  98,
-                  97,
-                  103
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "treasury",
-          "writable": true
-        },
-        {
-          "name": "mpl_core_program",
-          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "pause",
-      "discriminator": [
-        211,
-        22,
-        221,
-        251,
-        74,
-        121,
-        193,
-        47
-      ],
-      "accounts": [
-        {
-          "name": "admin",
-          "signer": true,
-          "relations": [
-            "config"
-          ]
-        },
-        {
-          "name": "config",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "register_game_type",
-      "discriminator": [
-        25,
-        96,
-        131,
-        147,
-        164,
-        128,
-        35,
-        21
-      ],
-      "accounts": [
-        {
-          "name": "admin",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "config"
-          ]
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "game_type",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  97,
-                  109,
-                  101,
-                  95,
-                  116,
-                  121,
-                  112,
-                  101
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "id"
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "id",
-          "type": "u8"
-        },
-        {
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "name": "enabled",
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "name": "settle_wager",
-      "discriminator": [
-        161,
-        242,
-        169,
-        152,
-        172,
-        163,
-        161,
-        104
-      ],
-      "accounts": [
-        {
-          "name": "settler",
-          "docs": [
-            "Anyone can call settlement once VRF result is available"
-          ],
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "wager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  119,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "escrow",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "challenger",
-          "writable": true
-        },
-        {
-          "name": "opponent",
-          "writable": true
-        },
-        {
-          "name": "challenger_bag",
-          "writable": true
-        },
-        {
-          "name": "challenger_stats",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.challenger",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "opponent_stats",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  116,
-                  97,
-                  116,
-                  115
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "wager.opponent",
-                "account": "Wager"
-              }
-            ]
-          }
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "treasury",
-          "writable": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "unpause",
-      "discriminator": [
-        169,
-        144,
-        4,
-        38,
-        10,
-        141,
-        188,
-        255
-      ],
-      "accounts": [
-        {
-          "name": "admin",
-          "signer": true,
-          "relations": [
-            "config"
-          ]
-        },
-        {
-          "name": "config",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "update_config",
-      "discriminator": [
-        29,
-        158,
-        252,
-        191,
-        10,
-        83,
-        219,
-        99
-      ],
-      "accounts": [
-        {
-          "name": "admin",
-          "signer": true,
-          "relations": [
-            "config"
-          ]
-        },
-        {
-          "name": "config",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      "args": [
-        {
-          "name": "treasury",
-          "type": {
-            "option": "pubkey"
-          }
-        },
-        {
-          "name": "fee_bps",
-          "type": {
-            "option": "u16"
-          }
-        },
-        {
-          "name": "mint_price",
-          "type": {
-            "option": "u64"
-          }
-        },
-        {
-          "name": "initial_uses",
-          "type": {
-            "option": "u8"
-          }
-        },
-        {
-          "name": "wager_expiry_seconds",
-          "type": {
-            "option": "i64"
-          }
-        },
-        {
-          "name": "vrf_timeout_seconds",
-          "type": {
-            "option": "i64"
-          }
-        }
-      ]
-    },
-    {
-      "name": "update_game_type",
-      "discriminator": [
-        53,
-        145,
-        193,
-        121,
-        128,
-        45,
-        224,
-        38
-      ],
-      "accounts": [
-        {
-          "name": "admin",
-          "signer": true,
-          "relations": [
-            "config"
-          ]
-        },
-        {
-          "name": "config",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "game_type",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  97,
-                  109,
-                  101,
-                  95,
-                  116,
-                  121,
-                  112,
-                  101
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "game_type.id",
-                "account": "GameType"
-              }
-            ]
-          }
-        }
-      ],
-      "args": [
-        {
-          "name": "name",
-          "type": {
-            "option": "string"
-          }
-        },
-        {
-          "name": "enabled",
-          "type": {
-            "option": "bool"
-          }
-        }
-      ]
-    }
-  ],
-  "accounts": [
-    {
-      "name": "DiceBag",
-      "discriminator": [
-        248,
-        248,
-        136,
-        8,
-        17,
-        97,
-        117,
-        157
-      ]
-    },
-    {
-      "name": "GameConfig",
-      "discriminator": [
-        45,
-        146,
-        146,
-        33,
-        170,
-        69,
-        96,
-        133
-      ]
-    },
-    {
-      "name": "GameType",
-      "discriminator": [
-        208,
-        255,
-        116,
-        236,
-        234,
-        71,
-        80,
-        34
-      ]
-    },
-    {
-      "name": "PlayerStats",
-      "discriminator": [
-        169,
-        146,
-        242,
-        176,
-        102,
-        118,
-        231,
-        172
-      ]
-    },
-    {
-      "name": "Wager",
-      "discriminator": [
-        3,
-        110,
-        53,
-        190,
-        113,
-        31,
-        230,
-        40
-      ]
-    }
-  ],
-  "events": [
-    {
-      "name": "ConfigUpdated",
-      "discriminator": [
-        40,
-        241,
-        230,
-        122,
-        11,
-        19,
-        198,
-        194
-      ]
-    },
-    {
-      "name": "DiceBagMinted",
-      "discriminator": [
-        109,
-        1,
-        217,
-        118,
-        17,
-        179,
-        172,
-        17
-      ]
-    },
-    {
-      "name": "DiceBagUsed",
-      "discriminator": [
-        70,
-        196,
-        117,
-        142,
-        49,
-        123,
-        28,
-        160
-      ]
-    },
-    {
-      "name": "VrfTimeoutRefund",
-      "discriminator": [
-        227,
-        221,
-        82,
-        28,
-        254,
-        103,
-        150,
-        25
-      ]
-    },
-    {
-      "name": "WagerAccepted",
-      "discriminator": [
-        133,
-        143,
-        135,
-        203,
-        173,
-        82,
-        11,
-        163
-      ]
-    },
-    {
-      "name": "WagerCancelled",
-      "discriminator": [
-        12,
-        227,
-        103,
-        239,
-        64,
-        116,
-        157,
-        72
-      ]
-    },
-    {
-      "name": "WagerExpiredEvent",
-      "discriminator": [
-        172,
-        123,
-        121,
-        0,
-        0,
-        253,
-        141,
-        195
-      ]
-    },
-    {
-      "name": "WagerInitiated",
-      "discriminator": [
-        203,
-        191,
-        151,
-        199,
-        168,
-        231,
-        104,
-        68
-      ]
-    },
-    {
-      "name": "WagerResolved",
-      "discriminator": [
-        166,
-        83,
-        14,
-        127,
-        130,
-        175,
-        204,
-        13
-      ]
-    },
-    {
-      "name": "WagerResolvedEvent",
-      "discriminator": [
-        70,
-        149,
-        137,
-        172,
-        58,
-        165,
-        156,
-        8
-      ]
-    },
-    {
-      "name": "WinningsClaimed",
-      "discriminator": [
-        187,
-        184,
-        29,
-        196,
-        54,
-        117,
-        70,
-        150
-      ]
-    }
-  ],
-  "errors": [
-    {
-      "code": 6000,
-      "name": "GamePaused",
-      "msg": "Game is currently paused"
-    },
-    {
-      "code": 6001,
-      "name": "SelfWager",
-      "msg": "Cannot wager against yourself"
-    },
-    {
-      "code": 6002,
-      "name": "BagExhausted",
-      "msg": "Dice bag has no uses remaining"
-    },
-    {
-      "code": 6003,
-      "name": "BagNotOwned",
-      "msg": "Dice bag not owned by challenger"
-    },
-    {
-      "code": 6004,
-      "name": "InvalidAmount",
-      "msg": "Invalid wager amount"
-    },
-    {
-      "code": 6005,
-      "name": "GameTypeDisabled",
-      "msg": "Game type is disabled"
-    },
-    {
-      "code": 6006,
-      "name": "InvalidChoice",
-      "msg": "Invalid choice for this game type"
-    },
-    {
-      "code": 6007,
-      "name": "WagerInProgress",
-      "msg": "An active wager is in progress — cannot overwrite"
-    },
-    {
-      "code": 6008,
-      "name": "InvalidWagerStatus",
-      "msg": "Wager is not in the expected status"
-    },
-    {
-      "code": 6009,
-      "name": "WagerExpired",
-      "msg": "Wager has expired"
-    },
-    {
-      "code": 6010,
-      "name": "WagerNotExpired",
-      "msg": "Wager has not expired yet"
-    },
-    {
-      "code": 6011,
-      "name": "VrfNotTimedOut",
-      "msg": "VRF timeout has not been reached"
-    },
-    {
-      "code": 6012,
-      "name": "EscrowBalanceMismatch",
-      "msg": "Escrow balance mismatch"
-    },
-    {
-      "code": 6013,
-      "name": "Overflow",
-      "msg": "Arithmetic overflow"
-    },
-    {
-      "code": 6014,
-      "name": "FeeTooHigh",
-      "msg": "Fee basis points exceed maximum (10000)"
-    },
-    {
-      "code": 6015,
-      "name": "InvalidInitialUses",
-      "msg": "Initial uses must be greater than zero"
-    },
-    {
-      "code": 6016,
-      "name": "InvalidTimeoutConfig",
-      "msg": "VRF timeout must exceed wager expiry"
-    },
-    {
-      "code": 6017,
-      "name": "Unauthorized",
-      "msg": "Unauthorized — admin only"
-    },
-    {
-      "code": 6018,
-      "name": "DuplicateAccounts",
-      "msg": "Duplicate accounts — challenger and opponent must differ"
-    },
-    {
-      "code": 6019,
-      "name": "InvalidGameTypeName",
-      "msg": "Invalid game type name length"
-    },
-    {
-      "code": 6020,
-      "name": "VrfResultNotAvailable",
-      "msg": "VRF result is not available yet"
-    },
-    {
-      "code": 6021,
-      "name": "WagerStale",
-      "msg": "Wager is stale — challenger has created a newer wager"
-    },
-    {
-      "code": 6022,
-      "name": "PreviousWagerRequired",
-      "msg": "Previous pending wager must be cleaned up before creating a new one"
-    },
-    {
-      "code": 6023,
-      "name": "WagerNonceMismatch",
-      "msg": "Previous wager nonce does not match pending_nonce — wrong wager passed"
-    }
-  ],
-  "types": [
-    {
-      "name": "ConfigUpdated",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "admin",
-            "type": "pubkey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "DiceBag",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "mint",
-            "type": "pubkey"
-          },
-          {
-            "name": "owner",
-            "type": "pubkey"
-          },
-          {
-            "name": "uses_remaining",
-            "type": "u8"
-          },
-          {
-            "name": "total_games",
-            "type": "u32"
-          },
-          {
-            "name": "wins",
-            "type": "u32"
-          },
-          {
-            "name": "losses",
-            "type": "u32"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "DiceBagMinted",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "player",
-            "type": "pubkey"
-          },
-          {
-            "name": "mint",
-            "type": "pubkey"
-          },
-          {
-            "name": "uses",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "DiceBagUsed",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "mint",
-            "type": "pubkey"
-          },
-          {
-            "name": "owner",
-            "type": "pubkey"
-          },
-          {
-            "name": "uses_remaining",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "GameConfig",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "admin",
-            "type": "pubkey"
-          },
-          {
-            "name": "treasury",
-            "type": "pubkey"
-          },
-          {
-            "name": "fee_bps",
-            "type": "u16"
-          },
-          {
-            "name": "mint_price",
-            "type": "u64"
-          },
-          {
-            "name": "initial_uses",
-            "type": "u8"
-          },
-          {
-            "name": "is_paused",
-            "type": "bool"
-          },
-          {
-            "name": "wager_expiry_seconds",
-            "type": "i64"
-          },
-          {
-            "name": "vrf_timeout_seconds",
-            "type": "i64"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "GameType",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "id",
-            "type": "u8"
-          },
-          {
-            "name": "name",
-            "type": {
-              "array": [
-                "u8",
-                32
-              ]
-            }
-          },
-          {
-            "name": "enabled",
-            "type": "bool"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "PlayerStats",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "player",
-            "type": "pubkey"
-          },
-          {
-            "name": "total_games",
-            "type": "u32"
-          },
-          {
-            "name": "wins",
-            "type": "u32"
-          },
-          {
-            "name": "losses",
-            "type": "u32"
-          },
-          {
-            "name": "sol_wagered",
-            "type": "u64"
-          },
-          {
-            "name": "sol_won",
-            "type": "u64"
-          },
-          {
-            "name": "current_streak",
-            "type": "i32"
-          },
-          {
-            "name": "best_streak",
-            "type": "u32"
-          },
-          {
-            "name": "wager_nonce",
-            "type": "u64"
-          },
-          {
-            "name": "pending_nonce",
-            "type": {
-              "option": "u64"
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "VrfTimeoutRefund",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "opponent",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          },
-          {
-            "name": "settled_at",
-            "type": "i64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Wager",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "opponent",
-            "type": "pubkey"
-          },
-          {
-            "name": "challenger_bag",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "game_type",
-            "type": "u8"
-          },
-          {
-            "name": "challenger_choice",
-            "type": "u8"
-          },
-          {
-            "name": "status",
-            "type": {
-              "defined": {
-                "name": "WagerStatus"
-              }
-            }
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          },
-          {
-            "name": "vrf_requested_at",
-            "type": "i64"
-          },
-          {
-            "name": "vrf_fulfilled_at",
-            "type": {
-              "option": "i64"
-            }
-          },
-          {
-            "name": "vrf_result",
-            "type": {
-              "option": "u8"
-            }
-          },
-          {
-            "name": "winner",
-            "type": {
-              "option": "pubkey"
-            }
-          },
-          {
-            "name": "created_at",
-            "type": "i64"
-          },
-          {
-            "name": "settled_at",
-            "type": {
-              "option": "i64"
-            }
-          },
-          {
-            "name": "threshold",
-            "type": "u8"
-          },
-          {
-            "name": "payout_multiplier_bps",
-            "type": "u32"
-          },
-          {
-            "name": "escrow_bump",
-            "type": "u8"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WagerAccepted",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "opponent",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WagerCancelled",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          },
-          {
-            "name": "settled_at",
-            "type": "i64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WagerExpiredEvent",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "opponent",
-            "type": "pubkey"
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          },
-          {
-            "name": "settled_at",
-            "type": "i64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WagerInitiated",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "opponent",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "game_type",
-            "type": "u8"
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          },
-          {
-            "name": "created_at",
-            "type": "i64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WagerResolved",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "opponent",
-            "type": "pubkey"
-          },
-          {
-            "name": "winner",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "vrf_result",
-            "type": "u8"
-          },
-          {
-            "name": "fee",
-            "type": "u64"
-          },
-          {
-            "name": "payout",
-            "type": "u64"
-          },
-          {
-            "name": "settled_at",
-            "type": "i64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WagerResolvedEvent",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "opponent",
-            "type": "pubkey"
-          },
-          {
-            "name": "winner",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "vrf_result",
-            "type": "u8"
-          },
-          {
-            "name": "game_type",
-            "type": "u8"
-          },
-          {
-            "name": "challenger_choice",
-            "type": "u8"
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WagerStatus",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "Pending"
-          },
-          {
-            "name": "Active"
-          },
-          {
-            "name": "ReadyToSettle"
-          },
-          {
-            "name": "Settled"
-          },
-          {
-            "name": "Cancelled"
-          },
-          {
-            "name": "Expired"
-          },
-          {
-            "name": "VrfTimeout"
-          },
-          {
-            "name": "Resolved"
-          }
-        ]
-      }
-    },
-    {
-      "name": "WinningsClaimed",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "winner",
-            "type": "pubkey"
-          },
-          {
-            "name": "challenger",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
-          },
-          {
-            "name": "fee",
-            "type": "u64"
-          },
-          {
-            "name": "payout",
-            "type": "u64"
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          },
-          {
-            "name": "settled_at",
-            "type": "i64"
-          }
-        ]
-      }
-    }
-  ]
+	"address": "D8YzrLvAiwNmJF6gjAKLVQkqSNx5zD7TH7anqC52noof",
+	"metadata": {
+		"name": "dice_duel",
+		"version": "0.1.0",
+		"spec": "0.1.0",
+		"description": "DiceDuel - Peer-to-peer dice wagering on Solana"
+	},
+	"instructions": [
+		{
+			"name": "accept_wager",
+			"discriminator": [214, 18, 178, 214, 203, 22, 50, 119],
+			"accounts": [
+				{
+					"name": "opponent",
+					"writable": true,
+					"signer": true,
+					"relations": ["wager"]
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							},
+							{
+								"kind": "account",
+								"path": "wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger",
+					"relations": ["wager"]
+				},
+				{
+					"name": "challenger_bag",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [100, 105, 99, 101, 95, 98, 97, 103]
+							},
+							{
+								"kind": "account",
+								"path": "challenger_bag.mint",
+								"account": "DiceBag"
+							}
+						]
+					},
+					"relations": ["wager"]
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_stats",
+					"docs": [
+						"Challenger's PlayerStats — guaranteed to exist from initiate_wager (M-01).",
+						"NOT init_if_needed — prevents opponent from paying rent for challenger's stats."
+					],
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "opponent_stats",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "opponent"
+							}
+						]
+					}
+				},
+				{
+					"name": "oracle_queue",
+					"writable": true,
+					"address": "Cuj97ggrhhidhbu39TijNVqE74xvKJ69gDervRUXAxGh"
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				},
+				{
+					"name": "program_identity",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [105, 100, 101, 110, 116, 105, 116, 121]
+							}
+						]
+					}
+				},
+				{
+					"name": "vrf_program",
+					"address": "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz"
+				},
+				{
+					"name": "slot_hashes",
+					"address": "SysvarS1otHashes111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "cancel_wager",
+			"discriminator": [57, 92, 124, 123, 216, 16, 37, 148],
+			"accounts": [
+				{
+					"name": "challenger",
+					"writable": true,
+					"signer": true,
+					"relations": ["wager"]
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "challenger"
+							},
+							{
+								"kind": "account",
+								"path": "wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_stats",
+					"docs": [
+						"Challenger's PlayerStats — guaranteed to exist from initiate_wager."
+					],
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "challenger"
+							}
+						]
+					}
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "claim_expired",
+			"discriminator": [124, 78, 197, 187, 210, 66, 255, 1],
+			"accounts": [
+				{
+					"name": "caller",
+					"signer": true
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							},
+							{
+								"kind": "account",
+								"path": "wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger",
+					"writable": true
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_stats",
+					"docs": [
+						"Challenger's PlayerStats — guaranteed to exist from initiate_wager."
+					],
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "claim_vrf_timeout",
+			"discriminator": [187, 216, 207, 151, 241, 76, 240, 164],
+			"accounts": [
+				{
+					"name": "caller",
+					"signer": true
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							},
+							{
+								"kind": "account",
+								"path": "wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger",
+					"writable": true
+				},
+				{
+					"name": "opponent",
+					"writable": true
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "claim_winnings",
+			"discriminator": [161, 215, 24, 59, 14, 236, 242, 221],
+			"accounts": [
+				{
+					"name": "claimer",
+					"writable": true,
+					"signer": true
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							},
+							{
+								"kind": "account",
+								"path": "wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger",
+					"writable": true
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "treasury",
+					"writable": true
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "cleanup_stale_wager",
+			"discriminator": [91, 79, 225, 111, 98, 183, 190, 208],
+			"accounts": [
+				{
+					"name": "payer",
+					"docs": ["Anyone can call this — permissionless"],
+					"writable": true,
+					"signer": true
+				},
+				{
+					"name": "wager",
+					"docs": [
+						"The stale wager to close. Must be Pending + nonce stale.",
+						"`close = challenger` zeroes the discriminator (prevents resurrection) and sends rent to challenger."
+					],
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							},
+							{
+								"kind": "account",
+								"path": "wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_stats",
+					"docs": ["Challenger's PlayerStats — used to verify staleness"],
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger",
+					"writable": true
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "consume_randomness",
+			"discriminator": [190, 217, 49, 162, 99, 26, 73, 234],
+			"accounts": [
+				{
+					"name": "vrf_program_identity",
+					"docs": [
+						"SECURITY: Validates callback is from the real VRF program.",
+						"In test builds, any signer is accepted to enable integration testing",
+						"of the settlement path without a real VRF oracle."
+					],
+					"signer": true,
+					"address": "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw"
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger",
+					"writable": true
+				},
+				{
+					"name": "opponent",
+					"writable": true
+				},
+				{
+					"name": "challenger_bag",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [100, 105, 99, 101, 95, 98, 97, 103]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger_bag",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_stats",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "opponent_stats",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.opponent",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "treasury",
+					"writable": true
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": [
+				{
+					"name": "randomness",
+					"type": {
+						"array": ["u8", 32]
+					}
+				}
+			]
+		},
+		{
+			"name": "consume_randomness_minimal",
+			"discriminator": [134, 130, 24, 11, 244, 65, 71, 231],
+			"accounts": [
+				{
+					"name": "vrf_program_identity",
+					"docs": [
+						"SECURITY: Validates callback is from the real VRF program.",
+						"In test builds, any signer is accepted to enable integration testing",
+						"of the settlement path without a real VRF oracle."
+					],
+					"signer": true,
+					"address": "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw"
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				}
+			],
+			"args": [
+				{
+					"name": "randomness",
+					"type": {
+						"array": ["u8", 32]
+					}
+				}
+			]
+		},
+		{
+			"name": "consume_randomness_resolved",
+			"discriminator": [16, 31, 74, 24, 208, 41, 157, 96],
+			"accounts": [
+				{
+					"name": "vrf_program_identity",
+					"signer": true,
+					"address": "9irBy75QS2BN81FUgXuHcjqceJJRuc9oDkAe8TKVvvAw"
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							},
+							{
+								"kind": "account",
+								"path": "wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_stats",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "opponent_stats",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.opponent",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_bag",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [100, 105, 99, 101, 95, 98, 97, 103]
+							},
+							{
+								"kind": "account",
+								"path": "challenger_bag.mint",
+								"account": "DiceBag"
+							}
+						]
+					}
+				}
+			],
+			"args": [
+				{
+					"name": "randomness",
+					"type": {
+						"array": ["u8", 32]
+					}
+				}
+			]
+		},
+		{
+			"name": "initialize",
+			"discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+			"accounts": [
+				{
+					"name": "admin",
+					"writable": true,
+					"signer": true
+				},
+				{
+					"name": "config",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": [
+				{
+					"name": "treasury",
+					"type": "pubkey"
+				},
+				{
+					"name": "fee_bps",
+					"type": "u16"
+				},
+				{
+					"name": "mint_price",
+					"type": "u64"
+				},
+				{
+					"name": "initial_uses",
+					"type": "u8"
+				},
+				{
+					"name": "wager_expiry_seconds",
+					"type": "i64"
+				},
+				{
+					"name": "vrf_timeout_seconds",
+					"type": "i64"
+				}
+			]
+		},
+		{
+			"name": "initiate_wager",
+			"discriminator": [40, 119, 19, 242, 58, 154, 81, 226],
+			"accounts": [
+				{
+					"name": "challenger",
+					"writable": true,
+					"signer": true
+				},
+				{
+					"name": "challenger_bag",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [100, 105, 99, 101, 95, 98, 97, 103]
+							},
+							{
+								"kind": "account",
+								"path": "challenger_bag.mint",
+								"account": "DiceBag"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger_stats",
+					"docs": [
+						"Challenger's PlayerStats — init_if_needed for first-time players.",
+						"Required to read/write wager_nonce and pending_nonce."
+					],
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "challenger"
+							}
+						]
+					}
+				},
+				{
+					"name": "wager",
+					"docs": [
+						"New wager account — unique PDA with nonce.",
+						"Uses `init` (NOT init_if_needed) — every wager is unique.",
+						"PDA seeds use the current wager_nonce value (before increment in handler)."
+					],
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "challenger"
+							},
+							{
+								"kind": "account",
+								"path": "challenger_stats.wager_nonce",
+								"account": "PlayerStats"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "game_type_account",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [103, 97, 109, 101, 95, 116, 121, 112, 101]
+							},
+							{
+								"kind": "arg",
+								"path": "game_type"
+							}
+						]
+					}
+				},
+				{
+					"name": "prev_wager",
+					"docs": [
+						"Optional: previous stale pending wager to close and reclaim rent.",
+						"REQUIRED when challenger_stats.pending_nonce.is_some()."
+					],
+					"writable": true,
+					"optional": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "challenger"
+							},
+							{
+								"kind": "account",
+								"path": "prev_wager.nonce",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "prev_escrow",
+					"docs": [
+						"Optional: previous wager's escrow to refund.",
+						"Required when prev_wager is provided."
+					],
+					"writable": true,
+					"optional": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "prev_wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": [
+				{
+					"name": "opponent",
+					"type": "pubkey"
+				},
+				{
+					"name": "amount",
+					"type": "u64"
+				},
+				{
+					"name": "game_type",
+					"type": "u8"
+				},
+				{
+					"name": "challenger_choice",
+					"type": "u8"
+				}
+			]
+		},
+		{
+			"name": "mint_dice_bag",
+			"discriminator": [204, 69, 239, 46, 175, 111, 64, 73],
+			"accounts": [
+				{
+					"name": "player",
+					"writable": true,
+					"signer": true
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "mint",
+					"writable": true,
+					"signer": true
+				},
+				{
+					"name": "dice_bag",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [100, 105, 99, 101, 95, 98, 97, 103]
+							},
+							{
+								"kind": "account",
+								"path": "mint"
+							}
+						]
+					}
+				},
+				{
+					"name": "treasury",
+					"writable": true
+				},
+				{
+					"name": "mpl_core_program",
+					"address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "pause",
+			"discriminator": [211, 22, 221, 251, 74, 121, 193, 47],
+			"accounts": [
+				{
+					"name": "admin",
+					"signer": true,
+					"relations": ["config"]
+				},
+				{
+					"name": "config",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "register_game_type",
+			"discriminator": [25, 96, 131, 147, 164, 128, 35, 21],
+			"accounts": [
+				{
+					"name": "admin",
+					"writable": true,
+					"signer": true,
+					"relations": ["config"]
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "game_type",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [103, 97, 109, 101, 95, 116, 121, 112, 101]
+							},
+							{
+								"kind": "arg",
+								"path": "id"
+							}
+						]
+					}
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": [
+				{
+					"name": "id",
+					"type": "u8"
+				},
+				{
+					"name": "name",
+					"type": "string"
+				},
+				{
+					"name": "enabled",
+					"type": "bool"
+				}
+			]
+		},
+		{
+			"name": "settle_wager",
+			"discriminator": [161, 242, 169, 152, 172, 163, 161, 104],
+			"accounts": [
+				{
+					"name": "settler",
+					"docs": ["Anyone can call settlement once VRF result is available"],
+					"writable": true,
+					"signer": true
+				},
+				{
+					"name": "wager",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [119, 97, 103, 101, 114]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "escrow",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [101, 115, 99, 114, 111, 119]
+							},
+							{
+								"kind": "account",
+								"path": "wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "challenger",
+					"writable": true
+				},
+				{
+					"name": "opponent",
+					"writable": true
+				},
+				{
+					"name": "challenger_bag",
+					"writable": true
+				},
+				{
+					"name": "challenger_stats",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.challenger",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "opponent_stats",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [115, 116, 97, 116, 115]
+							},
+							{
+								"kind": "account",
+								"path": "wager.opponent",
+								"account": "Wager"
+							}
+						]
+					}
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "treasury",
+					"writable": true
+				},
+				{
+					"name": "system_program",
+					"address": "11111111111111111111111111111111"
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "unpause",
+			"discriminator": [169, 144, 4, 38, 10, 141, 188, 255],
+			"accounts": [
+				{
+					"name": "admin",
+					"signer": true,
+					"relations": ["config"]
+				},
+				{
+					"name": "config",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				}
+			],
+			"args": []
+		},
+		{
+			"name": "update_config",
+			"discriminator": [29, 158, 252, 191, 10, 83, 219, 99],
+			"accounts": [
+				{
+					"name": "admin",
+					"signer": true,
+					"relations": ["config"]
+				},
+				{
+					"name": "config",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				}
+			],
+			"args": [
+				{
+					"name": "treasury",
+					"type": {
+						"option": "pubkey"
+					}
+				},
+				{
+					"name": "fee_bps",
+					"type": {
+						"option": "u16"
+					}
+				},
+				{
+					"name": "mint_price",
+					"type": {
+						"option": "u64"
+					}
+				},
+				{
+					"name": "initial_uses",
+					"type": {
+						"option": "u8"
+					}
+				},
+				{
+					"name": "wager_expiry_seconds",
+					"type": {
+						"option": "i64"
+					}
+				},
+				{
+					"name": "vrf_timeout_seconds",
+					"type": {
+						"option": "i64"
+					}
+				}
+			]
+		},
+		{
+			"name": "update_game_type",
+			"discriminator": [53, 145, 193, 121, 128, 45, 224, 38],
+			"accounts": [
+				{
+					"name": "admin",
+					"signer": true,
+					"relations": ["config"]
+				},
+				{
+					"name": "config",
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [99, 111, 110, 102, 105, 103]
+							}
+						]
+					}
+				},
+				{
+					"name": "game_type",
+					"writable": true,
+					"pda": {
+						"seeds": [
+							{
+								"kind": "const",
+								"value": [103, 97, 109, 101, 95, 116, 121, 112, 101]
+							},
+							{
+								"kind": "account",
+								"path": "game_type.id",
+								"account": "GameType"
+							}
+						]
+					}
+				}
+			],
+			"args": [
+				{
+					"name": "name",
+					"type": {
+						"option": "string"
+					}
+				},
+				{
+					"name": "enabled",
+					"type": {
+						"option": "bool"
+					}
+				}
+			]
+		}
+	],
+	"accounts": [
+		{
+			"name": "DiceBag",
+			"discriminator": [248, 248, 136, 8, 17, 97, 117, 157]
+		},
+		{
+			"name": "GameConfig",
+			"discriminator": [45, 146, 146, 33, 170, 69, 96, 133]
+		},
+		{
+			"name": "GameType",
+			"discriminator": [208, 255, 116, 236, 234, 71, 80, 34]
+		},
+		{
+			"name": "PlayerStats",
+			"discriminator": [169, 146, 242, 176, 102, 118, 231, 172]
+		},
+		{
+			"name": "Wager",
+			"discriminator": [3, 110, 53, 190, 113, 31, 230, 40]
+		}
+	],
+	"events": [
+		{
+			"name": "DiceBagMinted",
+			"discriminator": [109, 1, 217, 118, 17, 179, 172, 17]
+		},
+		{
+			"name": "VrfTimeoutRefund",
+			"discriminator": [227, 221, 82, 28, 254, 103, 150, 25]
+		},
+		{
+			"name": "WagerAccepted",
+			"discriminator": [133, 143, 135, 203, 173, 82, 11, 163]
+		},
+		{
+			"name": "WagerCancelled",
+			"discriminator": [12, 227, 103, 239, 64, 116, 157, 72]
+		},
+		{
+			"name": "WagerExpiredEvent",
+			"discriminator": [172, 123, 121, 0, 0, 253, 141, 195]
+		},
+		{
+			"name": "WagerInitiated",
+			"discriminator": [203, 191, 151, 199, 168, 231, 104, 68]
+		},
+		{
+			"name": "WagerResolved",
+			"discriminator": [166, 83, 14, 127, 130, 175, 204, 13]
+		},
+		{
+			"name": "WagerResolvedEvent",
+			"discriminator": [70, 149, 137, 172, 58, 165, 156, 8]
+		},
+		{
+			"name": "WinningsClaimed",
+			"discriminator": [187, 184, 29, 196, 54, 117, 70, 150]
+		}
+	],
+	"errors": [
+		{
+			"code": 6000,
+			"name": "GamePaused",
+			"msg": "Game is currently paused"
+		},
+		{
+			"code": 6001,
+			"name": "SelfWager",
+			"msg": "Cannot wager against yourself"
+		},
+		{
+			"code": 6002,
+			"name": "BagExhausted",
+			"msg": "Dice bag has no uses remaining"
+		},
+		{
+			"code": 6003,
+			"name": "BagNotOwned",
+			"msg": "Dice bag not owned by challenger"
+		},
+		{
+			"code": 6004,
+			"name": "InvalidAmount",
+			"msg": "Invalid wager amount"
+		},
+		{
+			"code": 6005,
+			"name": "GameTypeDisabled",
+			"msg": "Game type is disabled"
+		},
+		{
+			"code": 6006,
+			"name": "InvalidChoice",
+			"msg": "Invalid choice for this game type"
+		},
+		{
+			"code": 6007,
+			"name": "WagerInProgress",
+			"msg": "An active wager is in progress — cannot overwrite"
+		},
+		{
+			"code": 6008,
+			"name": "InvalidWagerStatus",
+			"msg": "Wager is not in the expected status"
+		},
+		{
+			"code": 6009,
+			"name": "WagerExpired",
+			"msg": "Wager has expired"
+		},
+		{
+			"code": 6010,
+			"name": "WagerNotExpired",
+			"msg": "Wager has not expired yet"
+		},
+		{
+			"code": 6011,
+			"name": "VrfNotTimedOut",
+			"msg": "VRF timeout has not been reached"
+		},
+		{
+			"code": 6012,
+			"name": "EscrowBalanceMismatch",
+			"msg": "Escrow balance mismatch"
+		},
+		{
+			"code": 6013,
+			"name": "Overflow",
+			"msg": "Arithmetic overflow"
+		},
+		{
+			"code": 6014,
+			"name": "FeeTooHigh",
+			"msg": "Fee basis points exceed maximum (10000)"
+		},
+		{
+			"code": 6015,
+			"name": "InvalidInitialUses",
+			"msg": "Initial uses must be greater than zero"
+		},
+		{
+			"code": 6016,
+			"name": "InvalidTimeoutConfig",
+			"msg": "VRF timeout must exceed wager expiry"
+		},
+		{
+			"code": 6017,
+			"name": "Unauthorized",
+			"msg": "Unauthorized — admin only"
+		},
+		{
+			"code": 6018,
+			"name": "DuplicateAccounts",
+			"msg": "Duplicate accounts — challenger and opponent must differ"
+		},
+		{
+			"code": 6019,
+			"name": "InvalidGameTypeName",
+			"msg": "Invalid game type name length"
+		},
+		{
+			"code": 6020,
+			"name": "VrfResultNotAvailable",
+			"msg": "VRF result is not available yet"
+		},
+		{
+			"code": 6021,
+			"name": "WagerStale",
+			"msg": "Wager is stale — challenger has created a newer wager"
+		},
+		{
+			"code": 6022,
+			"name": "PreviousWagerRequired",
+			"msg": "Previous pending wager must be cleaned up before creating a new one"
+		},
+		{
+			"code": 6023,
+			"name": "WagerNonceMismatch",
+			"msg": "Previous wager nonce does not match pending_nonce — wrong wager passed"
+		}
+	],
+	"types": [
+		{
+			"name": "DiceBag",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "mint",
+						"type": "pubkey"
+					},
+					{
+						"name": "owner",
+						"type": "pubkey"
+					},
+					{
+						"name": "uses_remaining",
+						"type": "u8"
+					},
+					{
+						"name": "total_games",
+						"type": "u32"
+					},
+					{
+						"name": "wins",
+						"type": "u32"
+					},
+					{
+						"name": "losses",
+						"type": "u32"
+					},
+					{
+						"name": "bump",
+						"type": "u8"
+					}
+				]
+			}
+		},
+		{
+			"name": "DiceBagMinted",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "player",
+						"type": "pubkey"
+					},
+					{
+						"name": "mint",
+						"type": "pubkey"
+					},
+					{
+						"name": "uses",
+						"type": "u8"
+					}
+				]
+			}
+		},
+		{
+			"name": "GameConfig",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "admin",
+						"type": "pubkey"
+					},
+					{
+						"name": "treasury",
+						"type": "pubkey"
+					},
+					{
+						"name": "fee_bps",
+						"type": "u16"
+					},
+					{
+						"name": "mint_price",
+						"type": "u64"
+					},
+					{
+						"name": "initial_uses",
+						"type": "u8"
+					},
+					{
+						"name": "is_paused",
+						"type": "bool"
+					},
+					{
+						"name": "wager_expiry_seconds",
+						"type": "i64"
+					},
+					{
+						"name": "vrf_timeout_seconds",
+						"type": "i64"
+					},
+					{
+						"name": "bump",
+						"type": "u8"
+					}
+				]
+			}
+		},
+		{
+			"name": "GameType",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "id",
+						"type": "u8"
+					},
+					{
+						"name": "name",
+						"type": {
+							"array": ["u8", 32]
+						}
+					},
+					{
+						"name": "enabled",
+						"type": "bool"
+					},
+					{
+						"name": "bump",
+						"type": "u8"
+					}
+				]
+			}
+		},
+		{
+			"name": "PlayerStats",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "player",
+						"type": "pubkey"
+					},
+					{
+						"name": "total_games",
+						"type": "u32"
+					},
+					{
+						"name": "wins",
+						"type": "u32"
+					},
+					{
+						"name": "losses",
+						"type": "u32"
+					},
+					{
+						"name": "sol_wagered",
+						"type": "u64"
+					},
+					{
+						"name": "sol_won",
+						"type": "u64"
+					},
+					{
+						"name": "current_streak",
+						"type": "i32"
+					},
+					{
+						"name": "best_streak",
+						"type": "u32"
+					},
+					{
+						"name": "wager_nonce",
+						"type": "u64"
+					},
+					{
+						"name": "pending_nonce",
+						"type": {
+							"option": "u64"
+						}
+					},
+					{
+						"name": "bump",
+						"type": "u8"
+					}
+				]
+			}
+		},
+		{
+			"name": "VrfTimeoutRefund",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "opponent",
+						"type": "pubkey"
+					},
+					{
+						"name": "amount",
+						"type": "u64"
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					},
+					{
+						"name": "settled_at",
+						"type": "i64"
+					}
+				]
+			}
+		},
+		{
+			"name": "Wager",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "opponent",
+						"type": "pubkey"
+					},
+					{
+						"name": "challenger_bag",
+						"type": "pubkey"
+					},
+					{
+						"name": "amount",
+						"type": "u64"
+					},
+					{
+						"name": "game_type",
+						"type": "u8"
+					},
+					{
+						"name": "challenger_choice",
+						"type": "u8"
+					},
+					{
+						"name": "status",
+						"type": {
+							"defined": {
+								"name": "WagerStatus"
+							}
+						}
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					},
+					{
+						"name": "vrf_requested_at",
+						"type": "i64"
+					},
+					{
+						"name": "vrf_fulfilled_at",
+						"type": {
+							"option": "i64"
+						}
+					},
+					{
+						"name": "vrf_result",
+						"type": {
+							"option": "u8"
+						}
+					},
+					{
+						"name": "winner",
+						"type": {
+							"option": "pubkey"
+						}
+					},
+					{
+						"name": "created_at",
+						"type": "i64"
+					},
+					{
+						"name": "settled_at",
+						"type": {
+							"option": "i64"
+						}
+					},
+					{
+						"name": "threshold",
+						"type": "u8"
+					},
+					{
+						"name": "payout_multiplier_bps",
+						"type": "u32"
+					},
+					{
+						"name": "escrow_bump",
+						"type": "u8"
+					},
+					{
+						"name": "bump",
+						"type": "u8"
+					}
+				]
+			}
+		},
+		{
+			"name": "WagerAccepted",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "opponent",
+						"type": "pubkey"
+					},
+					{
+						"name": "amount",
+						"type": "u64"
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					}
+				]
+			}
+		},
+		{
+			"name": "WagerCancelled",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					},
+					{
+						"name": "settled_at",
+						"type": "i64"
+					}
+				]
+			}
+		},
+		{
+			"name": "WagerExpiredEvent",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "opponent",
+						"type": "pubkey"
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					},
+					{
+						"name": "settled_at",
+						"type": "i64"
+					}
+				]
+			}
+		},
+		{
+			"name": "WagerInitiated",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "opponent",
+						"type": "pubkey"
+					},
+					{
+						"name": "amount",
+						"type": "u64"
+					},
+					{
+						"name": "game_type",
+						"type": "u8"
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					},
+					{
+						"name": "created_at",
+						"type": "i64"
+					}
+				]
+			}
+		},
+		{
+			"name": "WagerResolved",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "opponent",
+						"type": "pubkey"
+					},
+					{
+						"name": "winner",
+						"type": "pubkey"
+					},
+					{
+						"name": "amount",
+						"type": "u64"
+					},
+					{
+						"name": "vrf_result",
+						"type": "u8"
+					},
+					{
+						"name": "fee",
+						"type": "u64"
+					},
+					{
+						"name": "payout",
+						"type": "u64"
+					},
+					{
+						"name": "settled_at",
+						"type": "i64"
+					}
+				]
+			}
+		},
+		{
+			"name": "WagerResolvedEvent",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "opponent",
+						"type": "pubkey"
+					},
+					{
+						"name": "winner",
+						"type": "pubkey"
+					},
+					{
+						"name": "amount",
+						"type": "u64"
+					},
+					{
+						"name": "vrf_result",
+						"type": "u8"
+					},
+					{
+						"name": "game_type",
+						"type": "u8"
+					},
+					{
+						"name": "challenger_choice",
+						"type": "u8"
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					}
+				]
+			}
+		},
+		{
+			"name": "WagerStatus",
+			"type": {
+				"kind": "enum",
+				"variants": [
+					{
+						"name": "Pending"
+					},
+					{
+						"name": "Active"
+					},
+					{
+						"name": "ReadyToSettle"
+					},
+					{
+						"name": "Settled"
+					},
+					{
+						"name": "Cancelled"
+					},
+					{
+						"name": "Expired"
+					},
+					{
+						"name": "VrfTimeout"
+					},
+					{
+						"name": "Resolved"
+					}
+				]
+			}
+		},
+		{
+			"name": "WinningsClaimed",
+			"type": {
+				"kind": "struct",
+				"fields": [
+					{
+						"name": "winner",
+						"type": "pubkey"
+					},
+					{
+						"name": "challenger",
+						"type": "pubkey"
+					},
+					{
+						"name": "amount",
+						"type": "u64"
+					},
+					{
+						"name": "fee",
+						"type": "u64"
+					},
+					{
+						"name": "payout",
+						"type": "u64"
+					},
+					{
+						"name": "nonce",
+						"type": "u64"
+					},
+					{
+						"name": "settled_at",
+						"type": "i64"
+					}
+				]
+			}
+		}
+	]
 }

@@ -7,38 +7,38 @@
  */
 
 import {
-  combineCodec,
-  getEnumDecoder,
-  getEnumEncoder,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
+	type FixedSizeCodec,
+	type FixedSizeDecoder,
+	type FixedSizeEncoder,
+	combineCodec,
+	getEnumDecoder,
+	getEnumEncoder,
 } from "@solana/kit";
 
 export enum WagerStatus {
-  Pending,
-  Active,
-  ReadyToSettle,
-  Settled,
-  Cancelled,
-  Expired,
-  VrfTimeout,
-  Resolved,
+	Pending = 0,
+	Active = 1,
+	ReadyToSettle = 2,
+	Settled = 3,
+	Cancelled = 4,
+	Expired = 5,
+	VrfTimeout = 6,
+	Resolved = 7,
 }
 
 export type WagerStatusArgs = WagerStatus;
 
 export function getWagerStatusEncoder(): FixedSizeEncoder<WagerStatusArgs> {
-  return getEnumEncoder(WagerStatus);
+	return getEnumEncoder(WagerStatus);
 }
 
 export function getWagerStatusDecoder(): FixedSizeDecoder<WagerStatus> {
-  return getEnumDecoder(WagerStatus);
+	return getEnumDecoder(WagerStatus);
 }
 
 export function getWagerStatusCodec(): FixedSizeCodec<
-  WagerStatusArgs,
-  WagerStatus
+	WagerStatusArgs,
+	WagerStatus
 > {
-  return combineCodec(getWagerStatusEncoder(), getWagerStatusDecoder());
+	return combineCodec(getWagerStatusEncoder(), getWagerStatusDecoder());
 }

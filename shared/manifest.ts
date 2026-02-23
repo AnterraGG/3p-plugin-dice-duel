@@ -1,5 +1,5 @@
 /**
- * Dice Duel Plugin Manifest (3p SDK version)
+ * Dragon Dice Plugin Manifest (3p SDK version)
  */
 
 import {
@@ -7,13 +7,13 @@ import {
 	eventChannels,
 	svmCapabilities,
 } from "@townexchange/3p-plugin-sdk/shared";
-import type { DiceDuelEventMap } from "./event-data";
+import type { DragonDiceEventMap } from "./event-data";
 import { programs } from "./programs";
 
 export const manifest = defineManifest({
-	id: "dice-duel",
+	id: "dragon-dice",
 	version: "2.0.0",
-	name: "Dice Duel",
+	name: "Dragon Dice",
 	description: "Dice game with wagering — SVM (Solana Devnet)",
 
 	activationRules: [
@@ -28,7 +28,7 @@ export const manifest = defineManifest({
 
 	onchain: {
 		walletRead: true,
-		eventChannels: eventChannels<DiceDuelEventMap>(
+		eventChannels: eventChannels<DragonDiceEventMap>(
 			"wager_initiated",
 			"wager_accepted",
 			"wager_cancelled",

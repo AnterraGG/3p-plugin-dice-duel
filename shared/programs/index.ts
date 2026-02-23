@@ -1,5 +1,5 @@
 /**
- * Dice Duel SVM Program Definitions
+ * Dragon Dice SVM Program Definitions
  *
  * DiceDuel Anchor program — peer-to-peer dice wagering on Solana.
  * Uses MagicBlock VRF for verifiable randomness.
