@@ -46,16 +46,16 @@
 		}
 	},
 	"dependencies": {
+		"@solana/kit": "catalog:",
 		"@townexchange/3p-plugin-sdk": "workspace:*",
-		"@townexchange/token-icons": "workspace:*",
-		"@solana/kit": "catalog:"
+		"@townexchange/token-icons": "workspace:*"
 	},
 	"peerDependencies": {
+		"@tanstack/react-query": "*",
 		"@townexchange/tex-ui-kit": "workspace:*",
 		"react": ">=18",
 		"viem": "*",
 		"wagmi": "*",
-		"@tanstack/react-query": "*",
 		"zustand": "*"
 	},
 	"peerDependenciesMeta": {
@@ -79,13 +79,18 @@
 		}
 	},
 	"devDependencies": {
-		"@types/react": "catalog:",
-		"codama": "~1.5.0",
 		"@codama/nodes-from-anchor": "~1.3.8",
 		"@codama/renderers-js": "~1.7.0",
+		"@types/react": "catalog:",
+		"codama": "~1.5.0",
 		"typescript": "catalog:"
 	},
-	"files": ["client/", "server/", "shared/", "generated/"],
+	"files": [
+		"client/",
+		"server/",
+		"shared/",
+		"generated/"
+	],
 	"imports": {
 		"#generated/clients/svm/dice-duel": "./generated/clients/svm/dice-duel/index.ts",
 		"#generated/clients/svm/dice-duel/pdas": "./generated/clients/svm/dice-duel/pdas.ts",
