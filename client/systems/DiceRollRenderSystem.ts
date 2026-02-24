@@ -199,6 +199,8 @@ export function createDiceRollRenderSystem() {
 
 				const d1 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
 				const d2 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
+				// scrollFactor(0,0) = screen-space rendering, unaffected by camera scroll/zoom.
+				// Positioned via createScreenAnchor which provides screen pixel coordinates.
 				[d1, d2].forEach((s) => {
 					s.setScrollFactor(0, 0);
 					s.setScale(scale);
