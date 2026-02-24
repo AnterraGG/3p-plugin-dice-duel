@@ -37,6 +37,8 @@ interface IndicatorVisual {
 
 export function createChallengeIndicatorSystem() {
 	const indicatorVisuals = new Map<string, IndicatorVisual>();
+	/** Tracks challenges that have already triggered camera FX. */
+	const fxFired = new Set<string>();
 	let cleanupRegistered = false;
 	let capturedWorld: PluginWorld | null = null;
 
@@ -115,6 +117,15 @@ export function createChallengeIndicatorSystem() {
 
 				visual = { spriteEid, targetEntityId: entityId };
 				indicatorVisuals.set(wagerId, visual);
+
+				// Camera FX: vignette when local player receives a challenge
+				if (!fxFired.has(wagerId)) {
+					fxFired.add(wagerId);
+					ctx.services.cameraController.vignette({
+						intensity: 0.3,
+						durationMs: 2000,
+					});
+				}
 			}
 
 			// Follow target entity's world position
@@ -142,6 +153,7 @@ export function createChallengeIndicatorSystem() {
 			if (!activeWagerIds.has(wagerId)) {
 				removeEntity(world, visual.spriteEid);
 				indicatorVisuals.delete(wagerId);
+				fxFired.delete(wagerId);
 			}
 		}
 

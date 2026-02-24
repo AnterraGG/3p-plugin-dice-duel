@@ -46,6 +46,8 @@ interface FloatVisual {
 
 export function createBalanceFloatRenderSystem() {
 	const floatVisuals = new Map<string, FloatVisual>();
+	/** Tracks balance floats that have already triggered camera FX. */
+	const fxFired = new Set<string>();
 	let cleanupRegistered = false;
 	let capturedWorld: PluginWorld | null = null;
 
@@ -162,6 +164,16 @@ export function createBalanceFloatRenderSystem() {
 				}
 
 				floatVisuals.set(id, visual);
+
+				// Camera FX: green flash on positive payout
+				if (float.isPositive && !fxFired.has(id)) {
+					fxFired.add(id);
+					ctx.services.cameraController.flash({
+						color: 0x22c55e,
+						alpha: 0.25,
+						durationMs: 150,
+					});
+				}
 			}
 
 			const elapsed = Date.now() - float.startTime;
@@ -266,6 +278,7 @@ export function createBalanceFloatRenderSystem() {
 				if (visual.iconEid != null) removeEntity(world, visual.iconEid);
 				visual.coinCircle?.destroy();
 				floatVisuals.delete(id);
+				fxFired.delete(id);
 			}
 		}
 

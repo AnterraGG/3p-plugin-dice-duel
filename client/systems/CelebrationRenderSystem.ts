@@ -34,6 +34,8 @@ interface CelebrationVisuals {
 
 export function createCelebrationRenderSystem() {
 	const celebrationVisuals: Map<string, CelebrationVisuals> = new Map();
+	/** Tracks celebrations that have already triggered camera FX. */
+	const fxFired = new Set<string>();
 	let cleanupRegistered = false;
 
 	return (world: PluginWorld, ctx: PluginSystemContext) => {
@@ -91,6 +93,34 @@ export function createCelebrationRenderSystem() {
 
 				visuals = { text, graphics, anchor };
 				celebrationVisuals.set(id, visuals);
+
+				// Camera FX: fire once per celebration
+				if (!fxFired.has(id)) {
+					fxFired.add(id);
+					const cam = ctx.services.cameraController;
+					if (celebration.type === "win") {
+						cam.flash({
+							color: 0xffd700,
+							alpha: 0.8,
+							durationMs: 300,
+						});
+						cam.shake({
+							intensity: 4,
+							durationMs: 400,
+							decay: "exponential",
+						});
+					} else {
+						cam.flash({
+							color: 0xff2222,
+							alpha: 0.3,
+							durationMs: 200,
+						});
+						cam.vignette({
+							intensity: 0.4,
+							durationMs: 3000,
+						});
+					}
+				}
 			}
 
 			const { text, graphics, anchor } = visuals;
@@ -192,6 +222,7 @@ export function createCelebrationRenderSystem() {
 				visuals.graphics.destroy();
 				visuals.anchor?.release();
 				celebrationVisuals.delete(id);
+				fxFired.delete(id);
 			}
 		}
 

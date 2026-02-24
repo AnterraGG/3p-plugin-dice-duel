@@ -158,6 +158,10 @@ export function createDiceRollRenderSystem() {
 		string,
 		UIAnchorHandle<ScreenAnchorOptions>
 	> = new Map();
+	/** Tracks wagers that have already triggered roll-start camera FX. */
+	const fxRollStarted = new Set<string>();
+	/** Tracks wagers that have already triggered landing camera FX. */
+	const fxLanded = new Set<string>();
 	let cleanupRegistered = false;
 
 	return (world: PluginWorld, ctx: PluginSystemContext) => {
@@ -206,6 +210,16 @@ export function createDiceRollRenderSystem() {
 				sprites = [d1, d2];
 				diceSprites.set(wagerId, sprites);
 				diceState.set(wagerId, [createDieState(), createDieState()]);
+
+				// Camera FX: shake on dice roll start
+				if (!fxRollStarted.has(wagerId)) {
+					fxRollStarted.add(wagerId);
+					ctx.services.cameraController.shake({
+						intensity: 3,
+						durationMs: 500,
+						decay: "exponential",
+					});
+				}
 			}
 
 			// Create screen anchor once per wager (fixed screen position)
@@ -398,6 +412,21 @@ export function createDiceRollRenderSystem() {
 
 				if (settleT >= 1) {
 					playLandSound();
+
+					// Camera FX: flash + shake on dice landing
+					if (!fxLanded.has(wagerId)) {
+						fxLanded.add(wagerId);
+						ctx.services.cameraController.flash({
+							color: 0xffffff,
+							alpha: 0.5,
+							durationMs: 150,
+						});
+						ctx.services.cameraController.shake({
+							intensity: 2,
+							durationMs: 200,
+						});
+					}
+
 					const newRolls = new Map(store.diceRolls);
 					const r = newRolls.get(wagerId);
 					if (r) {
@@ -455,6 +484,8 @@ export function createDiceRollRenderSystem() {
 				});
 				diceSprites.delete(wagerId);
 				diceState.delete(wagerId);
+				fxRollStarted.delete(wagerId);
+				fxLanded.delete(wagerId);
 				const anchor = diceAnchors.get(wagerId);
 				if (anchor) {
 					anchor.release();
