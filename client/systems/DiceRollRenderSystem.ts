@@ -189,6 +189,14 @@ export function createDiceRollRenderSystem() {
 		const activeWagerIds = new Set<string>();
 		const scale = DRAGON_DICE_SCALES.DICE;
 
+		// Zoom compensation: sprites with scrollFactor(0,0) are still affected
+		// by camera zoom. Counteract to maintain consistent screen appearance.
+		const zoom = ctx.services.camera.zoom;
+		const { width: vw, height: vh } = ctx.services.camera.getViewportSize();
+		const cx = vw / 2;
+		const cy = vh / 2;
+		const izoom = 1 / zoom;
+
 		for (const [wagerId, roll] of store.diceRolls) {
 			activeWagerIds.add(wagerId);
 
@@ -199,8 +207,8 @@ export function createDiceRollRenderSystem() {
 
 				const d1 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
 				const d2 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
-				// scrollFactor(0,0) = screen-space rendering, unaffected by camera scroll/zoom.
-				// Positioned via createScreenAnchor which provides screen pixel coordinates.
+				// scrollFactor(0,0) = unaffected by camera scroll, but still affected by zoom.
+				// Position and scale are zoom-compensated each frame to maintain screen consistency.
 				[d1, d2].forEach((s) => {
 					s.setScrollFactor(0, 0);
 					s.setScale(scale);
@@ -368,10 +376,16 @@ export function createDiceRollRenderSystem() {
 
 					die.lastAngle = angle;
 
-					// ── Apply transforms ────────────────────────────
-					sprite.setPosition(x, y);
+					// ── Apply transforms (zoom-compensated) ─────────
+					sprite.setPosition(
+						(x - cx) * izoom + cx,
+						(y - cy) * izoom + cy,
+					);
 					sprite.setAngle(angle);
-					sprite.setScale(scale * scaleX * stretchX, scale * squashY);
+					sprite.setScale(
+						scale * scaleX * stretchX * izoom,
+						scale * squashY * izoom,
+					);
 					sprite.setTint(lerpTint(Math.min(scaleX / 0.5, 1)));
 					sprite.setAlpha(1);
 				}
@@ -398,7 +412,7 @@ export function createDiceRollRenderSystem() {
 					const side = sides[i];
 
 					sprite.setAngle(die.lastAngle * (1 - ease));
-					const pop = scale * (1 + 0.2 * (1 - ease));
+					const pop = scale * (1 + 0.2 * (1 - ease)) * izoom;
 					sprite.setScale(pop, pop);
 					sprite.setFlipX(false);
 					sprite.setTint(0xffffff);
@@ -409,7 +423,10 @@ export function createDiceRollRenderSystem() {
 						sprite.setTexture(`${DICE_TEXTURE_PREFIX}${i === 0 ? f1 : f2}`);
 					}
 
-					sprite.setPosition(screenPos.x + side * diceSpacing, screenPos.y);
+					sprite.setPosition(
+						(screenPos.x + side * diceSpacing - cx) * izoom + cx,
+						(screenPos.y - cy) * izoom + cy,
+					);
 				}
 
 				if (settleT >= 1) {
@@ -448,10 +465,13 @@ export function createDiceRollRenderSystem() {
 					const side = sides[i];
 
 					sprite.setAngle(0);
-					sprite.setScale(scale, scale);
+					sprite.setScale(scale * izoom, scale * izoom);
 					sprite.setFlipX(false);
 					sprite.setTint(0xffffff);
-					sprite.setPosition(screenPos.x + side * diceSpacing, screenPos.y);
+					sprite.setPosition(
+						(screenPos.x + side * diceSpacing - cx) * izoom + cx,
+						(screenPos.y - cy) * izoom + cy,
+					);
 
 					if (roll.result !== null) {
 						const [f1, f2] = getHighLowDicePair(roll.result);
