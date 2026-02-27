@@ -1,0 +1,1 @@
+export { DiceDuelModule } from "./DiceDuelModule";

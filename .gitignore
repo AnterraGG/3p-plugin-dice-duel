@@ -1,0 +1,18 @@
+# Anchor / Cargo build output
+target/release/
+target/debug/
+target/deploy/*.so
+target/deploy/*-keypair.json
+
+# Keep target/idl/ OR use shared/idl/ as canonical (we use shared/idl/)
+target/idl/
+
+# Anchor internals
+.anchor/
+
+# Local validator
+test-ledger/
+
+# NEVER commit wallet/signer keypairs (NOT the same as program deploy keypair)
+wallet.json
+id.json

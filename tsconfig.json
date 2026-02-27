@@ -1,0 +1,20 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"types": ["react"]
+	},
+	"include": [
+		"declarations.d.ts",
+		"client/**/*",
+		"server/**/*",
+		"shared/**/*",
+		"generated/clients/**/*"
+	],
+	"exclude": ["node_modules", "target", "out"]
+}

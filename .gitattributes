@@ -1,0 +1,3 @@
+# Mark generated code - collapse diffs in PRs, flag as generated
+generated/**/*.ts linguist-generated=true
+generated/**/*.json linguist-generated=true

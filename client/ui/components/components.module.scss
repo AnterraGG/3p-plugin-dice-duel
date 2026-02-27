@@ -1,0 +1,143 @@
+// Dice Duel Shared Components Styles
+// Uses tex-ui-kit theme tokens for consistency
+@use "@townexchange/tex-ui-kit/theme/tokens/colors" as *;
+@use "@townexchange/tex-ui-kit/theme/tokens/effects" as *;
+
+// ─── Keyframe Animations ───────────────────────────────────────────────────
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px) rotate(-1deg); }
+    75% { transform: translateX(2px) rotate(1deg); }
+}
+
+// ─── Result Display Styles ─────────────────────────────────────────────────
+
+.resultDisplay {
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    animation: fadeSlideIn 0.3s ease;
+    overflow: hidden;
+}
+
+.resultWin {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(255, 215, 0, 0.1));
+    border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.resultLose {
+    background: rgba(255, 48, 48, 0.1);
+    border: 1px solid rgba(255, 48, 48, 0.2);
+}
+
+.resultEmoji {
+    font-size: 36px;
+    animation: bounce 0.5s ease;
+}
+
+.resultTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+.resultTitleWin {
+    color: $state-success;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.resultTitleLose {
+    color: $state-error;
+}
+
+// ─── Dice Result Display ───────────────────────────────────────────────────
+
+.diceResultContainer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 4px 0;
+    gap: 6px;
+}
+
+.diceResultDie {
+    background: $bg-dark;
+    border: 2px solid $accent-gold;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: $accent-gold;
+    flex-shrink: 0;
+}
+
+.diceResultOperator {
+    color: $text-muted;
+    font-weight: normal;
+}
+
+.diceResultTotal {
+    font-weight: bold;
+    color: $accent-gold;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
+.diceResultOddEven {
+    color: $text-secondary;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+
+// ─── Loading States ────────────────────────────────────────────────────────
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 12px;
+}
+
+.loadingDice {
+    font-size: 32px;
+    animation: shake 0.3s ease-in-out infinite;
+}
+
+.loadingSpinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid $border-light;
+    border-top-color: $accent-gold;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+.loadingText {
+    color: $text-secondary;
+    font-size: 12px;
+}

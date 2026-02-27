@@ -1,0 +1,588 @@
+// SvmInventory styles
+// Exact match of EVM EvmInventory.module.scss + SVM-specific additions
+@use "@townexchange/tex-ui-kit/theme/tokens/colors" as *;
+@use "@townexchange/tex-ui-kit/theme/tokens/effects" as *;
+
+// ─── Keyframe Animations ───────────────────────────────────────────────────
+
+@keyframes selectionPulse {
+    0%, 100% {
+        box-shadow: $glow-gold-sm;
+    }
+    50% {
+        box-shadow: $glow-gold-md;
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px) rotate(-1deg); }
+    75% { transform: translateX(2px) rotate(1deg); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes urgentPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+@keyframes claimGlow {
+    0%, 100% {
+        box-shadow: none;
+    }
+    50% {
+        box-shadow: $glow-success-sm;
+    }
+}
+
+// ─── Selection States ──────────────────────────────────────────────────────
+
+.selectionSource {
+    box-shadow: $glow-gold-md;
+    animation: selectionPulse 1.5s infinite;
+}
+
+.dimmed {
+    opacity: $opacity-muted;
+    pointer-events: none;
+}
+
+// ─── Dice Card Styles ──────────────────────────────────────────────────────
+
+.diceBagCard {
+    animation: fadeSlideIn 0.2s ease;
+    transition: transform $transition-fast, box-shadow $transition-fast;
+    overflow: hidden;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+}
+
+.diceBagCardDepleted {
+    opacity: $opacity-disabled;
+    filter: grayscale(0.5);
+}
+
+.diceIcon {
+    font-size: 18px;
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.rollPipsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    justify-content: center;
+    width: 100%;
+    max-width: 42px;
+    margin-top: 2px;
+}
+
+.rollPip {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: $text-muted;
+    opacity: 0.3;
+    transition: all $transition-fast;
+}
+
+// Compact pips for smaller dice cards - 5x2 grid
+.rollPipsCompact {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    width: 100%;
+    max-width: 30px;
+}
+
+.rollPipSmall {
+    width: 5px;
+    height: 3px;
+    border-radius: 1px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.rollPipActive {
+    background: $accent-gold;
+    opacity: 1;
+}
+
+.rollPipLow {
+    background: $state-warning;
+    opacity: 1;
+}
+
+// ─── Wager Card Styles ─────────────────────────────────────────────────────
+
+.wagerCard {
+    animation: fadeSlideIn 0.2s ease;
+    transition: all $transition-fast;
+    position: relative;
+    overflow: hidden;
+}
+
+.wagerCardIncoming {
+    border-left: 3px solid $state-warning;
+}
+
+.wagerCardActive {
+    border-left: 3px solid $accent-teal;
+}
+
+.wagerCardClaimable {
+    border-left: 3px solid $state-success;
+    animation: claimGlow 2s ease-in-out infinite;
+}
+
+.wagerCardCompleted {
+    opacity: $opacity-muted;
+}
+
+// SVM-specific: settled (equivalent to EVM completed)
+.wagerCardSettled {
+    opacity: $opacity-muted;
+}
+
+.wagerCardExpired {
+    opacity: $opacity-disabled;
+    border-left: 3px solid $state-error;
+}
+
+// SVM-specific: VRF timeout
+.wagerCardVrfTimeout {
+    opacity: $opacity-disabled;
+    border-left: 3px solid $state-warning;
+}
+
+// ─── Status Badge Styles ───────────────────────────────────────────────────
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    opacity: 0.85;
+}
+
+.statusPending {
+    background: rgba(255, 204, 0, 0.15);
+    color: $state-warning;
+}
+
+.statusAccept {
+    background: rgba(255, 204, 0, 0.2);
+    color: $state-warning;
+    font-weight: 600;
+    opacity: 1 !important;
+    animation: acceptGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes acceptGlow {
+    0%, 100% {
+        box-shadow: 0 0 3px rgba(255, 204, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 8px rgba(255, 204, 0, 0.25);
+    }
+}
+
+.statusActive {
+    background: rgba(90, 154, 154, 0.15);
+    color: $accent-teal-bright;
+}
+
+.statusRolling {
+    background: rgba(90, 154, 154, 0.15);
+    color: $accent-teal-bright;
+
+    &::after {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border: 1.5px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+}
+
+.statusClaimable {
+    background: rgba(0, 255, 0, 0.2);
+    color: $state-success;
+    font-weight: 600;
+    opacity: 1 !important;
+    animation: claimPulse 2s ease-in-out infinite;
+}
+
+@keyframes claimPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 4px rgba(0, 255, 0, 0.15);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+    }
+}
+
+// SVM-specific
+.statusSettled {
+    background: rgba(0, 255, 0, 0.15);
+    color: $state-success;
+}
+
+.statusWon {
+    background: rgba(0, 255, 0, 0.15);
+    color: $state-success;
+}
+
+.statusLost {
+    background: rgba(255, 48, 48, 0.15);
+    color: $state-error;
+}
+
+.statusExpired {
+    background: rgba(255, 48, 48, 0.1);
+    color: $state-error-muted;
+}
+
+// SVM-specific
+.statusVrfTimeout {
+    background: rgba(255, 204, 0, 0.1);
+    color: $state-warning;
+}
+
+// ─── Countdown Timer Styles ────────────────────────────────────────────────
+
+.countdown {
+    font-family: "Tickerbit", monospace;
+    font-size: 10px;
+    transition: all $transition-fast;
+}
+
+.countdownNormal {
+    color: $text-secondary;
+}
+
+.countdownWarning {
+    color: $state-warning;
+    animation: urgentPulse 1s ease-in-out infinite;
+}
+
+.countdownUrgent {
+    color: $state-error;
+    font-weight: bold;
+    animation: urgentPulse 0.5s ease-in-out infinite;
+}
+
+// ─── Result Display Styles ─────────────────────────────────────────────────
+
+.resultDisplay {
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    animation: fadeSlideIn 0.3s ease;
+}
+
+.resultWin {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(255, 215, 0, 0.1));
+    border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.resultLose {
+    background: rgba(255, 48, 48, 0.1);
+    border: 1px solid rgba(255, 48, 48, 0.2);
+}
+
+.resultEmoji {
+    font-size: 32px;
+    animation: bounce 0.5s ease;
+}
+
+.resultTitle {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 4px 0;
+}
+
+.resultTitleWin {
+    color: $state-success;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.resultTitleLose {
+    color: $state-error;
+}
+
+// ─── Dice Result Display ───────────────────────────────────────────────────
+
+.diceResultContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+}
+
+.diceResultDie {
+    width: 32px;
+    height: 32px;
+    background: $bg-dark;
+    border: 2px solid $accent-gold;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: $accent-gold;
+}
+
+.diceResultTotal {
+    font-size: 24px;
+    font-weight: bold;
+    color: $accent-gold;
+}
+
+.diceResultOddEven {
+    font-size: 10px;
+    color: $text-secondary;
+    text-transform: uppercase;
+}
+
+// ─── Loading States ────────────────────────────────────────────────────────
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    gap: 8px;
+}
+
+.loadingDice {
+    font-size: 24px;
+    animation: shake 0.3s ease-in-out infinite;
+}
+
+.loadingSpinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid $border-light;
+    border-top-color: $accent-gold;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+.loadingText {
+    color: $text-secondary;
+    font-size: 11px;
+}
+
+// ─── Inventory Section Styles ─────────────────────────────────────────────
+
+.sectionHeader {
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    transition: background $transition-fast;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+}
+
+.countBadge {
+    background: #ff981f;
+    color: #2a2420;
+    padding: 1px 5px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    min-width: 16px;
+    text-align: center;
+}
+
+.sectionContent {
+    // Custom scrollbar for scrollable sections
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    }
+}
+
+// ─── Wager Item (Two-Line Layout) ─────────────────────────────────────────
+
+.wagerOpponent {
+    font-size: 11px;
+    color: $text-primary;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.wagerAmount {
+    font-size: 11px;
+    color: $text-primary;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.wagerMeta {
+    font-size: 9px;
+    color: $text-muted;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// ─── Compact History Item ─────────────────────────────────────────────────
+
+.historyItemCompact {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: $bg-darkest;
+    border: 2px solid;
+    border-color: $border-outer $border-inner $border-inner $border-outer;
+    border-radius: 3px;
+    cursor: var(--cursor-pointer, pointer);
+    transition: background $transition-fast;
+
+    &:hover {
+        background: lighten($bg-darkest, 4%);
+    }
+}
+
+.historyOpponent {
+    font-size: 11px;
+    color: $text-primary;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.historyAmount {
+    font-size: 11px;
+    color: $text-primary;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 5px;
+    border-radius: 8px;
+}
+
+.historyStatus {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 0;
+    border-radius: 3px;
+    text-align: center;
+    width: 22px;
+}
+
+.historyWon {
+    background: rgba(0, 255, 0, 0.25);
+    color: $state-success;
+}
+
+.historyLost {
+    background: rgba(255, 48, 48, 0.25);
+    color: $state-error;
+}
+
+.historyExpired {
+    background: rgba(128, 128, 128, 0.25);
+    color: $text-muted;
+}
+
+.historyListItem {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 4px 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    cursor: var(--cursor-pointer, pointer);
+    transition: background $transition-fast;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.15);
+    }
+}
+
+.viewAllLink {
+    display: block;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 10px;
+    color: $accent-gold;
+    cursor: var(--cursor-pointer, pointer);
+    transition: all $transition-fast;
+    opacity: 0.8;
+
+    &:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
+}
