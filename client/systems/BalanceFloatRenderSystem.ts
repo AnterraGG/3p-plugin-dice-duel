@@ -46,6 +46,8 @@ interface FloatVisual {
 
 export function createBalanceFloatRenderSystem() {
 	const floatVisuals = new Map<string, FloatVisual>();
+	/** Tracks balance floats that have already triggered camera FX. */
+	const fxFired = new Set<string>();
 	let cleanupRegistered = false;
 	let capturedWorld: PluginWorld | null = null;
 
@@ -153,10 +155,25 @@ export function createBalanceFloatRenderSystem() {
 						...textStyle,
 					});
 
-					visual = { textEid, tickerTextEid: null, iconEid: null, coinCircle: null };
+					visual = {
+						textEid,
+						tickerTextEid: null,
+						iconEid: null,
+						coinCircle: null,
+					};
 				}
 
 				floatVisuals.set(id, visual);
+
+				// Camera FX: green flash on positive payout
+				if (float.isPositive && !fxFired.has(id)) {
+					fxFired.add(id);
+					ctx.services.cameraController.flash({
+						color: 0x22c55e,
+						alpha: 0.25,
+						durationMs: 150,
+					});
+				}
 			}
 
 			const elapsed = Date.now() - float.startTime;
@@ -181,7 +198,10 @@ export function createBalanceFloatRenderSystem() {
 			if (elapsed < holdDuration) {
 				alpha = 1;
 			} else {
-				const fadeProgress = Math.min((elapsed - holdDuration) / fadeDuration, 1);
+				const fadeProgress = Math.min(
+					(elapsed - holdDuration) / fadeDuration,
+					1,
+				);
 				alpha = 1 - fadeProgress * fadeProgress;
 			}
 
@@ -204,12 +224,19 @@ export function createBalanceFloatRenderSystem() {
 				const amountW = ctx.entities.getTextWidth(visual.textEid) * scale;
 				const tickerW = ctx.entities.getTextWidth(visual.tickerTextEid) * scale;
 				const iconW = TICKER_ICON_SIZE * scale;
-				const totalW = amountW + TICKER_ICON_GAP + iconW + TICKER_ICON_GAP + tickerW;
+				const totalW =
+					amountW + TICKER_ICON_GAP + iconW + TICKER_ICON_GAP + tickerW;
 
 				const leftEdge = baseWorldX - totalW / 2;
 				const amountX = leftEdge + amountW / 2;
 				const iconX = leftEdge + amountW + TICKER_ICON_GAP + iconW / 2;
-				const tickerX = leftEdge + amountW + TICKER_ICON_GAP + iconW + TICKER_ICON_GAP + tickerW / 2;
+				const tickerX =
+					leftEdge +
+					amountW +
+					TICKER_ICON_GAP +
+					iconW +
+					TICKER_ICON_GAP +
+					tickerW / 2;
 
 				// Text origin (0.5, 0): top-anchored. Icon center offset down by half text height.
 				const iconY = currentWorldY + (TICKER_TEXT_HEIGHT * scale) / 2;
@@ -228,9 +255,7 @@ export function createBalanceFloatRenderSystem() {
 				Position.worldY[visual.iconEid] = iconY;
 				Sprite.alpha[visual.iconEid] = alpha;
 
-				visual.coinCircle
-					?.setPosition(iconX, iconY)
-					.setAlpha(alpha);
+				visual.coinCircle?.setPosition(iconX, iconY).setAlpha(alpha);
 			} else {
 				// No icon: single centered text
 				Position.worldX[visual.textEid] = baseWorldX;
@@ -250,10 +275,10 @@ export function createBalanceFloatRenderSystem() {
 				removeEntity(world, visual.textEid);
 				if (visual.tickerTextEid != null)
 					removeEntity(world, visual.tickerTextEid);
-				if (visual.iconEid != null)
-					removeEntity(world, visual.iconEid);
+				if (visual.iconEid != null) removeEntity(world, visual.iconEid);
 				visual.coinCircle?.destroy();
 				floatVisuals.delete(id);
+				fxFired.delete(id);
 			}
 		}
 

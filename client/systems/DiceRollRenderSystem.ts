@@ -158,6 +158,10 @@ export function createDiceRollRenderSystem() {
 		string,
 		UIAnchorHandle<ScreenAnchorOptions>
 	> = new Map();
+	/** Tracks wagers that have already triggered roll-start camera FX. */
+	const fxRollStarted = new Set<string>();
+	/** Tracks wagers that have already triggered landing camera FX. */
+	const fxLanded = new Set<string>();
 	let cleanupRegistered = false;
 
 	return (world: PluginWorld, ctx: PluginSystemContext) => {
@@ -185,6 +189,14 @@ export function createDiceRollRenderSystem() {
 		const activeWagerIds = new Set<string>();
 		const scale = DICE_DUEL_SCALES.DICE;
 
+		// Zoom compensation: sprites with scrollFactor(0,0) are still affected
+		// by camera zoom. Counteract to maintain consistent screen appearance.
+		const zoom = ctx.services.camera.zoom;
+		const { width: vw, height: vh } = ctx.services.camera.getViewportSize();
+		const cx = vw / 2;
+		const cy = vh / 2;
+		const izoom = 1 / zoom;
+
 		for (const [wagerId, roll] of store.diceRolls) {
 			activeWagerIds.add(wagerId);
 
@@ -195,6 +207,8 @@ export function createDiceRollRenderSystem() {
 
 				const d1 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
 				const d2 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
+				// scrollFactor(0,0) = unaffected by camera scroll, but still affected by zoom.
+				// Position and scale are zoom-compensated each frame to maintain screen consistency.
 				[d1, d2].forEach((s) => {
 					s.setScrollFactor(0, 0);
 					s.setScale(scale);
@@ -206,6 +220,16 @@ export function createDiceRollRenderSystem() {
 				sprites = [d1, d2];
 				diceSprites.set(wagerId, sprites);
 				diceState.set(wagerId, [createDieState(), createDieState()]);
+
+				// Camera FX: shake on dice roll start
+				if (!fxRollStarted.has(wagerId)) {
+					fxRollStarted.add(wagerId);
+					ctx.services.cameraController.shake({
+						intensity: 3,
+						durationMs: 500,
+						decay: "exponential",
+					});
+				}
 			}
 
 			// Create screen anchor once per wager (fixed screen position)
@@ -231,7 +255,7 @@ export function createDiceRollRenderSystem() {
 			if (roll.state === "rolling") {
 				const rollDur = DICE_DUEL_ANIMATION.DICE_ROLL_DURATION;
 				const rollProgress = Math.min(elapsed / rollDur, 1);
-				const speedDecay = Math.pow(1 - rollProgress, 1.8);
+				const speedDecay = (1 - rollProgress) ** 1.8;
 
 				for (let i = 0; i < 2; i++) {
 					const die = states[i];
@@ -293,7 +317,7 @@ export function createDiceRollRenderSystem() {
 					if (elapsed < throwEnd) {
 						// THROW: parabolic arc from center outward
 						const t = elapsed / throwEnd;
-						const easeX = 1 - Math.pow(1 - t, 3);
+						const easeX = 1 - (1 - t) ** 3;
 						x = screenPos.x + side * diceSpacing * easeX;
 						// Arc up then down
 						y = screenPos.y - die.throwArcHeight * 4 * t * (1 - t);
@@ -314,7 +338,7 @@ export function createDiceRollRenderSystem() {
 						// Squash near ground, proportional to bounce energy
 						if (b.peak > 0) {
 							const hRatio = Math.abs(b.y) / b.peak;
-							const groundF = Math.pow(1 - hRatio, 3);
+							const groundF = (1 - hRatio) ** 3;
 							const intensity = groundF * 0.3 * Math.min(b.peak / 30, 1);
 							squashY = 1 - intensity;
 							stretchX = 1 + intensity * 0.5;
@@ -325,7 +349,7 @@ export function createDiceRollRenderSystem() {
 					} else if (elapsed < settleEnd) {
 						// SETTLE: damped wobble
 						const st = (elapsed - bounceEnd) / die.settleDur;
-						const damp = Math.pow(1 - st, 2.5);
+						const damp = (1 - st) ** 2.5;
 
 						angle =
 							die.settleAngleAmp *
@@ -352,10 +376,16 @@ export function createDiceRollRenderSystem() {
 
 					die.lastAngle = angle;
 
-					// ── Apply transforms ────────────────────────────
-					sprite.setPosition(x, y);
+					// ── Apply transforms (zoom-compensated) ─────────
+					sprite.setPosition(
+						(x - cx) * izoom + cx,
+						(y - cy) * izoom + cy,
+					);
 					sprite.setAngle(angle);
-					sprite.setScale(scale * scaleX * stretchX, scale * squashY);
+					sprite.setScale(
+						scale * scaleX * stretchX * izoom,
+						scale * squashY * izoom,
+					);
 					sprite.setTint(lerpTint(Math.min(scaleX / 0.5, 1)));
 					sprite.setAlpha(1);
 				}
@@ -372,7 +402,7 @@ export function createDiceRollRenderSystem() {
 				const ease =
 					settleT < 1
 						? 1 -
-							Math.pow(2, -10 * settleT) *
+							2 ** (-10 * settleT) *
 								Math.cos((settleT * 10 - 0.75) * ((2 * Math.PI) / 3))
 						: 1;
 
@@ -382,7 +412,7 @@ export function createDiceRollRenderSystem() {
 					const side = sides[i];
 
 					sprite.setAngle(die.lastAngle * (1 - ease));
-					const pop = scale * (1 + 0.2 * (1 - ease));
+					const pop = scale * (1 + 0.2 * (1 - ease)) * izoom;
 					sprite.setScale(pop, pop);
 					sprite.setFlipX(false);
 					sprite.setTint(0xffffff);
@@ -393,11 +423,29 @@ export function createDiceRollRenderSystem() {
 						sprite.setTexture(`${DICE_TEXTURE_PREFIX}${i === 0 ? f1 : f2}`);
 					}
 
-					sprite.setPosition(screenPos.x + side * diceSpacing, screenPos.y);
+					sprite.setPosition(
+						(screenPos.x + side * diceSpacing - cx) * izoom + cx,
+						(screenPos.y - cy) * izoom + cy,
+					);
 				}
 
 				if (settleT >= 1) {
 					playLandSound();
+
+					// Camera FX: flash + shake on dice landing
+					if (!fxLanded.has(wagerId)) {
+						fxLanded.add(wagerId);
+						ctx.services.cameraController.flash({
+							color: 0xffffff,
+							alpha: 0.5,
+							durationMs: 150,
+						});
+						ctx.services.cameraController.shake({
+							intensity: 2,
+							durationMs: 200,
+						});
+					}
+
 					const newRolls = new Map(store.diceRolls);
 					const r = newRolls.get(wagerId);
 					if (r) {
@@ -417,10 +465,13 @@ export function createDiceRollRenderSystem() {
 					const side = sides[i];
 
 					sprite.setAngle(0);
-					sprite.setScale(scale, scale);
+					sprite.setScale(scale * izoom, scale * izoom);
 					sprite.setFlipX(false);
 					sprite.setTint(0xffffff);
-					sprite.setPosition(screenPos.x + side * diceSpacing, screenPos.y);
+					sprite.setPosition(
+						(screenPos.x + side * diceSpacing - cx) * izoom + cx,
+						(screenPos.y - cy) * izoom + cy,
+					);
 
 					if (roll.result !== null) {
 						const [f1, f2] = getHighLowDicePair(roll.result);
@@ -455,6 +506,8 @@ export function createDiceRollRenderSystem() {
 				});
 				diceSprites.delete(wagerId);
 				diceState.delete(wagerId);
+				fxRollStarted.delete(wagerId);
+				fxLanded.delete(wagerId);
 				const anchor = diceAnchors.get(wagerId);
 				if (anchor) {
 					anchor.release();
