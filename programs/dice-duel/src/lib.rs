@@ -8,6 +8,10 @@ pub mod state;
 
 use instructions::*;
 
+// Prevent test-mode from being used in release builds
+#[cfg(all(feature = "test-mode", not(debug_assertions)))]
+compile_error!("test-mode feature must NOT be used in release builds");
+
 declare_id!("7xfkbzEMJ31jPUqZoJ3EXrU72LiAw1wGKupGqmdZdoMM");
 
 #[program]
@@ -62,20 +66,6 @@ pub mod dice_duel {
         instructions::accept_wager::handle_accept_wager(context)
     }
 
-    pub fn consume_randomness(
-        context: Context<ConsumeRandomnessAccountConstraints>,
-        randomness: [u8; 32],
-    ) -> Result<()> {
-        instructions::consume_randomness::handle_consume_randomness(context, randomness)
-    }
-
-    pub fn consume_randomness_minimal(
-        context: Context<ConsumeRandomnessMinimalAccountConstraints>,
-        randomness: [u8; 32],
-    ) -> Result<()> {
-        instructions::consume_randomness_minimal::handle_consume_randomness_minimal(context, randomness)
-    }
-
     pub fn consume_randomness_resolved(
         context: Context<ConsumeRandomnessResolvedAccountConstraints>,
         randomness: [u8; 32],
@@ -85,10 +75,6 @@ pub mod dice_duel {
 
     pub fn claim_winnings(context: Context<ClaimWinningsAccountConstraints>) -> Result<()> {
         instructions::claim_winnings::handle_claim_winnings(context)
-    }
-
-    pub fn settle_wager(context: Context<SettleWagerAccountConstraints>) -> Result<()> {
-        instructions::settle_wager::handle_settle_wager(context)
     }
 
     pub fn claim_vrf_timeout(context: Context<ClaimVrfTimeoutAccountConstraints>) -> Result<()> {
