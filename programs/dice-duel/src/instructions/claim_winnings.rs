@@ -4,7 +4,7 @@ use anchor_lang::system_program;
 use crate::constants::*;
 use crate::errors::DiceDuelError;
 use crate::events::WinningsClaimed;
-use crate::state::{GameConfig, Wager, WagerStatus};
+use crate::state::{GameConfig, PlayerStats, Wager, WagerStatus};
 
 #[derive(Accounts)]
 pub struct ClaimWinningsAccountConstraints<'info> {
@@ -37,6 +37,20 @@ pub struct ClaimWinningsAccountConstraints<'info> {
     pub challenger: SystemAccount<'info>,
 
     #[account(
+        mut,
+        seeds = [SEED_STATS, wager.challenger.as_ref()],
+        bump = challenger_stats.bump,
+    )]
+    pub challenger_stats: Account<'info, PlayerStats>,
+
+    #[account(
+        mut,
+        seeds = [SEED_STATS, wager.opponent.as_ref()],
+        bump = opponent_stats.bump,
+    )]
+    pub opponent_stats: Account<'info, PlayerStats>,
+
+    #[account(
         seeds = [SEED_CONFIG],
         bump = config.bump,
     )]
@@ -55,7 +69,7 @@ pub struct ClaimWinningsAccountConstraints<'info> {
 pub fn handle_claim_winnings(context: Context<ClaimWinningsAccountConstraints>) -> Result<()> {
     let wager = &context.accounts.wager;
 
-    // Read challenger before wager closes
+    // Read fields before wager closes
     let challenger_key = wager.challenger;
     let nonce = wager.nonce;
 
@@ -103,6 +117,17 @@ pub fn handle_claim_winnings(context: Context<ClaimWinningsAccountConstraints>) 
 
     let clock = Clock::get()?;
     let wager_amount = wager.amount;
+
+    // Update winner's sol_won
+    let winner_stats = if context.accounts.claimer.key() == challenger_key {
+        &mut context.accounts.challenger_stats
+    } else {
+        &mut context.accounts.opponent_stats
+    };
+    winner_stats.sol_won = winner_stats
+        .sol_won
+        .checked_add(winner_payout)
+        .ok_or(DiceDuelError::Overflow)?;
 
     // Update wager
     let wager = &mut context.accounts.wager;
