@@ -135,4 +135,21 @@ pub mod dice_duel {
     ) -> Result<()> {
         instructions::admin::update_game_type::handle_update_game_type(context, name, enabled)
     }
+
+    pub fn propose_admin(
+        context: Context<ProposeAdminAccountConstraints>,
+        new_admin: Pubkey,
+    ) -> Result<()> {
+        instructions::admin::propose_admin::handle_propose_admin(context, new_admin)
+    }
+
+    pub fn accept_admin(context: Context<AcceptAdminAccountConstraints>) -> Result<()> {
+        instructions::admin::accept_admin::handle_accept_admin(context)
+    }
+
+    pub fn cancel_admin_proposal(
+        context: Context<CancelAdminProposalAccountConstraints>,
+    ) -> Result<()> {
+        instructions::admin::cancel_admin_proposal::handle_cancel_admin_proposal(context)
+    }
 }

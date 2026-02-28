@@ -50,4 +50,6 @@ pub enum DiceDuelError {
     PreviousWagerRequired,
     #[msg("Previous wager nonce does not match pending_nonce — wrong wager passed")]
     WagerNonceMismatch,
+    #[msg("Signer is not the pending admin")]
+    NotPendingAdmin,
 }

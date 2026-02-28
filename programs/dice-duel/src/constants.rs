@@ -1,4 +1,5 @@
 pub const SEED_CONFIG: &[u8] = b"config";
+pub const SEED_PENDING_ADMIN: &[u8] = b"pending_admin";
 pub const SEED_DICE_BAG: &[u8] = b"dice_bag";
 pub const SEED_WAGER: &[u8] = b"wager";
 pub const SEED_ESCROW: &[u8] = b"escrow";

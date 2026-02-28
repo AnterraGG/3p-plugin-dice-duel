@@ -1,6 +1,24 @@
 use anchor_lang::prelude::*;
 
 #[event]
+pub struct AdminProposed {
+    pub current_admin: Pubkey,
+    pub proposed_admin: Pubkey,
+}
+
+#[event]
+pub struct AdminTransferred {
+    pub old_admin: Pubkey,
+    pub new_admin: Pubkey,
+}
+
+#[event]
+pub struct AdminProposalCancelled {
+    pub admin: Pubkey,
+    pub cancelled_proposal: Pubkey,
+}
+
+#[event]
 pub struct DiceBagMinted {
     pub player: Pubkey,
     pub mint: Pubkey,
