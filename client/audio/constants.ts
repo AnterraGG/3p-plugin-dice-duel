@@ -14,14 +14,14 @@ export const DICE_DUEL_AUDIO = {
 
 export const DICE_DUEL_AUDIO_PATHS: Record<string, string> = {
 	[DICE_DUEL_AUDIO.CHALLENGE]:
-		"/assets/features/dragon-dice/dragon_dice_challenge.wav",
-	[DICE_DUEL_AUDIO.ROLL]: "/assets/features/dragon-dice/dragon_dice_roll.wav",
-	[DICE_DUEL_AUDIO.LAND]: "/assets/features/dragon-dice/dragon_dice_land.wav",
-	[DICE_DUEL_AUDIO.WIN]: "/assets/features/dragon-dice/dragon_dice_win.wav",
-	[DICE_DUEL_AUDIO.LOSE]: "/assets/features/dragon-dice/dragon_dice_lose.wav",
-	[DICE_DUEL_AUDIO.COIN]: "/assets/features/dragon-dice/dragon_dice_coin.wav",
+		"/assets/features/dice-duel/dice_duel_challenge.wav",
+	[DICE_DUEL_AUDIO.ROLL]: "/assets/features/dice-duel/dice_duel_roll.wav",
+	[DICE_DUEL_AUDIO.LAND]: "/assets/features/dice-duel/dice_duel_land.wav",
+	[DICE_DUEL_AUDIO.WIN]: "/assets/features/dice-duel/dice_duel_win.wav",
+	[DICE_DUEL_AUDIO.LOSE]: "/assets/features/dice-duel/dice_duel_lose.wav",
+	[DICE_DUEL_AUDIO.COIN]: "/assets/features/dice-duel/dice_duel_coin.wav",
 	[DICE_DUEL_AUDIO.CLICK]:
-		"/assets/features/dragon-dice/dragon_dice_click.wav",
+		"/assets/features/dice-duel/dice_duel_click.wav",
 };
 
 export type DiceDuelAudioKey =
