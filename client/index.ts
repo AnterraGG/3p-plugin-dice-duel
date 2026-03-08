@@ -8,17 +8,13 @@
 
 import { defineClientPlugin } from "@townexchange/3p-plugin-sdk/client";
 import { getTokenTextures } from "@townexchange/token-icons";
+import { assets } from "../shared/assets";
 import { diceDuelChains } from "../shared/chains";
-import {
-	CHALLENGE_TEXTURE_KEY,
-	CHALLENGE_TEXTURE_PATH,
-	DICE_TEXTURE_PATHS,
-} from "../shared/constants";
 import { manifest as diceDuelManifest } from "../shared/manifest";
 import { registerDiceDuelNotificationHandler } from "./handlers";
 import { DiceDuelModule } from "./modules/DiceDuelModule";
 import { registerDiceDuelWindows } from "./register-windows";
-import { initDiceDuelAudio } from "./services/DiceDuelAudioService";
+import { setDiceDuelAudio } from "./services/DiceDuelAudioService";
 import { DiceDuelUIContainer } from "./ui";
 
 // ============================================================================
@@ -42,47 +38,29 @@ export const DiceDuelClientPlugin = defineClientPlugin({
 	capabilities: ["rendering", "network"],
 	chains: diceDuelChains,
 	manifest: diceDuelManifest,
+	assets,
 	onLoad: async (ctx) => {
 		// Register all windows with the window manager
 		registerDiceDuelWindows();
 
 		// Register notification packet handler.
-		// Query invalidation on incoming notifications is handled here via ctx.queries,
-		// which the bridge wires to the app's QueryClient singleton.
 		registerDiceDuelNotificationHandler(ctx);
 
-		// Initialize audio (async, non-blocking)
-		const audio = ctx.services.audio;
-		if (audio) {
-			initDiceDuelAudio(audio).catch((err) => {
-				console.warn("[DiceDuel] Audio init failed (non-fatal):", err);
-			});
-		}
+		// Store framework audio service reference for UI components
+		if (ctx.audio) setDiceDuelAudio(ctx.audio);
 
-		// Preload all plugin textures (non-blocking).
-		// Systems use hasTexture() guards so they gracefully wait for loading.
+		// Plugin audio + textures are auto-loaded by framework via assets declaration.
+		// Only token textures (external, dynamic) still need manual loading.
 		const render = ctx.services.render;
 		const textureLoads: Promise<void>[] = [];
-
-		for (const [key, path] of Object.entries(DICE_TEXTURE_PATHS)) {
-			if (!render.hasTexture(key)) {
-				textureLoads.push(render.loadImage(key, path));
-			}
-		}
 		for (const { key, url } of getTokenTextures()) {
 			if (!render.hasTexture(key)) {
 				textureLoads.push(render.loadImage(key, url));
 			}
 		}
-		if (!render.hasTexture(CHALLENGE_TEXTURE_KEY)) {
-			textureLoads.push(
-				render.loadImage(CHALLENGE_TEXTURE_KEY, CHALLENGE_TEXTURE_PATH),
-			);
-		}
-
 		if (textureLoads.length > 0) {
 			Promise.all(textureLoads).catch((err) => {
-				console.warn("[DiceDuel] Texture preload failed (non-fatal):", err);
+				console.warn("[DiceDuel] Token texture preload failed (non-fatal):", err);
 			});
 		}
 	},
@@ -152,19 +130,9 @@ export {
 
 export { DiceDuelModule } from "./modules";
 
-// ─── Audio ──────────────────────────────────────────────────────────────────
+// ─── Assets ─────────────────────────────────────────────────────────────────
 
-export {
-	initDiceDuelAudio,
-	playClickSound,
-	playErrorSound,
-	playChallengeSound,
-	playRollSound,
-	playLandSound,
-	playWinSound,
-	playLoseSound,
-	playCoinSound,
-} from "./services/DiceDuelAudioService";
+export { assets, getDiceFaceHandle, DICE_FACE_COUNT } from "../shared/assets";
 
 // ─── API ───────────────────────────────────────────────────────────────────
 

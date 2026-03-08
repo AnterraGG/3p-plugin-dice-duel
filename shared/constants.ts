@@ -44,21 +44,4 @@ export const DICE_DUEL_SCALES = {
 	CONFETTI: 1.0,
 } as const;
 
-// Dice face sprite configuration
-export const DICE_TEXTURE_PREFIX = "dice-duel-face-";
-export const DICE_FACE_COUNT = 6;
-
-// Challenge indicator sprite
-export const CHALLENGE_TEXTURE_KEY = "dice-duel-challenge-icon";
-export const CHALLENGE_TEXTURE_PATH =
-	"/assets/features/dice-duel/challenge_icon.png";
-
-// Dice face texture paths
-export const DICE_TEXTURE_PATHS: Record<string, string> = {
-	[`${DICE_TEXTURE_PREFIX}1`]: "/assets/features/dice-duel/dice_1.png",
-	[`${DICE_TEXTURE_PREFIX}2`]: "/assets/features/dice-duel/dice_2.png",
-	[`${DICE_TEXTURE_PREFIX}3`]: "/assets/features/dice-duel/dice_3.png",
-	[`${DICE_TEXTURE_PREFIX}4`]: "/assets/features/dice-duel/dice_4.png",
-	[`${DICE_TEXTURE_PREFIX}5`]: "/assets/features/dice-duel/dice_5.png",
-	[`${DICE_TEXTURE_PREFIX}6`]: "/assets/features/dice-duel/dice_6.png",
-};
+// Texture/audio constants moved to shared/assets.ts — use definePluginAssets()

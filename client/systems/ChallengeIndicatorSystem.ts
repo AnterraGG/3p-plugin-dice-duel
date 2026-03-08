@@ -16,9 +16,8 @@ import {
 	hasComponent,
 	removeEntity,
 } from "@townexchange/3p-plugin-sdk/ecs";
+import { assets } from "../../shared/assets";
 import {
-	CHALLENGE_TEXTURE_KEY,
-	CHALLENGE_TEXTURE_PATH,
 	DICE_DUEL_ANIMATION,
 	DICE_DUEL_DEPTHS,
 	DICE_DUEL_SCALES,
@@ -107,8 +106,7 @@ export function createChallengeIndicatorSystem() {
 				const spriteEid = createSpriteEntity(world, ctx, {
 					worldX: Position.worldX[entityId],
 					worldY: Position.worldY[entityId] - 40,
-					textureKey: CHALLENGE_TEXTURE_KEY,
-					texturePath: CHALLENGE_TEXTURE_PATH,
+					textureKey: assets.textures.challenge as string,
 					depth: DICE_DUEL_DEPTHS.CHALLENGE_INDICATOR,
 					scale: DICE_DUEL_SCALES.CHALLENGE_INDICATOR,
 					originX: 0.5,

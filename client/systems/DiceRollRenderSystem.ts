@@ -19,15 +19,13 @@ import type {
 	UIAnchorHandle,
 } from "@townexchange/3p-plugin-sdk/client";
 import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
+import { assets, DICE_FACE_COUNT, getDiceFaceHandle } from "../../shared/assets";
 import {
-	DICE_FACE_COUNT,
-	DICE_TEXTURE_PREFIX,
 	DICE_DUEL_ANIMATION,
 	DICE_DUEL_DEPTHS,
 	DICE_DUEL_SCALES,
 } from "../../shared/constants";
 import { getHighLowDicePair } from "../../shared/dice-faces";
-import { playLandSound } from "../services/DiceDuelAudioService";
 import {
 	registerCleanupCallback,
 	registerSprite,
@@ -203,10 +201,10 @@ export function createDiceRollRenderSystem() {
 			let sprites = diceSprites.get(wagerId);
 
 			if (!sprites) {
-				if (!render.hasTexture(`${DICE_TEXTURE_PREFIX}1`)) continue;
+				if (!render.hasTexture(assets.textures.face1 as string)) continue;
 
-				const d1 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
-				const d2 = render.createSprite(0, 0, `${DICE_TEXTURE_PREFIX}1`);
+				const d1 = render.createSprite(0, 0, assets.textures.face1 as string);
+				const d2 = render.createSprite(0, 0, assets.textures.face1 as string);
 				// scrollFactor(0,0) = unaffected by camera scroll, but still affected by zoom.
 				// Position and scale are zoom-compensated each frame to maintain screen consistency.
 				[d1, d2].forEach((s) => {
@@ -289,7 +287,7 @@ export function createDiceRollRenderSystem() {
 						if (shouldFlip !== die.flippedX) {
 							die.flippedX = shouldFlip;
 							die.faceIndex = (die.faceIndex % DICE_FACE_COUNT) + 1;
-							sprite.setTexture(`${DICE_TEXTURE_PREFIX}${die.faceIndex}`);
+							sprite.setTexture(getDiceFaceHandle(die.faceIndex) as string);
 							die.lastFaceChangeTime = elapsed;
 						}
 						sprite.setFlipX(die.flippedX);
@@ -302,7 +300,7 @@ export function createDiceRollRenderSystem() {
 						const interval = 130 + (1 - speedDecay) * 450;
 						if (elapsed - die.lastFaceChangeTime > interval) {
 							die.faceIndex = (die.faceIndex % DICE_FACE_COUNT) + 1;
-							sprite.setTexture(`${DICE_TEXTURE_PREFIX}${die.faceIndex}`);
+							sprite.setTexture(getDiceFaceHandle(die.faceIndex) as string);
 							die.lastFaceChangeTime = elapsed;
 						}
 					}
@@ -331,7 +329,7 @@ export function createDiceRollRenderSystem() {
 						if (b.arcIdx > die.lastBounceIdx) {
 							die.lastBounceIdx = b.arcIdx;
 							die.faceIndex = (die.faceIndex % DICE_FACE_COUNT) + 1;
-							sprite.setTexture(`${DICE_TEXTURE_PREFIX}${die.faceIndex}`);
+							sprite.setTexture(getDiceFaceHandle(die.faceIndex) as string);
 							die.lastFaceChangeTime = elapsed;
 						}
 
@@ -420,7 +418,7 @@ export function createDiceRollRenderSystem() {
 
 					if (roll.result !== null) {
 						const [f1, f2] = getHighLowDicePair(roll.result);
-						sprite.setTexture(`${DICE_TEXTURE_PREFIX}${i === 0 ? f1 : f2}`);
+						sprite.setTexture(getDiceFaceHandle(i === 0 ? f1 : f2) as string);
 					}
 
 					sprite.setPosition(
@@ -430,7 +428,7 @@ export function createDiceRollRenderSystem() {
 				}
 
 				if (settleT >= 1) {
-					playLandSound();
+					ctx.audio?.play(assets.audio.land);
 
 					// Camera FX: flash + shake on dice landing
 					if (!fxLanded.has(wagerId)) {
@@ -475,7 +473,7 @@ export function createDiceRollRenderSystem() {
 
 					if (roll.result !== null) {
 						const [f1, f2] = getHighLowDicePair(roll.result);
-						sprite.setTexture(`${DICE_TEXTURE_PREFIX}${i === 0 ? f1 : f2}`);
+						sprite.setTexture(getDiceFaceHandle(i === 0 ? f1 : f2) as string);
 					}
 				}
 

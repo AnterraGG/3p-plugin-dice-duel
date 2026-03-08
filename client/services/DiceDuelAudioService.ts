@@ -1,83 +1,53 @@
 /**
- * Dice Duel Audio Service (3p SDK version)
+ * Dice Duel Audio — thin accessor for UI components.
  *
- * Import change: IAudioService from 3p-plugin-sdk/client
+ * Delegates to the framework-managed PluginAudioService via asset handles.
+ * Assets are auto-loaded by the framework; this just provides named helpers
+ * so UI components can call `playChallengeSound()` without ECS context.
  */
 
-import type { IAudioService } from "@townexchange/3p-plugin-sdk/client";
-import { DICE_DUEL_AUDIO, DICE_DUEL_AUDIO_PATHS } from "../audio/constants";
+import type { IPluginAudioService } from "@townexchange/3p-plugin-sdk/client";
+import { assets } from "../../shared/assets";
 
-let audioService: IAudioService | null = null;
-let audioInitialized = false;
+let audioService: IPluginAudioService | null = null;
 
-export async function initDiceDuelAudio(audio: IAudioService): Promise<void> {
-	if (audioInitialized) return;
-
+/** Called from onLoad to store the framework audio service reference. */
+export function setDiceDuelAudio(audio: IPluginAudioService): void {
 	audioService = audio;
-	if (!audioService) return;
-
-	try {
-		const loadPromises: Promise<void>[] = [];
-		for (const [key, path] of Object.entries(DICE_DUEL_AUDIO_PATHS)) {
-			loadPromises.push(
-				audioService
-					.loadDynamicSound(key, path, { volume: 0.5 })
-					.catch(() => {}),
-			);
-		}
-		await Promise.all(loadPromises);
-		audioInitialized = true;
-	} catch {
-		// Audio is optional
-	}
 }
 
-export function playDiceDuelSound(key: string): void {
-	if (!audioService) return;
-	try {
-		audioService.playDynamicSound(key, { volume: 0.6 });
-	} catch {
-		// Ignore
-	}
+function play(handle: Parameters<IPluginAudioService["play"]>[0]): void {
+	audioService?.play(handle);
 }
 
 export function playChallengeSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.CHALLENGE);
+	play(assets.audio.challenge);
 }
 
 export function playRollSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.ROLL);
+	play(assets.audio.roll);
 }
 
 export function playLandSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.LAND);
+	play(assets.audio.land);
 }
 
 export function playWinSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.WIN);
+	play(assets.audio.win);
 }
 
 export function playLoseSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.LOSE);
+	play(assets.audio.lose);
 }
 
 export function playCoinSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.COIN);
+	play(assets.audio.coin);
 }
 
 export function playClickSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.CLICK);
+	play(assets.audio.click);
 }
 
 export function playErrorSound(): void {
-	playDiceDuelSound(DICE_DUEL_AUDIO.LOSE);
-}
-
-export function destroyDiceDuelAudio(): void {
-	if (!audioService) return;
-	for (const key of Object.values(DICE_DUEL_AUDIO)) {
-		audioService.unloadDynamicSound(key);
-	}
-	audioService = null;
-	audioInitialized = false;
+	play(assets.audio.lose);
 }
