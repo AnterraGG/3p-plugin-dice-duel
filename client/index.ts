@@ -6,6 +6,7 @@
  * - ctx.services.audio instead of ctx.worldContext.services.audio
  */
 
+import type { PluginUIEntry } from "@townexchange/3p-plugin-sdk/client";
 import { defineClientPlugin } from "@townexchange/3p-plugin-sdk/client";
 import { getTokenTextures } from "@townexchange/token-icons";
 import { assets } from "../shared/assets";
@@ -13,12 +14,62 @@ import { diceDuelChains } from "../shared/chains";
 import { manifest as diceDuelManifest } from "../shared/manifest";
 import { registerDiceDuelNotificationHandler } from "./handlers";
 import { DiceDuelModule } from "./modules/DiceDuelModule";
-import { registerDiceDuelWindows } from "./register-windows";
 import { DiceDuelUIContainer } from "./ui";
+import {
+	DD_INCOMING_WAGER,
+	DD_INITIATE_WAGER,
+	DD_INVENTORY,
+	DD_SHOP,
+	DD_WAGER_DETAILS,
+	DD_WAGER_HISTORY,
+} from "./window-keys";
 
 // ============================================================================
 // Plugin Definition
 // ============================================================================
+
+const ui: PluginUIEntry[] = [
+	// Slot — always rendered in game HUD
+	{
+		type: "slot",
+		id: "dice-duel-hud",
+		slot: "game-hud",
+		component: DiceDuelUIContainer,
+		priority: 90, // Below BombaPerp (100)
+	},
+	// Windows — on-demand, managed by WindowManager
+	{
+		type: "window",
+		key: DD_SHOP,
+		component: () => import("./ui/svm/SvmShop/SvmShopContent"),
+		inputMode: "blocking",
+	},
+	{
+		type: "window",
+		key: DD_INVENTORY,
+		component: () => import("./ui/svm/SvmInventory/SvmInventoryContent"),
+	},
+	{
+		type: "window",
+		key: DD_INITIATE_WAGER,
+		component: () => import("./ui/svm/SvmWager/InitiateWagerContent"),
+	},
+	{
+		type: "window",
+		key: DD_INCOMING_WAGER,
+		component: () => import("./ui/svm/SvmWager/AcceptWagerContent"),
+	},
+	{
+		type: "window",
+		key: DD_WAGER_DETAILS,
+		component: () => import("./ui/svm/SvmWager/SvmWagerDetailsContent"),
+	},
+	{
+		type: "window",
+		key: DD_WAGER_HISTORY,
+		component: () => import("./ui/svm/SvmWager/SvmWagerHistoryContent"),
+	},
+];
 
 export const DiceDuelClientPlugin = defineClientPlugin({
 	id: "dice-duel",
@@ -26,22 +77,12 @@ export const DiceDuelClientPlugin = defineClientPlugin({
 	version: "1.0.0",
 	sdkVersion: "1.0.0",
 	modules: [DiceDuelModule], // ECS module for visual effects
-	ui: [
-		{
-			id: "dice-duel-hud",
-			slot: "game-hud",
-			component: DiceDuelUIContainer,
-			priority: 90, // Below BombaPerp (100)
-		},
-	],
+	ui,
 	capabilities: ["rendering", "network"],
 	chains: diceDuelChains,
 	manifest: diceDuelManifest,
 	assets,
 	onLoad: async (ctx) => {
-		// Register all windows with the window manager
-		registerDiceDuelWindows();
-
 		// Register notification packet handler.
 		registerDiceDuelNotificationHandler(ctx);
 
@@ -102,10 +143,6 @@ export {
 	DD_WAGER_DETAILS,
 	DD_WAGER_HISTORY,
 } from "./window-keys";
-
-// ─── Window Registration ───────────────────────────────────────────────────
-
-export { registerDiceDuelWindows } from "./register-windows";
 
 // ─── Handlers ────────────────────────────────────────────────────────────────
 
