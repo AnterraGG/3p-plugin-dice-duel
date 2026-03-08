@@ -14,7 +14,6 @@ import { manifest as diceDuelManifest } from "../shared/manifest";
 import { registerDiceDuelNotificationHandler } from "./handlers";
 import { DiceDuelModule } from "./modules/DiceDuelModule";
 import { registerDiceDuelWindows } from "./register-windows";
-import { setDiceDuelAudio } from "./services/DiceDuelAudioService";
 import { DiceDuelUIContainer } from "./ui";
 
 // ============================================================================
@@ -45,9 +44,6 @@ export const DiceDuelClientPlugin = defineClientPlugin({
 
 		// Register notification packet handler.
 		registerDiceDuelNotificationHandler(ctx);
-
-		// Store framework audio service reference for UI components
-		if (ctx.audio) setDiceDuelAudio(ctx.audio);
 
 		// Plugin audio + textures are auto-loaded by framework via assets declaration.
 		// Only token textures (external, dynamic) still need manual loading.

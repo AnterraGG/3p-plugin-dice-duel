@@ -8,7 +8,10 @@
 
 import type { Address } from "@solana/kit";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePluginIdentity } from "@townexchange/3p-plugin-sdk/client";
+import {
+	usePluginAudio,
+	usePluginIdentity,
+} from "@townexchange/3p-plugin-sdk/client";
 import { Card, Flex, notificationApi } from "@townexchange/tex-ui-kit";
 import { TokenIcon } from "@townexchange/token-icons";
 import type React from "react";
@@ -20,13 +23,9 @@ import {
 	queryKeys,
 	useSvmGameConfig,
 } from "../../../hooks/svm/queries-indexed";
+import { assets } from "../../../../shared/assets";
 import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
 import { useCountdown } from "../../../hooks/useCountdown";
-import {
-	playClickSound,
-	playCoinSound,
-	playErrorSound,
-} from "../../../services/DiceDuelAudioService";
 import styles from "./SvmInventory.module.scss";
 
 interface SvmWagerSlotProps {
@@ -150,6 +149,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 	onClick,
 	onRightClick,
 }) => {
+	const audio = usePluginAudio();
 	const queryClient = useQueryClient();
 	const { getUsernameBySvmAddress } = usePluginIdentity();
 	const {
@@ -184,7 +184,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 	const handleCancel = useCallback(async () => {
 		if (actionState !== "confirm-cancel") {
 			setActionState("confirm-cancel");
-			playClickSound();
+			audio.play(assets.audio.click, { volume: 0.6 });
 			return;
 		}
 		setActionState("confirming");
@@ -195,7 +195,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 			invalidateQueries();
 		} catch (e: any) {
 			const decoded = logDiceDuelError("cancelWager", e);
-			playErrorSound();
+			audio.play(assets.audio.lose, { volume: 0.6 });
 			notificationApi.notify({
 				type: "error",
 				title: "Error",
@@ -208,7 +208,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 
 	const handleClaimExpired = useCallback(async () => {
 		setActionState("confirming");
-		playClickSound();
+		audio.play(assets.audio.click, { volume: 0.6 });
 		try {
 			await claimExpired.execute({
 				challenger: wager.challenger as Address,
@@ -219,7 +219,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 			invalidateQueries();
 		} catch (e: any) {
 			const decoded = logDiceDuelError("claimExpired", e);
-			playErrorSound();
+			audio.play(assets.audio.lose, { volume: 0.6 });
 			notificationApi.notify({
 				type: "error",
 				title: "Error",
@@ -241,21 +241,21 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 			return;
 		}
 		setActionState("confirming");
-		playClickSound();
+		audio.play(assets.audio.click, { volume: 0.6 });
 		try {
 			await claimWinnings.execute({
 				challenger: wager.challenger as Address,
 				treasury: configData.config.treasury as Address,
 				nonce: BigInt(wager.nonce),
 			});
-			playCoinSound();
+			audio.play(assets.audio.coin, { volume: 0.6 });
 			// No inline notification — the server-driven wager_claimed event
 			// in DiceDuelUIContainer handles the "Winnings Claimed" toast
 			// with the actual payout amount from the chain.
 			invalidateQueries();
 		} catch (e: any) {
 			const decoded = logDiceDuelError("claimWinnings", e);
-			playErrorSound();
+			audio.play(assets.audio.lose, { volume: 0.6 });
 			notificationApi.notify({
 				type: "error",
 				title: "Error",
@@ -274,7 +274,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 
 	const handleClaimVrfTimeout = useCallback(async () => {
 		setActionState("confirming");
-		playClickSound();
+		audio.play(assets.audio.click, { volume: 0.6 });
 		try {
 			await claimVrfTimeout.execute({
 				challenger: wager.challenger as Address,
@@ -286,7 +286,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 			invalidateQueries();
 		} catch (e: any) {
 			const decoded = logDiceDuelError("claimVrfTimeout", e);
-			playErrorSound();
+			audio.play(assets.audio.lose, { volume: 0.6 });
 			notificationApi.notify({
 				type: "error",
 				title: "Error",

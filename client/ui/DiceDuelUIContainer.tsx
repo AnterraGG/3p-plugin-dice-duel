@@ -4,6 +4,7 @@
 
 import {
 	useActiveZones,
+	usePluginAudio,
 	usePluginIdentity,
 	usePluginSvmTransaction,
 } from "@townexchange/3p-plugin-sdk/client";
@@ -14,16 +15,9 @@ import {
 	useNotification,
 } from "@townexchange/tex-ui-kit";
 import { useEffect } from "react";
+import { assets } from "../../shared/assets";
 import { DICE_DUEL_ANIMATION } from "../../shared/constants";
 import { formatTokenAmount, getTokenSymbol } from "../../shared/tokenUtils";
-import {
-	playChallengeSound,
-	playCoinSound,
-	playLandSound,
-	playLoseSound,
-	playRollSound,
-	playWinSound,
-} from "../services/DiceDuelAudioService";
 import { getLocalPlayerEntityId, getLocalPlayerPosition } from "../state";
 import {
 	useDiceDuelGameStore,
@@ -38,6 +32,7 @@ import { SvmInventory } from "./svm/SvmInventory";
  * depending on whether the active game chain is EVM or SVM.
  */
 function useDiceDuelNotifications() {
+	const audio = usePluginAudio();
 	const notify = useNotification((s) => s.notify);
 	const chain = usePluginActiveChain("svm");
 	const { walletAddress: svmWalletAddress } = usePluginSvmTransaction();
@@ -74,7 +69,7 @@ function useDiceDuelNotifications() {
 
 		switch (notification.type) {
 			case "dice_minted":
-				playCoinSound();
+				audio.play(assets.audio.coin, { volume: 0.6 });
 				notify({
 					type: "success",
 					title: "Dice Minted!",
@@ -84,7 +79,7 @@ function useDiceDuelNotifications() {
 				break;
 
 			case "dice_bag_minted":
-				playCoinSound();
+				audio.play(assets.audio.coin, { volume: 0.6 });
 				notify({
 					type: "success",
 					title: "Dice Bag Minted!",
@@ -98,7 +93,7 @@ function useDiceDuelNotifications() {
 					notification.initiator &&
 					gameWalletAddress &&
 					compareAddresses(notification.initiator, gameWalletAddress);
-				playChallengeSound();
+				audio.play(assets.audio.challenge, { volume: 0.6 });
 				if (isInitiator) {
 					// Initiator confirmation — wager was created on-chain
 					const opponentName = notification.opponent
@@ -133,7 +128,7 @@ function useDiceDuelNotifications() {
 
 			case "wager_accepted": {
 				gameStore.removeChallengeIndicator(notification.wagerId);
-				playRollSound();
+				audio.play(assets.audio.roll, { volume: 0.6 });
 				const pos = getEffectPosition();
 				gameStore.startDiceRoll(notification.wagerId, pos);
 				const isAcceptor =
@@ -169,7 +164,7 @@ function useDiceDuelNotifications() {
 
 				const existingRoll = gameStore.diceRolls.get(notification.wagerId);
 				if (!existingRoll) {
-					playRollSound();
+					audio.play(assets.audio.roll, { volume: 0.6 });
 					gameStore.startDiceRoll(notification.wagerId, pos);
 				}
 
@@ -193,9 +188,9 @@ function useDiceDuelNotifications() {
 
 				setTimeout(() => {
 					if (isWinner) {
-						playWinSound();
+						audio.play(assets.audio.win, { volume: 0.6 });
 					} else {
-						playLoseSound();
+						audio.play(assets.audio.lose, { volume: 0.6 });
 					}
 					gameStore.addCelebration(
 						isWinner ? "win" : "lose",
@@ -253,7 +248,7 @@ function useDiceDuelNotifications() {
 				// Show a notification with the payout amount
 				if (notification.payout) {
 					const payoutSol = (Number(notification.payout) / 1e9).toFixed(3);
-					playCoinSound();
+					audio.play(assets.audio.coin, { volume: 0.6 });
 					notify({
 						type: "success",
 						title: "Winnings Claimed!",
@@ -266,7 +261,7 @@ function useDiceDuelNotifications() {
 
 			case "wager_cancelled":
 				gameStore.removeChallengeIndicator(notification.wagerId);
-				playCoinSound();
+				audio.play(assets.audio.coin, { volume: 0.6 });
 				notify({
 					type: "info",
 					title: "Wager Cancelled",
@@ -303,6 +298,7 @@ function useDiceDuelNotifications() {
 
 		clearNotification(0);
 	}, [
+		audio,
 		notifications,
 		notify,
 		clearNotification,

@@ -428,7 +428,7 @@ export function createDiceRollRenderSystem() {
 				}
 
 				if (settleT >= 1) {
-					ctx.audio?.play(assets.audio.land);
+					ctx.audio?.play(assets.audio.land, { volume: 0.6 });
 
 					// Camera FX: flash + shake on dice landing
 					if (!fxLanded.has(wagerId)) {

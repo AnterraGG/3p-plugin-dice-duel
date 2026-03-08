@@ -8,7 +8,10 @@
 
 import type { Address } from "@solana/kit";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePluginIdentity } from "@townexchange/3p-plugin-sdk/client";
+import {
+	usePluginAudio,
+	usePluginIdentity,
+} from "@townexchange/3p-plugin-sdk/client";
 import {
 	Button,
 	Stack,
@@ -21,12 +24,9 @@ import { useCallback, useState } from "react";
 import type { SvmWager } from "../../../api";
 import { logDiceDuelError } from "../../../hooks/svm/errors";
 import { queryKeys } from "../../../hooks/svm/queries-indexed";
+import { assets } from "../../../../shared/assets";
 import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
 import { useCountdown } from "../../../hooks/useCountdown";
-import {
-	playClickSound,
-	playErrorSound,
-} from "../../../services/DiceDuelAudioService";
 
 type TxState = "idle" | "confirming" | "success" | "error";
 
@@ -44,6 +44,7 @@ export const AcceptWagerSvm: React.FC<AcceptWagerSvmProps> = ({
 	wager,
 	onClose,
 }) => {
+	const audio = usePluginAudio();
 	const queryClient = useQueryClient();
 	const { acceptWager, isLoading } = useDiceDuelSvm();
 	const { getUsernameBySvmAddress } = usePluginIdentity();
@@ -52,7 +53,7 @@ export const AcceptWagerSvm: React.FC<AcceptWagerSvmProps> = ({
 
 	const handleAccept = useCallback(async () => {
 		setTxState("confirming");
-		playClickSound();
+		audio.play(assets.audio.click, { volume: 0.6 });
 
 		try {
 			await acceptWager.execute({
@@ -75,7 +76,7 @@ export const AcceptWagerSvm: React.FC<AcceptWagerSvmProps> = ({
 			const decoded = logDiceDuelError("acceptWager", e);
 			setTxState("error");
 			setErrorMsg(decoded.message);
-			playErrorSound();
+			audio.play(assets.audio.lose, { volume: 0.6 });
 			notificationApi.notify({
 				type: "error",
 				title: "Error",

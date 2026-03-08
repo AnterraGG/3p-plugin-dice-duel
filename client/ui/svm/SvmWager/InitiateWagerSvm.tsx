@@ -20,14 +20,12 @@ import {
 	modalStyles,
 	notificationApi,
 } from "@townexchange/tex-ui-kit";
+import { usePluginAudio } from "@townexchange/3p-plugin-sdk/client";
 import { useCallback, useMemo, useState } from "react";
+import { assets } from "../../../../shared/assets";
 import { logDiceDuelError } from "../../../hooks/svm/errors";
 import { queryKeys, useSvmDiceBags } from "../../../hooks/svm/queries-indexed";
 import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
-import {
-	playClickSound,
-	playErrorSound,
-} from "../../../services/DiceDuelAudioService";
 
 type TxState = "idle" | "confirming" | "success" | "error";
 
@@ -51,6 +49,7 @@ export const InitiateWagerSvm: React.FC<InitiateWagerSvmProps> = ({
 	diceBagMint,
 	onClose,
 }) => {
+	const audio = usePluginAudio();
 	const queryClient = useQueryClient();
 	const { initiateWager, isLoading, walletAddress } = useDiceDuelSvm();
 	const { data: diceBagsData } = useSvmDiceBags();
@@ -84,12 +83,12 @@ export const InitiateWagerSvm: React.FC<InitiateWagerSvmProps> = ({
 		const err = validate();
 		if (err) {
 			setErrorMsg(err);
-			playErrorSound();
+			audio.play(assets.audio.lose, { volume: 0.6 });
 			return;
 		}
 		setErrorMsg("");
 		setTxState("confirming");
-		playClickSound();
+		audio.play(assets.audio.click, { volume: 0.6 });
 
 		try {
 			const lamports = BigInt(Math.round(Number.parseFloat(amount) * 1e9));
@@ -124,7 +123,7 @@ export const InitiateWagerSvm: React.FC<InitiateWagerSvmProps> = ({
 					? "You have a pending wager that must be cancelled first. Check your inventory."
 					: decoded.message;
 			setErrorMsg(msg);
-			playErrorSound();
+			audio.play(assets.audio.lose, { volume: 0.6 });
 			notificationApi.notify({
 				type: "error",
 				title: "Error",
@@ -234,7 +233,7 @@ export const InitiateWagerSvm: React.FC<InitiateWagerSvmProps> = ({
 							variant={amount === preset ? "primary" : "ghost"}
 							onClick={() => {
 								setAmount(preset);
-								playClickSound();
+								audio.play(assets.audio.click, { volume: 0.6 });
 							}}
 							disabled={busy}
 							style={{ flex: 1, fontSize: 10 }}
