@@ -72,7 +72,6 @@ const ui: PluginUIEntry[] = [
 ];
 
 export const DiceDuelClientPlugin = defineClientPlugin({
-	id: "dice-duel",
 	name: "Dice Duel",
 	version: "1.0.0",
 	sdkVersion: "1.0.0",
