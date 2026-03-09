@@ -10,6 +10,7 @@
 import {
 	usePluginIdentity,
 	usePluginSvmTransaction,
+	usePluginWindows,
 } from "@townexchange/3p-plugin-sdk/client";
 import {
 	Button,
@@ -20,7 +21,6 @@ import {
 	useContextMenu,
 	useSelectionStore,
 } from "@townexchange/tex-ui-kit";
-import { windowManagerApi } from "@townexchange/tex-ui-kit/api";
 import type React from "react";
 import { useState } from "react";
 import type { SvmDiceBag, SvmWager, SvmWagerCompact } from "../../../api";
@@ -51,6 +51,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 	const { open: openContextMenu } = useContextMenu();
 	const startSelection = useSelectionStore((s) => s.startSelection);
 	const { getUsernameBySvmAddress } = usePluginIdentity();
+	const pluginWindows = usePluginWindows();
 
 	const [collapsedSections, setCollapsedSections] = useState<
 		Record<string, boolean>
@@ -136,7 +137,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 				],
 			},
 			onComplete: (target) => {
-				windowManagerApi.open(DD_INITIATE_WAGER as any, {
+				pluginWindows.open(DD_INITIATE_WAGER, {
 					opponentAddress: target.data?.svmAddress as string | undefined,
 					opponentName: target.data?.displayName as string | undefined,
 					diceBagMint: bag.mint,
@@ -181,14 +182,14 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 			wager.challenger.toLowerCase() === walletAddress.toLowerCase();
 
 		if (wager.status === "Pending" && !isChallenger) {
-			windowManagerApi.open(DD_INCOMING_WAGER as any, { wager });
+			pluginWindows.open(DD_INCOMING_WAGER, { wager });
 		} else {
-			windowManagerApi.open(DD_WAGER_DETAILS as any, { wager });
+			pluginWindows.open(DD_WAGER_DETAILS, { wager });
 		}
 	};
 
 	const handleHistoryItemClick = (wager: SvmWager | SvmWagerCompact) => {
-		windowManagerApi.open(DD_WAGER_DETAILS as any, { wager });
+		pluginWindows.open(DD_WAGER_DETAILS, { wager });
 	};
 
 	const handleWagerRightClick =
@@ -201,8 +202,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 				{
 					id: "view-details",
 					label: "View Details",
-					onClick: () =>
-						windowManagerApi.open(DD_WAGER_DETAILS as any, { wager }),
+					onClick: () => pluginWindows.open(DD_WAGER_DETAILS, { wager }),
 				},
 			];
 
@@ -210,8 +210,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 				menuItems.unshift({
 					id: "accept",
 					label: "Accept Wager",
-					onClick: () =>
-						windowManagerApi.open(DD_INCOMING_WAGER as any, { wager }),
+					onClick: () => pluginWindows.open(DD_INCOMING_WAGER, { wager }),
 				});
 			}
 
@@ -240,13 +239,13 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 					Dice Duel
 				</Typography>
 
-					{/* Stuck pending wager warning — indexer missed creation, on-chain state is ahead */}
+				{/* Stuck pending wager warning — indexer missed creation, on-chain state is ahead */}
 				{hasStuckPendingWager && (
 					<StatusBox variant="error">
 						<Stack gap={2}>
 							<Typography variant="error" size="xs">
-								Pending wager #{pendingNonce!.toString()} not found. Cancel it to
-								create new wagers.
+								Pending wager #{pendingNonce!.toString()} not found. Cancel it
+								to create new wagers.
 							</Typography>
 							<Button
 								size="sm"
@@ -261,7 +260,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 					</StatusBox>
 				)}
 
-			{isLoading ? (
+				{isLoading ? (
 					<Typography variant="muted" size="xs">
 						Loading...
 					</Typography>
@@ -397,9 +396,7 @@ export const SvmInventory: React.FC<SvmInventoryProps> = ({ className }) => {
 									<button
 										type="button"
 										className={styles.viewAllLink}
-										onClick={() =>
-											windowManagerApi.open(DD_WAGER_HISTORY as any, {} as any)
-										}
+										onClick={() => pluginWindows.open(DD_WAGER_HISTORY)}
 									>
 										View all {totalHistoryCount} duels →
 									</button>

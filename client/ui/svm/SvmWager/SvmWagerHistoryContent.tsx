@@ -9,6 +9,7 @@
 import {
 	usePluginIdentity,
 	usePluginSvmTransaction,
+	usePluginWindows,
 } from "@townexchange/3p-plugin-sdk/client";
 import {
 	Button,
@@ -18,7 +19,6 @@ import {
 	Typography,
 	modalStyles,
 } from "@townexchange/tex-ui-kit";
-import { windowManagerApi } from "@townexchange/tex-ui-kit/api";
 import type React from "react";
 
 import { TokenIcon } from "@townexchange/token-icons";
@@ -163,6 +163,7 @@ const HistoryListItem: React.FC<{
 const SvmWagerHistoryInner: React.FC<Props> = ({ onClose }) => {
 	const { walletAddress } = usePluginSvmTransaction();
 	const { getUsernameBySvmAddress } = usePluginIdentity();
+	const pluginWindows = usePluginWindows();
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
 		useSvmWagerHistory(20);
 	const { data: statsData } = useSvmPlayerStats();
@@ -170,7 +171,7 @@ const SvmWagerHistoryInner: React.FC<Props> = ({ onClose }) => {
 	const stats = statsData?.stats;
 
 	const handleWagerClick = (wager: SvmWagerCompact) => {
-		windowManagerApi.open(DD_WAGER_DETAILS as any, { wager });
+		pluginWindows.open(DD_WAGER_DETAILS, { wager });
 	};
 
 	const allWagers = data?.pages.flatMap((p) => p.wagers) ?? [];
