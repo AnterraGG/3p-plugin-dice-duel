@@ -201,10 +201,10 @@ export function createDiceRollRenderSystem() {
 			let sprites = diceSprites.get(wagerId);
 
 			if (!sprites) {
-				if (!render.hasTexture(assets.textures.face1 as string)) continue;
+				if (!render.hasTexture(assets.textures.face1)) continue;
 
-				const d1 = render.createSprite(0, 0, assets.textures.face1 as string);
-				const d2 = render.createSprite(0, 0, assets.textures.face1 as string);
+				const d1 = render.createSprite(0, 0, assets.textures.face1);
+				const d2 = render.createSprite(0, 0, assets.textures.face1);
 				// scrollFactor(0,0) = unaffected by camera scroll, but still affected by zoom.
 				// Position and scale are zoom-compensated each frame to maintain screen consistency.
 				[d1, d2].forEach((s) => {
@@ -287,7 +287,7 @@ export function createDiceRollRenderSystem() {
 						if (shouldFlip !== die.flippedX) {
 							die.flippedX = shouldFlip;
 							die.faceIndex = (die.faceIndex % DICE_FACE_COUNT) + 1;
-							sprite.setTexture(getDiceFaceHandle(die.faceIndex) as string);
+							sprite.setTexture(getDiceFaceHandle(die.faceIndex));
 							die.lastFaceChangeTime = elapsed;
 						}
 						sprite.setFlipX(die.flippedX);
@@ -300,7 +300,7 @@ export function createDiceRollRenderSystem() {
 						const interval = 130 + (1 - speedDecay) * 450;
 						if (elapsed - die.lastFaceChangeTime > interval) {
 							die.faceIndex = (die.faceIndex % DICE_FACE_COUNT) + 1;
-							sprite.setTexture(getDiceFaceHandle(die.faceIndex) as string);
+							sprite.setTexture(getDiceFaceHandle(die.faceIndex));
 							die.lastFaceChangeTime = elapsed;
 						}
 					}
@@ -329,7 +329,7 @@ export function createDiceRollRenderSystem() {
 						if (b.arcIdx > die.lastBounceIdx) {
 							die.lastBounceIdx = b.arcIdx;
 							die.faceIndex = (die.faceIndex % DICE_FACE_COUNT) + 1;
-							sprite.setTexture(getDiceFaceHandle(die.faceIndex) as string);
+							sprite.setTexture(getDiceFaceHandle(die.faceIndex));
 							die.lastFaceChangeTime = elapsed;
 						}
 
@@ -418,7 +418,7 @@ export function createDiceRollRenderSystem() {
 
 					if (roll.result !== null) {
 						const [f1, f2] = getHighLowDicePair(roll.result);
-						sprite.setTexture(getDiceFaceHandle(i === 0 ? f1 : f2) as string);
+						sprite.setTexture(getDiceFaceHandle(i === 0 ? f1 : f2));
 					}
 
 					sprite.setPosition(
@@ -473,7 +473,7 @@ export function createDiceRollRenderSystem() {
 
 					if (roll.result !== null) {
 						const [f1, f2] = getHighLowDicePair(roll.result);
-						sprite.setTexture(getDiceFaceHandle(i === 0 ? f1 : f2) as string);
+						sprite.setTexture(getDiceFaceHandle(i === 0 ? f1 : f2));
 					}
 				}
 

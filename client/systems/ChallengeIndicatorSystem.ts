@@ -106,7 +106,7 @@ export function createChallengeIndicatorSystem() {
 				const spriteEid = createSpriteEntity(world, ctx, {
 					worldX: Position.worldX[entityId],
 					worldY: Position.worldY[entityId] - 40,
-					textureKey: assets.textures.challenge as string,
+					textureKey: assets.textures.challenge,
 					depth: DICE_DUEL_DEPTHS.CHALLENGE_INDICATOR,
 					scale: DICE_DUEL_SCALES.CHALLENGE_INDICATOR,
 					originX: 0.5,
