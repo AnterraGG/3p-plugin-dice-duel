@@ -117,4 +117,14 @@ export function fetchSvmGameConfig(
 	return trackedGet(api, "/dice-duel/svm/config");
 }
 
+export function fetchSvmLeaderboard(
+	api: IndexerApiClient,
+	opts?: { limit?: number; offset?: number },
+): Promise<{ leaderboard: SvmPlayerStats[]; limit: number; offset: number }> {
+	const params: Record<string, string> = {};
+	if (opts?.limit) params.limit = String(opts.limit);
+	if (opts?.offset !== undefined) params.offset = String(opts.offset);
+	return trackedGet(api, "/dice-duel/svm/leaderboard", params);
+}
+
 // fetchPriorityFees moved to @townexchange/3p-plugin-sdk/client

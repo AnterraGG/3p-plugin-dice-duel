@@ -11,3 +11,4 @@ export const DD_INITIATE_WAGER = "initiate-wager";
 export const DD_INCOMING_WAGER = "incoming-wager";
 export const DD_WAGER_DETAILS = "wager-details";
 export const DD_WAGER_HISTORY = "wager-history";
+export const DD_LEADERBOARD = "leaderboard";

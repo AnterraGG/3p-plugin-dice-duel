@@ -45,9 +45,8 @@ export const SvmHistoryItem: React.FC<SvmHistoryItemProps> = ({
 	}
 	return (
 		<div
-			className={styles.historyItemCompact}
+			className={`${styles.historyItemCompact} ${isWin ? styles.historyBorderWin : styles.historyBorderLoss}`}
 			onClick={handleClick}
-			style={{ borderLeftColor: isWin ? "#22c55e" : "#ef4444" }}
 		>
 			<span className={styles.historyOpponent}>{opponentDisplay}</span>
 			<span className={styles.historyAmount}>

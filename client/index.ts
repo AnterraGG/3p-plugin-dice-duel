@@ -19,6 +19,7 @@ import {
 	DD_INCOMING_WAGER,
 	DD_INITIATE_WAGER,
 	DD_INVENTORY,
+	DD_LEADERBOARD,
 	DD_SHOP,
 	DD_WAGER_DETAILS,
 	DD_WAGER_HISTORY,
@@ -68,6 +69,11 @@ const ui: PluginUIEntry[] = [
 		type: "window",
 		key: DD_WAGER_HISTORY,
 		component: () => import("./ui/svm/SvmWager/SvmWagerHistoryContent"),
+	},
+	{
+		type: "window",
+		key: DD_LEADERBOARD,
+		component: () => import("./ui/svm/SvmLeaderboard/SvmLeaderboardContent"),
 	},
 ];
 
@@ -141,6 +147,7 @@ export {
 	DD_INCOMING_WAGER,
 	DD_WAGER_DETAILS,
 	DD_WAGER_HISTORY,
+	DD_LEADERBOARD,
 } from "./window-keys";
 
 // ─── Handlers ────────────────────────────────────────────────────────────────

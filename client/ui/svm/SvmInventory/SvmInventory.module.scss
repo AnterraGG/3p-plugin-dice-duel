@@ -428,8 +428,8 @@
 }
 
 .countBadge {
-    background: #ff981f;
-    color: #2a2420;
+    background: $accent-gold;
+    color: $stone-darkest;
     padding: 1px 5px;
     border-radius: 8px;
     font-size: 9px;
@@ -570,6 +570,124 @@
         background: rgba(0, 0, 0, 0.15);
     }
 }
+
+// ─── Status Colors (for inline style replacement in TSX) ─────────────────
+
+.statusColorPending {
+    color: $state-warning;
+}
+
+.statusColorActive {
+    color: $state-info;
+}
+
+.statusColorResolved {
+    color: $state-warning;
+}
+
+.statusColorSettled {
+    color: $state-success;
+}
+
+.statusColorExpired {
+    color: $text-muted;
+}
+
+.statusColorDefault {
+    color: $text-white;
+}
+
+// ─── History Item Inline Style Replacements ──────────────────────────────
+
+.historyBorderWin {
+    border-left: 3px solid $state-success;
+}
+
+.historyBorderLoss {
+    border-left: 3px solid $state-error;
+}
+
+.historyBorderExpired {
+    border-left: 3px solid $text-muted;
+}
+
+.historyTextCream {
+    color: $text-cream;
+}
+
+.historyTextMuted {
+    color: $text-muted;
+}
+
+.historyBadgeWin {
+    background: rgba($state-success, 0.2);
+    color: $state-success;
+}
+
+.historyBadgeLoss {
+    background: rgba($state-error, 0.2);
+    color: $state-error;
+}
+
+.historyBadgeExpired {
+    background: rgba(128, 128, 128, 0.2);
+    color: $text-muted;
+}
+
+.recordWins {
+    color: $state-success;
+    font-weight: 600;
+}
+
+.recordSeparator {
+    color: $text-muted;
+}
+
+.recordLosses {
+    color: $state-error;
+    font-weight: 600;
+}
+
+.totalWageredDivider {
+    text-align: center;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba($text-white, 0.08);
+}
+
+// ─── Buy Dice Bag Slot ────────────────────────────────────────────────────
+
+.buySlot {
+    width: 38px;
+    height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 2px;
+    gap: 2px;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    opacity: 0.6;
+    transition: opacity $transition-fast, border-color $transition-fast;
+
+    &:hover {
+        opacity: 1;
+        border-color: $accent-gold;
+    }
+}
+
+.buySlotIcon {
+    font-size: 18px;
+    line-height: 1;
+    color: $text-muted;
+    font-weight: 300;
+}
+
+.buySlotLabel {
+    font-size: 8px;
+}
+
+// ─── View All Link ────────────────────────────────────────────────────────
 
 .viewAllLink {
     display: block;

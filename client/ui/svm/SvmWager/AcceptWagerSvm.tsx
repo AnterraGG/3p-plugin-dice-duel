@@ -27,6 +27,7 @@ import { queryKeys } from "../../../hooks/svm/queries-indexed";
 import { assets } from "../../../../shared/assets";
 import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
 import { useCountdown } from "../../../hooks/useCountdown";
+import inventoryStyles from "../SvmInventory/SvmInventory.module.scss";
 
 type TxState = "idle" | "confirming" | "success" | "error";
 
@@ -111,13 +112,14 @@ export const AcceptWagerSvm: React.FC<AcceptWagerSvmProps> = ({
 					</Typography>
 					<Typography
 						size="lg"
+						className={
+							expiresAtNum! - Math.floor(Date.now() / 1000) < 60
+								? inventoryStyles.countdownUrgent
+								: inventoryStyles.countdownWarning
+						}
 						style={{
 							fontWeight: 700,
 							fontVariantNumeric: "tabular-nums",
-							color:
-								expiresAtNum! - Math.floor(Date.now() / 1000) < 60
-									? "#ef4444"
-									: "#f59e0b",
 						}}
 					>
 						⏱ {countdown}

@@ -2,100 +2,27 @@
  * Dice Duel Onchain Event Data
  *
  * Shared type definitions for event payloads published by the SVM indexer
- * (handlers.ts / anchor-events.ts) and consumed by the server plugin.
- * Single source of truth — both sides import from here.
+ * (handlers.ts) and consumed by the server plugin. Single source of truth
+ * for the publisher-consumer NATS contract.
  *
- * Named with `EventData` suffix to distinguish from the raw Anchor-decoded
- * event types (WagerInitiatedEvent, etc.) in anchor-events.ts.
+ * Derived from Codama-generated Anchor event types where possible.
+ * The wire format uses plain `string` for Address and bigint fields
+ * (JSON cannot represent bigint natively).
  */
 
-/** wager_initiated — new wager created */
-export interface WagerInitiatedEventData {
-	challenger: string;
-	opponent: string;
-	amount: string;
-	wagerAddress: string;
-	nonce?: string;
-}
-
-/** wager_accepted — opponent accepted, dice rolling */
-export interface WagerAcceptedEventData {
-	challenger: string;
-	opponent: string;
-	wagerAddress: string;
-	amount?: string;
-	nonce?: string;
-}
-
-/** wager_cancelled — wager cancelled before acceptance */
-export interface WagerCancelledEventData {
-	challenger: string;
-	opponent?: string;
-	wagerAddress: string;
-	nonce?: string;
-}
-
-/** wager_resolved — VRF result in, winner determined, awaiting claim */
-export interface WagerResolvedEventData {
-	challenger: string;
-	opponent: string;
-	winner: string;
-	vrfResult: number;
-	gameType: number;
-	challengerChoice: number;
-	amount: string;
-	wagerAddress: string;
-	nonce?: string;
-}
-
-/** winnings_claimed — payout complete, wager settled */
-export interface WinningsClaimedEventData {
-	winner: string;
-	amount: string;
-	payout?: string;
-	fee?: string;
-	settledAt?: string;
-	challenger?: string;
-	opponent?: string;
-	wagerAddress?: string;
-	nonce?: string;
-}
-
-/** wager_expired / vrf_timeout_claimed — wager timed out */
-export interface WagerStatusEventData {
-	wagerAddress: string;
-	challenger: string;
-	opponent: string;
-	amount?: string;
-	nonce?: string;
-}
-
-/** dice_bag_minted — new dice bag NFT minted */
-export interface DiceBagMintedEventData {
-	player: string;
-	mint: string;
-}
-
-/** dice_bag_updated — dice bag stats changed */
-export interface DiceBagUpdatedEventData {
-	player: string;
-	mint: string;
-	usesRemaining: number;
-}
-
-/** config_updated — game config changed on-chain */
-export interface GameConfigUpdatedEventData {
-	admin: string;
-	treasury: string;
-	feeBps: number;
-	mintPrice: string;
-	initialUses: number;
-	isPaused: boolean;
-	wagerExpirySeconds: string;
-	vrfTimeoutSeconds: string;
-}
-
-// ─── Account Type Map ────────────────────────────────────────────────────────
+import type { Address } from "@solana/kit";
+import type {
+	WagerInitiated,
+	WagerAccepted,
+	WagerResolvedEvent,
+	WinningsClaimed,
+	WagerCancelled,
+	WagerExpiredEvent,
+	VrfTimeoutRefund,
+	DiceBagMinted,
+	DiceBagUsed,
+	ConfigUpdated,
+} from "#generated/clients/svm/dice-duel/types";
 
 import type {
 	DeserializedDiceBag,
@@ -103,6 +30,111 @@ import type {
 	DeserializedPlayerStats,
 	DeserializedWager,
 } from "./svm/program";
+
+// ─── Utility: Codama → wire format ──────────────────────────────────────────
+
+/** Convert Address/bigint fields to string for JSON transport. */
+type Stringify<T> = {
+	[K in keyof T]: T[K] extends Address
+		? string
+		: T[K] extends bigint
+			? string
+			: T[K];
+};
+
+/**
+ * Accept both string and bigint for fields that are bigint-origin.
+ * The SDK's serializePayload() auto-converts bigint → string at the
+ * publish boundary, so handlers can pass either form.
+ *
+ * Only applied to the PublishableDiceDuelEventMap (used by handlers),
+ * not the base DiceDuelEventMap (used by consumers).
+ */
+type Publishable<T> = {
+	[K in keyof T]: [T[K]] extends [string]
+		? string | bigint
+		: [T[K]] extends [string | undefined]
+			? string | bigint | undefined
+			: T[K];
+};
+
+// ─── Event Payloads ─────────────────────────────────────────────────────────
+
+/** wager_initiated — new wager created */
+export type WagerInitiatedEventData = Stringify<
+	Pick<WagerInitiated, "challenger" | "opponent" | "amount" | "nonce">
+> & { wagerAddress: string };
+
+/** wager_accepted — opponent accepted, dice rolling */
+export type WagerAcceptedEventData = Stringify<
+	Pick<WagerAccepted, "challenger" | "opponent" | "amount">
+> & { wagerAddress: string; nonce?: string };
+
+/** wager_cancelled — wager cancelled before acceptance */
+export type WagerCancelledEventData = Stringify<
+	Pick<WagerCancelled, "challenger">
+> & { opponent?: string; wagerAddress: string; nonce?: string };
+
+/** wager_resolved — VRF result in, winner determined, awaiting claim */
+export type WagerResolvedEventData = Stringify<
+	Pick<
+		WagerResolvedEvent,
+		| "challenger"
+		| "opponent"
+		| "winner"
+		| "vrfResult"
+		| "gameType"
+		| "challengerChoice"
+		| "amount"
+	>
+> & { wagerAddress: string; nonce?: string };
+
+/** winnings_claimed — payout complete, wager settled */
+export type WinningsClaimedEventData = Stringify<
+	Pick<WinningsClaimed, "winner" | "amount" | "payout" | "fee" | "challenger">
+> & {
+	wagerAddress: string;
+	opponent?: string;
+	nonce?: string;
+};
+
+/** wager_expired / vrf_timeout_claimed — wager timed out */
+export type WagerStatusEventData = {
+	wagerAddress: string;
+	challenger: string;
+	opponent: string;
+	amount?: string;
+	nonce?: string;
+};
+
+/** dice_bag_minted — new dice bag NFT minted */
+export type DiceBagMintedEventData = Stringify<
+	Pick<DiceBagMinted, "player" | "mint">
+>;
+
+/** dice_bag_updated — dice bag stats changed */
+export type DiceBagUpdatedEventData = {
+	player: string;
+	mint: string;
+	usesRemaining: number;
+};
+
+/** config_updated — game config changed on-chain */
+export type GameConfigUpdatedEventData = Stringify<
+	Pick<
+		DeserializedGameConfig,
+		| "admin"
+		| "treasury"
+		| "feeBps"
+		| "mintPrice"
+		| "initialUses"
+		| "isPaused"
+		| "wagerExpirySeconds"
+		| "vrfTimeoutSeconds"
+	>
+>;
+
+// ─── Account Type Map ────────────────────────────────────────────────────────
 
 /**
  * Maps "ProgramName:AccountType" handler keys to their deserialized types.
@@ -120,7 +152,7 @@ export interface DiceDuelAccountTypeMap {
 
 /**
  * Maps event type strings to their payload types.
- * Single source of truth for the publisher→consumer contract.
+ * Single source of truth for the publisher-consumer contract.
  */
 export interface DiceDuelEventMap {
 	wager_initiated: WagerInitiatedEventData;
@@ -134,3 +166,11 @@ export interface DiceDuelEventMap {
 	dice_bag_updated: DiceBagUpdatedEventData;
 	config_updated: GameConfigUpdatedEventData;
 }
+
+/**
+ * Publishable variant of DiceDuelEventMap — accepts bigint for string fields.
+ * Used by indexer handlers where the SDK auto-serializes bigint → string.
+ */
+export type PublishableDiceDuelEventMap = {
+	[K in keyof DiceDuelEventMap]: Publishable<DiceDuelEventMap[K]>;
+};

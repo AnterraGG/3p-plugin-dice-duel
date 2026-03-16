@@ -7,14 +7,17 @@
 
 import {
 	defineAccountHandler,
-	closure,
 	eq,
+	addr,
+	toEpoch,
+	epochNow,
 } from "@townexchange/3p-plugin-sdk/indexer";
 import type {
 	InferAnchorEvents,
 	IndexingDb,
 } from "@townexchange/3p-plugin-sdk/indexer";
-import type { DiceDuelEventMap } from "../event-data";
+import type { Address } from "@solana/kit";
+import type { PublishableDiceDuelEventMap } from "../event-data";
 import type {
 	DeserializedWager,
 	DeserializedDiceBag,
@@ -38,10 +41,6 @@ type DDEvents = InferAnchorEvents<typeof diceDuelProgram>;
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-function toEpoch(seconds: number | bigint): bigint {
-	return BigInt(seconds);
-}
-
 const DEFAULT_EXPIRY_SECONDS = BigInt(3600);
 let cachedExpirySeconds: bigint | null = null;
 
@@ -61,15 +60,20 @@ function invalidateExpiryCache(): void {
 	cachedExpirySeconds = null;
 }
 
-async function resolveWager(e: {
-	challenger: unknown;
+async function resolveWagerAddress(e: {
+	challenger: Address;
 	nonce: bigint;
 }): Promise<string> {
 	const [pda] = await diceDuelProgram.pdas.findWagerPda(
-		e.challenger as any,
+		e.challenger,
 		e.nonce,
 	);
-	return pda as string;
+	return addr(pda);
+}
+
+async function resolveDiceBagAddress(mint: Address): Promise<string> {
+	const [pda] = await diceDuelProgram.pdas.findDiceBagPda(mint);
+	return addr(pda);
 }
 
 // ─── Status Ordering ───────────────────────────────────────────────────────
@@ -88,7 +92,7 @@ const WAGER_STATUS_ORDER: Record<string, number> = {
 
 export const wagerHandler = defineAccountHandler<
 	DeserializedWager,
-	DiceDuelEventMap,
+	PublishableDiceDuelEventMap,
 	DDEvents
 >(diceDuelProgram, diceDuelProgram.accounts.Wager, wagerTable, {
 	statusField: "status",
@@ -107,7 +111,7 @@ export const wagerHandler = defineAccountHandler<
 		winner: "winner",
 		createdAt: (state) => {
 			const raw = toEpoch(state.createdAt);
-			return raw > 0n ? raw : BigInt(Math.floor(Date.now() / 1000));
+			return raw > 0n ? raw : epochNow();
 		},
 		settledAt: (state) =>
 			state.settledAt ? toEpoch(state.settledAt) : null,
@@ -130,106 +134,97 @@ export const wagerHandler = defineAccountHandler<
 		}
 	},
 
+	resolveAddress: resolveWagerAddress,
+
 	events: {
 		WagerInitiated: {
-			resolveAddress: resolveWager,
 			handler: async (ctx) => {
 				await ctx.db.insertOrIgnore(wagerEventLog).values({
 					id: `${ctx.address}-created-${ctx.slot}`,
 					programId: PID,
 					eventType: "wager_initiated",
 					wagerAddress: ctx.address,
-					challenger: ctx.account.challenger,
-					opponent: ctx.account.opponent,
-					amount: ctx.account.amount,
-					createdAt: toEpoch(ctx.account.createdAt),
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.event.amount,
+					createdAt: toEpoch(ctx.event.createdAt),
 					slot: BigInt(ctx.slot),
 				});
 
 				await ctx.publish("wager_initiated", {
-					challenger: ctx.account.challenger,
-					opponent: ctx.account.opponent,
-					amount: ctx.account.amount.toString(),
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.event.amount,
 					wagerAddress: ctx.address,
-					nonce: ctx.account.nonce.toString(),
+					nonce: ctx.event.nonce,
 				});
 			},
 		},
 
 		WagerAccepted: {
-			resolveAddress: resolveWager,
 			handler: async (ctx) => {
 				await ctx.db.insertOrIgnore(wagerEventLog).values({
 					id: `${ctx.address}-Active-${ctx.slot}`,
 					programId: PID,
 					eventType: "wager_accepted",
 					wagerAddress: ctx.address,
-					challenger: ctx.account.challenger,
-					opponent: ctx.account.opponent,
-					amount: ctx.account.amount,
-					createdAt: BigInt(Math.floor(Date.now() / 1000)),
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.event.amount,
+					createdAt: epochNow(),
 					slot: BigInt(ctx.slot),
 				});
 
 				await ctx.publish("wager_accepted", {
-					challenger: ctx.account.challenger,
-					opponent: ctx.account.opponent,
-					amount: ctx.account.amount.toString(),
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.event.amount,
 					wagerAddress: ctx.address,
 				});
 			},
 		},
 
 		WagerResolvedEvent: {
-			resolveAddress: resolveWager,
 			handler: async (ctx) => {
-				const event = ctx.event as DDEvents["WagerResolvedEvent"];
-
 				await ctx.db.insertOrIgnore(wagerEventLog).values({
 					id: `${ctx.address}-Resolved-${ctx.slot}`,
 					programId: PID,
 					eventType: "wager_resolved",
 					wagerAddress: ctx.address,
-					challenger: ctx.account.challenger,
-					opponent: ctx.account.opponent,
-					amount: ctx.account.amount,
-					createdAt: BigInt(Math.floor(Date.now() / 1000)),
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.event.amount,
+					createdAt: epochNow(),
 					slot: BigInt(ctx.slot),
 					data: {
-						winner: ctx.account.winner,
-						vrfResult: ctx.account.vrfResult,
+						winner: addr(ctx.event.winner),
+						vrfResult: ctx.event.vrfResult,
 					},
 				});
 
 				await ctx.publish("wager_resolved", {
-					challenger: ctx.account.challenger,
-					opponent: ctx.account.opponent,
-					winner: ctx.account.winner ?? ctx.account.challenger,
-					vrfResult: ctx.account.vrfResult ?? 0,
-					gameType: ctx.account.gameType,
-					challengerChoice: ctx.account.challengerChoice,
-					amount: ctx.account.amount.toString(),
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					winner: addr(ctx.event.winner),
+					vrfResult: ctx.event.vrfResult,
+					gameType: ctx.event.gameType,
+					challengerChoice: ctx.event.challengerChoice,
+					amount: ctx.event.amount,
 					wagerAddress: ctx.address,
 				});
 			},
 		},
 
-		WinningsClaimed: closure({
-			resolveAddress: resolveWager,
+		WinningsClaimed: {
+			closure: true,
 			handler: async (ctx) => {
-				const event = ctx.event as DDEvents["WinningsClaimed"];
-				// Closure: account may be {} during replay — read from DB first
-				const row = await ctx.db.find(wagerTable, { address: ctx.address });
-				const acct = row ?? ctx.account;
-				const settledAt = event.settledAt
-					? toEpoch(event.settledAt)
-					: BigInt(Math.floor(Date.now() / 1000));
+				const settledAt = toEpoch(ctx.event.settledAt);
 
-				if (row) {
+				if (ctx.account.challenger) {
 					await ctx.db.update(wagerTable, { address: ctx.address }).set({
 						status: "Settled",
 						settledAt,
-						winner: acct.winner ?? (event.winner as string),
+						winner: addr(ctx.event.winner),
 					});
 				}
 
@@ -238,36 +233,31 @@ export const wagerHandler = defineAccountHandler<
 					programId: PID,
 					eventType: "winnings_claimed",
 					wagerAddress: ctx.address,
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: acct.opponent,
-					amount: (event.amount as bigint | undefined) ?? acct.amount,
+					challenger: addr(ctx.event.challenger),
+					opponent: ctx.account.opponent,
+					amount: ctx.event.amount,
 					createdAt: settledAt,
 					slot: BigInt(ctx.slot),
 				});
 
 				await ctx.publish("winnings_claimed", {
-					winner: (event.winner as string) ?? acct.winner ?? acct.challenger,
-					amount: (event.amount ?? acct.amount)?.toString() ?? "0",
-					payout: event.payout?.toString(),
-					fee: event.fee?.toString(),
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: acct.opponent,
+					winner: addr(ctx.event.winner),
+					amount: ctx.event.amount,
+					payout: ctx.event.payout,
+					fee: ctx.event.fee,
+					challenger: addr(ctx.event.challenger),
+					opponent: ctx.account.opponent,
 					wagerAddress: ctx.address,
 				});
 			},
-		}),
+		},
 
-		WagerCancelled: closure({
-			resolveAddress: resolveWager,
+		WagerCancelled: {
+			closure: true,
 			handler: async (ctx) => {
-				const event = ctx.event as DDEvents["WagerCancelled"];
-				const row = await ctx.db.find(wagerTable, { address: ctx.address });
-				const acct = row ?? ctx.account;
-				const settledAt = event.settledAt
-					? toEpoch(event.settledAt)
-					: BigInt(Math.floor(Date.now() / 1000));
+				const settledAt = toEpoch(ctx.event.settledAt);
 
-				if (row) {
+				if (ctx.account.challenger) {
 					await ctx.db.update(wagerTable, { address: ctx.address }).set({
 						status: "Cancelled",
 						settledAt,
@@ -279,32 +269,27 @@ export const wagerHandler = defineAccountHandler<
 					programId: PID,
 					eventType: "wager_cancelled",
 					wagerAddress: ctx.address,
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: acct.opponent,
-					amount: acct.amount,
+					challenger: addr(ctx.event.challenger),
+					opponent: ctx.account.opponent,
+					amount: ctx.account.amount,
 					createdAt: settledAt,
 					slot: BigInt(ctx.slot),
 				});
 
 				await ctx.publish("wager_cancelled", {
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: acct.opponent,
+					challenger: addr(ctx.event.challenger),
+					opponent: ctx.account.opponent,
 					wagerAddress: ctx.address,
 				});
 			},
-		}),
+		},
 
-		WagerExpiredEvent: closure({
-			resolveAddress: resolveWager,
+		WagerExpiredEvent: {
+			closure: true,
 			handler: async (ctx) => {
-				const event = ctx.event as DDEvents["WagerExpiredEvent"];
-				const row = await ctx.db.find(wagerTable, { address: ctx.address });
-				const acct = row ?? ctx.account;
-				const settledAt = event.settledAt
-					? toEpoch(event.settledAt)
-					: BigInt(Math.floor(Date.now() / 1000));
+				const settledAt = toEpoch(ctx.event.settledAt);
 
-				if (row) {
+				if (ctx.account.challenger) {
 					await ctx.db.update(wagerTable, { address: ctx.address }).set({
 						status: "Expired",
 						settledAt,
@@ -316,32 +301,27 @@ export const wagerHandler = defineAccountHandler<
 					programId: PID,
 					eventType: "wager_expired",
 					wagerAddress: ctx.address,
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: (event.opponent as string) ?? acct.opponent,
-					amount: acct.amount,
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.account.amount,
 					createdAt: settledAt,
 					slot: BigInt(ctx.slot),
 				});
 
 				await ctx.publish("wager_expired", {
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: (event.opponent as string) ?? acct.opponent,
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
 					wagerAddress: ctx.address,
 				});
 			},
-		}),
+		},
 
-		VrfTimeoutRefund: closure({
-			resolveAddress: resolveWager,
+		VrfTimeoutRefund: {
+			closure: true,
 			handler: async (ctx) => {
-				const event = ctx.event as DDEvents["VrfTimeoutRefund"];
-				const row = await ctx.db.find(wagerTable, { address: ctx.address });
-				const acct = row ?? ctx.account;
-				const settledAt = event.settledAt
-					? toEpoch(event.settledAt)
-					: BigInt(Math.floor(Date.now() / 1000));
+				const settledAt = toEpoch(ctx.event.settledAt);
 
-				if (row) {
+				if (ctx.account.challenger) {
 					await ctx.db.update(wagerTable, { address: ctx.address }).set({
 						status: "VrfTimeout",
 						settledAt,
@@ -353,21 +333,21 @@ export const wagerHandler = defineAccountHandler<
 					programId: PID,
 					eventType: "vrf_timeout_claimed",
 					wagerAddress: ctx.address,
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: (event.opponent as string) ?? acct.opponent,
-					amount: (event.amount as bigint | undefined) ?? acct.amount,
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.event.amount,
 					createdAt: settledAt,
 					slot: BigInt(ctx.slot),
 				});
 
 				await ctx.publish("vrf_timeout_claimed", {
-					challenger: (event.challenger as string) ?? acct.challenger,
-					opponent: (event.opponent as string) ?? acct.opponent,
-					amount: (event.amount ?? acct.amount)?.toString() ?? "0",
+					challenger: addr(ctx.event.challenger),
+					opponent: addr(ctx.event.opponent),
+					amount: ctx.event.amount,
 					wagerAddress: ctx.address,
 				});
 			},
-		}),
+		},
 	},
 });
 
@@ -375,7 +355,7 @@ export const wagerHandler = defineAccountHandler<
 
 export const diceBagHandler = defineAccountHandler<
 	DeserializedDiceBag,
-	DiceDuelEventMap,
+	PublishableDiceDuelEventMap,
 	DDEvents
 >(diceDuelProgram, diceDuelProgram.accounts.DiceBag, diceBagTable, {
 	staticColumns: { programId: PID },
@@ -390,33 +370,21 @@ export const diceBagHandler = defineAccountHandler<
 	},
 	events: {
 		DiceBagMinted: {
-			resolveAddress: async (e) => {
-				// Resolve to the on-chain DiceBag PDA (not the mint address)
-				// so the EventBuffer drain key matches the state-diff key.
-				const [pda] = await diceDuelProgram.pdas.findDiceBagPda(
-					(e as DDEvents["DiceBagMinted"]).mint as any,
-				);
-				return pda as string;
-			},
+			resolveAddress: (e) => resolveDiceBagAddress(e.mint),
 			handler: async (ctx) => {
 				await ctx.publish("dice_bag_minted", {
-					player: ctx.account.owner,
-					mint: ctx.account.mint,
+					player: addr(ctx.event.player),
+					mint: addr(ctx.event.mint),
 				});
 			},
 		},
 		DiceBagUsed: {
-			resolveAddress: async (e) => {
-				const [pda] = await diceDuelProgram.pdas.findDiceBagPda(
-					(e as DDEvents["DiceBagUsed"]).mint as any,
-				);
-				return pda as string;
-			},
+			resolveAddress: (e) => resolveDiceBagAddress(e.mint),
 			handler: async (ctx) => {
 				await ctx.publish("dice_bag_updated", {
-					player: ctx.account.owner,
-					mint: ctx.account.mint,
-					usesRemaining: ctx.account.usesRemaining,
+					player: addr(ctx.event.owner),
+					mint: addr(ctx.event.mint),
+					usesRemaining: ctx.event.usesRemaining,
 				});
 			},
 		},
@@ -427,7 +395,7 @@ export const diceBagHandler = defineAccountHandler<
 
 export const playerStatsHandler = defineAccountHandler<
 	DeserializedPlayerStats,
-	DiceDuelEventMap,
+	PublishableDiceDuelEventMap,
 	DDEvents
 >(diceDuelProgram, diceDuelProgram.accounts.PlayerStats, playerStatsTable, {
 	staticColumns: { programId: PID },
@@ -449,7 +417,7 @@ export const playerStatsHandler = defineAccountHandler<
 
 export const gameConfigHandler = defineAccountHandler<
 	DeserializedGameConfig,
-	DiceDuelEventMap,
+	PublishableDiceDuelEventMap,
 	DDEvents
 >(diceDuelProgram, diceDuelProgram.accounts.GameConfig, gameConfigTable, {
 	staticColumns: { programId: PID, id: "singleton" },
@@ -475,11 +443,11 @@ export const gameConfigHandler = defineAccountHandler<
 					admin: ctx.account.admin,
 					treasury: ctx.account.treasury,
 					feeBps: ctx.account.feeBps,
-					mintPrice: ctx.account.mintPrice.toString(),
+					mintPrice: ctx.account.mintPrice,
 					initialUses: ctx.account.initialUses,
 					isPaused: ctx.account.isPaused,
-					wagerExpirySeconds: ctx.account.wagerExpirySeconds.toString(),
-					vrfTimeoutSeconds: ctx.account.vrfTimeoutSeconds.toString(),
+					wagerExpirySeconds: ctx.account.wagerExpirySeconds,
+					vrfTimeoutSeconds: ctx.account.vrfTimeoutSeconds,
 				});
 			},
 		},

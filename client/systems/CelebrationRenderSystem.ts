@@ -13,10 +13,7 @@ import type {
 	UIAnchorHandle,
 } from "@townexchange/3p-plugin-sdk/client";
 import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
-import {
-	DICE_DUEL_ANIMATION,
-	DICE_DUEL_DEPTHS,
-} from "../../shared/constants";
+import { DICE_DUEL_ANIMATION, DICE_DUEL_DEPTHS } from "../../shared/constants";
 import {
 	registerCleanupCallback,
 	registerGraphics,
@@ -24,7 +21,21 @@ import {
 	unregisterGraphics,
 	unregisterText,
 } from "../state";
+import {
+	black,
+	cssHexToNumber,
+	gold,
+	goldBright,
+	goldLight,
+	textDark,
+	textWhite,
+} from "@townexchange/tex-ui-kit";
 import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
+
+const HEX_GOLD = cssHexToNumber(gold);
+const HEX_GOLD_BRIGHT = cssHexToNumber(goldBright);
+const HEX_GOLD_LIGHT = cssHexToNumber(goldLight);
+const HEX_WHITE = cssHexToNumber(textWhite);
 
 interface CelebrationVisuals {
 	text: IText;
@@ -67,8 +78,8 @@ export function createCelebrationRenderSystem() {
 				const text = render.createText(0, 0, "", {
 					fontFamily: "Tickerbit",
 					fontSize: celebration.type === "win" ? "48px" : "32px",
-					color: celebration.type === "win" ? "#ffd700" : "#888888",
-					stroke: "#000000",
+					color: celebration.type === "win" ? gold : textDark,
+					stroke: black,
 					strokeThickness: celebration.type === "win" ? 6 : 4,
 				});
 				text.setOrigin(0.5, 0.5);
@@ -134,7 +145,7 @@ export function createCelebrationRenderSystem() {
 			if (anchor) {
 				worldPos = anchor.getPosition();
 			} else {
-				// Use world coords directly — Phaser camera handles scroll + zoom
+				// Use world coords directly — camera handles scroll + zoom
 				worldPos = celebration.position;
 			}
 
@@ -180,7 +191,7 @@ export function createCelebrationRenderSystem() {
 				// Particles — more of them, bigger, with color variety
 				graphics.clear();
 				const particleCount = 14;
-				const colors = [0xffd700, 0xffaa00, 0xffee55, 0xffffff];
+				const colors = [HEX_GOLD, HEX_GOLD_BRIGHT, HEX_GOLD_LIGHT, HEX_WHITE];
 				for (let i = 0; i < particleCount; i++) {
 					const angle = (i / particleCount) * Math.PI * 2 + elapsed / 400;
 					const radius = 40 + Math.sin(elapsed / 180 + i) * 15;
@@ -194,7 +205,7 @@ export function createCelebrationRenderSystem() {
 				}
 
 				// Inner glow ring
-				graphics.lineStyle(2, 0xffd700, alpha * 0.3);
+				graphics.lineStyle(2, HEX_GOLD, alpha * 0.3);
 				const glowRadius = 55 + Math.sin(elapsed / 250) * 8;
 				graphics.strokeCircle(worldPos.x, yPos, glowRadius);
 			} else {

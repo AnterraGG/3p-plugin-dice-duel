@@ -2,6 +2,7 @@ export {
 	fetchSvmDiceBags,
 	fetchSvmPlayerStats,
 	fetchSvmGameConfig,
+	fetchSvmLeaderboard,
 	fetchInventoryWagers,
 	fetchWagerHistory,
 	fetchWagerDetail,

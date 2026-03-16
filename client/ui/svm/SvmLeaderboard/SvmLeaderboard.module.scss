@@ -1,0 +1,98 @@
+@use "@townexchange/tex-ui-kit/theme/tokens/colors" as *;
+
+.tableWrapper {
+	max-height: 420px;
+	overflow-y: auto;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th {
+		text-align: left;
+		color: $text-muted;
+		font-weight: 600;
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid $stone-dark;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		position: sticky;
+		top: 0;
+		background: $bg-dark;
+		z-index: 1;
+	}
+
+	td {
+		padding: 0.4rem 0.75rem;
+		color: $text-cream;
+		border-bottom: 1px solid rgba($stone-dark, 0.5);
+		font-size: 0.8rem;
+	}
+
+	tbody tr:hover {
+		background: rgba($gold, 0.05);
+	}
+}
+
+.currentPlayer {
+	background: rgba($gold, 0.1);
+
+	td {
+		color: $gold;
+	}
+
+	&:hover {
+		background: rgba($gold, 0.15);
+	}
+}
+
+.rank {
+	color: $text-muted;
+	font-weight: 600;
+	width: 2rem;
+	text-align: center;
+}
+
+.player {
+	font-family: monospace;
+	font-size: 0.75rem;
+}
+
+.youBadge {
+	margin-left: 0.5rem;
+	padding: 0.1rem 0.3rem;
+	background: rgba($gold, 0.2);
+	color: $gold;
+	font-size: 0.6rem;
+	font-weight: 700;
+	border-radius: 2px;
+	text-transform: uppercase;
+}
+
+.wins {
+	color: $state-success;
+	font-weight: 600;
+}
+
+.sol {
+	color: $accent-gold;
+}
+
+.streak {
+	color: $state-warning;
+}
+
+.games {
+	color: $text-muted;
+}
+
+.numCol {
+	text-align: right;
+}
+
+.emptyState {
+	padding: 3rem 1rem;
+	text-align: center;
+}

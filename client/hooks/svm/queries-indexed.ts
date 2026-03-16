@@ -16,6 +16,7 @@ import {
 	fetchInventoryWagers,
 	fetchSvmDiceBags,
 	fetchSvmGameConfig,
+	fetchSvmLeaderboard,
 	fetchSvmPlayerStats,
 	fetchWagerDetail,
 	fetchWagerHistory,
@@ -34,6 +35,7 @@ export const queryKeys = createPluginQueryKeys("dice-duel", {
 	diceBags: (address: string) => ({ address }),
 	playerStats: (address: string) => ({ address }),
 	gameConfig: () => ({}),
+	leaderboard: (limit: number) => ({ limit }),
 });
 
 // ── New optimized hooks ────────────────────────────────────────────────────
@@ -229,5 +231,19 @@ export function useSvmGameConfig() {
 			return result;
 		},
 		staleTime: 60_000,
+	});
+}
+
+/**
+ * Fetch the global leaderboard — top players sorted by wins (desc).
+ */
+export function useSvmGlobalLeaderboard(limit = 20) {
+	const api = usePluginIndexerApi("svm");
+
+	return useQuery({
+		queryKey: queryKeys.leaderboard(limit),
+		queryFn: () => fetchSvmLeaderboard(api, { limit }),
+		staleTime: 30_000,
+		refetchInterval: 60_000,
 	});
 }

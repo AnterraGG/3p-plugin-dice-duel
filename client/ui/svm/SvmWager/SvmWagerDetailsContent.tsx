@@ -14,6 +14,7 @@ import {
 	Button,
 	GameWindow,
 	Stack,
+	StatusBox,
 	Typography,
 	modalStyles,
 	notificationApi,
@@ -22,12 +23,14 @@ import type React from "react";
 import { useCallback, useState } from "react";
 
 import type { SvmWager } from "../../../api";
+import inventoryStyles from "../SvmInventory/SvmInventory.module.scss";
 import { logDiceDuelError } from "../../../hooks/svm/errors";
 import {
 	queryKeys,
 	useSvmGameConfig,
 } from "../../../hooks/svm/queries-indexed";
 import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
+import { getVrfTimeoutState } from "../../../hooks/vrfTimeout";
 
 interface Props {
 	wager: SvmWager;
@@ -72,30 +75,30 @@ const formatTimestamp = (timestamp: string | number): string => {
 	});
 };
 
-const getStatusColor = (status: string): string => {
+const getStatusClass = (status: string): string => {
 	switch (status) {
 		case "Pending":
-			return "#f59e0b";
+		case "VrfTimeout":
+			return inventoryStyles.statusColorPending;
 		case "Active":
-			return "#3b82f6";
+			return inventoryStyles.statusColorActive;
 		case "Resolved":
-			return "#eab308";
+			return inventoryStyles.statusColorResolved;
 		case "Settled":
-			return "#22c55e";
+			return inventoryStyles.statusColorSettled;
 		case "Expired":
 		case "Cancelled":
-			return "#6b7280";
-		case "VrfTimeout":
-			return "#f59e0b";
+			return inventoryStyles.statusColorExpired;
 		default:
-			return "#fff";
+			return inventoryStyles.statusColorDefault;
 	}
 };
 
 const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 	const { walletAddress } = usePluginSvmTransaction();
 	const { getUsernameBySvmAddress } = usePluginIdentity();
-	const { claimWinnings, isLoading: isTxLoading } = useDiceDuelSvm();
+	const { claimWinnings, claimVrfTimeout, isLoading: isTxLoading } =
+		useDiceDuelSvm();
 	const { data: configData } = useSvmGameConfig();
 	const queryClient = useQueryClient();
 	const [isClaiming, setIsClaiming] = useState(false);
@@ -111,6 +114,12 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 
 	const hasResults = wager.vrfResult !== null && wager.winner !== null;
 
+	// VRF timeout — only trust on-chain status, no client-side countdown
+	const { isVrfTimeout, isActive } = getVrfTimeoutState(wager);
+
+	// No inline notification on success — the server-driven wager_claimed event
+	// in DiceDuelUIContainer handles the "Winnings Claimed" toast with the
+	// actual payout amount from the chain.
 	const handleClaimWinnings = useCallback(async () => {
 		if (!configData?.config?.treasury) return;
 		setIsClaiming(true);
@@ -120,9 +129,6 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 				treasury: configData.config.treasury as Address,
 				nonce: BigInt(wager.nonce),
 			});
-			// No inline notification — the server-driven wager_claimed event
-			// in DiceDuelUIContainer handles the "Winnings Claimed" toast
-			// with the actual payout amount from the chain.
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.inventoryWagers.all(),
 			});
@@ -138,6 +144,36 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 		}
 		setIsClaiming(false);
 	}, [claimWinnings, wager.challenger, configData, queryClient]);
+
+	const handleClaimVrfTimeout = useCallback(async () => {
+		setIsClaiming(true);
+		try {
+			await claimVrfTimeout.execute({
+				challenger: wager.challenger as Address,
+				opponent: wager.opponent as Address,
+				nonce: BigInt(wager.nonce),
+			});
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.inventoryWagers.all(),
+			});
+			queryClient.invalidateQueries({ queryKey: queryKeys.wagerHistory.all() });
+		} catch (e: any) {
+			const decoded = logDiceDuelError("claimVrfTimeout", e);
+			notificationApi.notify({
+				type: "error",
+				title: "VRF Timeout Failed",
+				message: decoded.message,
+				channel: "dice-duel",
+			});
+		}
+		setIsClaiming(false);
+	}, [
+		claimVrfTimeout,
+		wager.challenger,
+		wager.opponent,
+		wager.nonce,
+		queryClient,
+	]);
 
 	const challengerChoice = wager.challengerChoice === 0 ? "Low" : "High";
 	const opponentChoice = challengerChoice === "High" ? "Low" : "High";
@@ -163,7 +199,7 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 					<Typography
 						variant="light"
 						size="sm"
-						style={{ color: getStatusColor(wager.status) }}
+						className={getStatusClass(wager.status)}
 					>
 						{wager.status === "Resolved" ? "Winner Determined" : wager.status}
 					</Typography>
@@ -173,17 +209,7 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 			{/* Result Display */}
 			{hasResults && isParticipant && (
 				<div
-					style={{
-						textAlign: "center",
-						padding: 12,
-						borderRadius: 8,
-						background: isWinner
-							? "linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(255, 215, 0, 0.1))"
-							: "rgba(255, 48, 48, 0.1)",
-						border: isWinner
-							? "1px solid rgba(0, 255, 0, 0.3)"
-							: "1px solid rgba(255, 48, 48, 0.2)",
-					}}
+					className={`${inventoryStyles.resultDisplay} ${isWinner ? inventoryStyles.resultWin : inventoryStyles.resultLose}`}
 				>
 					<Typography variant={isWinner ? "success" : "error"} size="lg" bold>
 						{canClaim
@@ -317,14 +343,7 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 				{(wager.status === "Settled" ||
 					wager.status === "Resolved" ||
 					hasResults) && (
-					<div
-						style={{
-							textAlign: "center",
-							marginTop: 6,
-							paddingTop: 6,
-							borderTop: "1px solid rgba(255,255,255,0.08)",
-						}}
-					>
+					<div className={inventoryStyles.totalWageredDivider}>
 						<div>
 							<Typography variant="gold" size="sm">
 								{totalPrize.toFixed(3)} SOL
@@ -363,6 +382,31 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 				</div>
 			)}
 
+			{/* VRF Status — Active (awaiting VRF) */}
+			{isActive && isParticipant && (
+				<StatusBox variant="info">
+					<Stack gap={2}>
+						<Typography variant="light" size="sm">
+							Awaiting VRF result...
+						</Typography>
+					</Stack>
+				</StatusBox>
+			)}
+
+			{/* VRF Timed Out status */}
+			{isVrfTimeout && isParticipant && (
+				<StatusBox variant="error">
+					<Stack gap={2}>
+						<Typography variant="error" size="sm" bold>
+							VRF timed out — Funds returned
+						</Typography>
+						<Typography variant="muted" size="xs">
+							The random result did not arrive. Claim your refund below.
+						</Typography>
+					</Stack>
+				</StatusBox>
+			)}
+
 			{/* Single timestamp line */}
 			{getTimestampInfo() && (
 				<div style={{ textAlign: "center" }}>
@@ -382,6 +426,18 @@ const SvmWagerDetailsInner: React.FC<Props> = ({ wager, onClose }) => {
 						disabled={isClaiming || isTxLoading}
 					>
 						{isClaiming ? "Claiming..." : `Claim ${totalPrize.toFixed(3)} SOL`}
+					</Button>
+				)}
+				{isVrfTimeout && isParticipant && (
+					<Button
+						variant="primary"
+						width="full"
+						onClick={handleClaimVrfTimeout}
+						disabled={isClaiming || isTxLoading}
+					>
+						{isClaiming
+							? "Claiming Refund..."
+							: `Claim VRF Timeout Refund (${lamportsToSol(wager.amount)} SOL)`}
 					</Button>
 				)}
 				<Button variant="secondary" width="full" onClick={onClose}>

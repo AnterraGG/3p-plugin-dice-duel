@@ -26,6 +26,7 @@ import {
 import { assets } from "../../../../shared/assets";
 import { useDiceDuelSvm } from "../../../hooks/svm/useDiceDuelSvm";
 import { useCountdown } from "../../../hooks/useCountdown";
+import { getVrfTimeoutState } from "../../../hooks/vrfTimeout";
 import styles from "./SvmInventory.module.scss";
 
 interface SvmWagerSlotProps {
@@ -174,6 +175,9 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 		wager.status === "Pending" ? expiresAtNum : null,
 	);
 
+	// VRF timeout — only trust on-chain status, no client-side countdown
+	const { isVrfTimeout, isActive } = getVrfTimeoutState(wager);
+
 	const invalidateQueries = useCallback(() => {
 		queryClient.invalidateQueries({
 			queryKey: queryKeys.inventoryWagers.all(),
@@ -316,8 +320,8 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 			return;
 		}
 
-		// Claim VRF timeout
-		if (wager.status === "VrfTimeout") {
+		// Claim VRF timeout (on-chain confirmed only)
+		if (isVrfTimeout) {
 			handleClaimVrfTimeout();
 			return;
 		}
@@ -327,6 +331,7 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 	}, [
 		statusInfo,
 		isChallenger,
+		isVrfTimeout,
 		wager,
 		onClick,
 		handleCancel,
@@ -373,21 +378,23 @@ export const SvmWagerSlot: React.FC<SvmWagerSlotProps> = ({
 			{/* Line 2: Meta text + Status badge */}
 			<Flex align="center" justify="between" gap={4} style={{ marginTop: 1 }}>
 				<span className={styles.wagerMeta}>
-					{statusInfo?.type === "claimable"
-						? "You won"
-						: isChallenger
-							? "You challenged"
-							: "Challenged you"}
+					{isActive
+						? "Awaiting VRF result..."
+						: statusInfo?.type === "claimable"
+							? "You won"
+							: isChallenger
+								? "You challenged"
+								: "Challenged you"}
 					{countdown && (
 						<span
+							className={
+								Number(wager.expiresAt) - Math.floor(Date.now() / 1000) < 60
+									? styles.countdownUrgent
+									: styles.countdownWarning
+							}
 							style={{
 								marginLeft: 4,
-								color:
-									Number(wager.expiresAt) - Math.floor(Date.now() / 1000) < 60
-										? "#ef4444"
-										: "#f59e0b",
 								fontSize: 9,
-								fontWeight: 600,
 								fontVariantNumeric: "tabular-nums",
 							}}
 						>

@@ -9,12 +9,15 @@ import {
 	type DecodedAnchorError,
 	createErrorDecoder,
 } from "@townexchange/3p-plugin-sdk/anchor";
-import { getDiceDuelErrorMessage } from "#generated/clients/svm/dice-duel/errors";
+import {
+	type DiceDuelError,
+	getDiceDuelErrorMessage,
+} from "#generated/clients/svm/dice-duel/errors";
 
 export type { DecodedAnchorError };
 
 const decodeError = createErrorDecoder((code: number) =>
-	getDiceDuelErrorMessage(code as any),
+	getDiceDuelErrorMessage(code as DiceDuelError),
 );
 
 /**

@@ -70,13 +70,16 @@ const HistoryListItem: React.FC<{
 	const isLoss =
 		!isExpired && wager.winner !== null && wager.winner !== walletAddress;
 
-	const borderColor = isWin ? "#22c55e" : isLoss ? "#ef4444" : "#6b7280";
-	const badgeBg = isWin
-		? "rgba(34, 197, 94, 0.2)"
+	const borderClass = isWin
+		? inventoryStyles.historyBorderWin
 		: isLoss
-			? "rgba(239, 68, 68, 0.2)"
-			: "rgba(128, 128, 128, 0.2)";
-	const badgeColor = isWin ? "#22c55e" : isLoss ? "#ef4444" : "#6b7280";
+			? inventoryStyles.historyBorderLoss
+			: inventoryStyles.historyBorderExpired;
+	const badgeClass = isWin
+		? inventoryStyles.historyBadgeWin
+		: isLoss
+			? inventoryStyles.historyBadgeLoss
+			: inventoryStyles.historyBadgeExpired;
 	const badgeLabel = isWin ? "W" : isLoss ? "L" : "X";
 
 	const timestamp = wager.settledAt || wager.createdAt;
@@ -92,8 +95,7 @@ const HistoryListItem: React.FC<{
 	return (
 		<div
 			onClick={onClick}
-			className={inventoryStyles.historyListItem}
-			style={{ borderLeft: `3px solid ${borderColor}` }}
+			className={`${inventoryStyles.historyListItem} ${borderClass}`}
 		>
 			{/* Line 1: opponent + amount */}
 			<div
@@ -105,9 +107,9 @@ const HistoryListItem: React.FC<{
 				}}
 			>
 				<span
+					className={inventoryStyles.historyTextCream}
 					style={{
 						fontSize: 11,
-						color: "#c4b498",
 						fontWeight: 400,
 						overflow: "hidden",
 						textOverflow: "ellipsis",
@@ -119,9 +121,9 @@ const HistoryListItem: React.FC<{
 					{opponentDisplay}
 				</span>
 				<span
+					className={inventoryStyles.historyTextCream}
 					style={{
 						fontSize: 11,
-						color: "#c4b498",
 						fontWeight: 500,
 						display: "inline-flex",
 						alignItems: "center",
@@ -142,15 +144,14 @@ const HistoryListItem: React.FC<{
 					justifyContent: "space-between",
 				}}
 			>
-				<span style={{ fontSize: 9, color: "#8a7a6a" }}>{dateStr}</span>
+				<span className={inventoryStyles.historyTextMuted} style={{ fontSize: 9 }}>{dateStr}</span>
 				<span
+					className={badgeClass}
 					style={{
 						fontSize: 9,
 						fontWeight: 600,
 						padding: "1px 5px",
 						borderRadius: 2,
-						background: badgeBg,
-						color: badgeColor,
 					}}
 				>
 					{badgeLabel}
@@ -197,9 +198,9 @@ const SvmWagerHistoryInner: React.FC<Props> = ({ onClose }) => {
 						Record
 					</Typography>
 					<Flex gap={1}>
-						<span style={{ color: "#22c55e", fontWeight: 600 }}>{wins}W</span>
-						<span style={{ color: "#888" }}>-</span>
-						<span style={{ color: "#ef4444", fontWeight: 600 }}>{losses}L</span>
+						<span className={inventoryStyles.recordWins}>{wins}W</span>
+						<span className={inventoryStyles.recordSeparator}>-</span>
+						<span className={inventoryStyles.recordLosses}>{losses}L</span>
 					</Flex>
 				</div>
 				<div className={modalStyles.infoRow}>
