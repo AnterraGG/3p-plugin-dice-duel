@@ -9,7 +9,7 @@
 		"build:svm": "bash scripts/anchor-build.sh",
 		"codegen:svm": "node scripts/codegen-svm.mjs",
 		"build:ts": "tsc --noEmit",
-		"build": "pnpm build:ts",
+		"build": "tsup",
 		"build:full": "pnpm build:svm && pnpm codegen:svm && pnpm build:ts",
 		"codegen": "pnpm codegen:svm",
 		"test:svm": "anchor test",
@@ -20,29 +20,26 @@
 		"clean:all": "pnpm clean && cargo clean"
 	},
 	"exports": {
-		"./client": {
-			"types": "./client/index.ts",
-			"import": "./client/index.ts"
-		},
+		"./client": "./client/index.ts",
 		"./server": {
 			"types": "./server/index.ts",
-			"import": "./server/index.ts"
+			"default": "./dist/server/index.js"
 		},
 		"./shared": {
 			"types": "./shared/index.ts",
-			"import": "./shared/index.ts"
+			"default": "./dist/shared/index.js"
 		},
 		"./manifest": {
 			"types": "./shared/manifest.ts",
-			"import": "./shared/manifest.ts"
+			"default": "./dist/shared/manifest.js"
 		},
 		"./indexing-svm": {
 			"types": "./shared/indexing-svm/index.ts",
-			"import": "./shared/indexing-svm/index.ts"
+			"default": "./dist/shared/indexing-svm/index.js"
 		},
 		"./svm": {
 			"types": "./shared/svm/program.ts",
-			"import": "./shared/svm/program.ts"
+			"default": "./dist/shared/svm/program.js"
 		}
 	},
 	"dependencies": {
@@ -81,12 +78,15 @@
 	"devDependencies": {
 		"@codama/nodes-from-anchor": "~1.3.8",
 		"@codama/renderers-js": "~1.7.0",
+		"@repo/tsup-config": "workspace:*",
 		"@types/react": "catalog:",
 		"codama": "~1.5.0",
+		"tsup": "catalog:",
 		"typescript": "catalog:"
 	},
 	"files": [
 		"client/",
+		"dist/",
 		"server/",
 		"shared/",
 		"generated/"
