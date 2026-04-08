@@ -10,7 +10,7 @@
 		"codegen:svm": "node scripts/codegen-svm.mjs",
 		"build:ts": "tsc --noEmit",
 		"build": "tsup",
-		"build:full": "pnpm build:svm && pnpm codegen:svm && pnpm build:ts",
+		"build:full": "pnpm build:svm && pnpm codegen:svm && pnpm build",
 		"codegen": "pnpm codegen:svm",
 		"test:svm": "anchor test",
 		"test:ts": "vitest run",
