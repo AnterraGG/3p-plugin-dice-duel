@@ -3,22 +3,20 @@
  *
  * Renders floating "+0.05 [icon] SOL" text above the player when a wager
  * resolves. Layout: [amountText] [coinIcon] [tickerText], all centered as
- * a group. Uses ECS entities for text/sprite and IGraphics for the coin circle.
+ * a group. All visual elements are ECS entities so they go through the same
+ * TransformSystem pipeline and stay in sync during camera/player movement.
  */
 
-import type { IGraphics } from "@townexchange/3p-plugin-sdk/client";
 import type { PluginSystemContext } from "@townexchange/3p-plugin-sdk/client";
 import {
+	createGraphicsEntity,
 	createSpriteEntity,
 	createTextEntity,
 } from "@townexchange/3p-plugin-sdk/client";
 import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
 import { removeEntity } from "@townexchange/3p-plugin-sdk/ecs";
 import { TOKEN_ICONS } from "@townexchange/token-icons";
-import {
-	DICE_DUEL_ANIMATION,
-	DICE_DUEL_DEPTHS,
-} from "../../shared/constants";
+import { DICE_DUEL_ANIMATION, DICE_DUEL_DEPTHS } from "../../shared/constants";
 import { registerCleanupCallback } from "../state";
 import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
 
@@ -41,7 +39,8 @@ interface FloatVisual {
 	/** Ticker label entity, e.g. "SOL" — only set when icon exists */
 	tickerTextEid: number | null;
 	iconEid: number | null;
-	coinCircle: IGraphics | null;
+	/** Coin circle background — ECS graphics entity, synced through the same pipeline as iconEid */
+	coinCircleEid: number | null;
 }
 
 export function createBalanceFloatRenderSystem() {
@@ -64,7 +63,8 @@ export function createBalanceFloatRenderSystem() {
 							removeEntity(capturedWorld, visual.tickerTextEid);
 						if (visual.iconEid != null)
 							removeEntity(capturedWorld, visual.iconEid);
-						visual.coinCircle?.destroy();
+						if (visual.coinCircleEid != null)
+							removeEntity(capturedWorld, visual.coinCircleEid);
 					}
 				}
 				floatVisuals.clear();
@@ -127,14 +127,22 @@ export function createBalanceFloatRenderSystem() {
 						...textStyle,
 					});
 
-					const coinCircle = ctx.services.render
+					const coinCircleGfx = ctx.services.render
 						.createGraphics()
-						.setDepth(depth - 0.5)
 						.setScrollFactor(1, 1)
 						.fillStyle(COIN_FILL_COLOR, 1)
 						.fillCircle(0, 0, COIN_RADIUS)
 						.lineStyle(COIN_STROKE_WIDTH, COIN_STROKE_COLOR, 0.6)
 						.strokeCircle(0, 0, COIN_RADIUS);
+
+					const coinCircleEid = createGraphicsEntity(world, ctx, {
+						worldX,
+						worldY: worldY - 20,
+						graphics: coinCircleGfx,
+						depth: depth - 0.5,
+						alpha: 1,
+						scale: 0,
+					});
 
 					const iconEid = createSpriteEntity(world, ctx, {
 						worldX,
@@ -145,7 +153,7 @@ export function createBalanceFloatRenderSystem() {
 						alpha: 1,
 					});
 
-					visual = { textEid, tickerTextEid, iconEid, coinCircle };
+					visual = { textEid, tickerTextEid, iconEid, coinCircleEid };
 				} else {
 					// No icon: single combined text
 					const textEid = createTextEntity(world, ctx, {
@@ -159,7 +167,7 @@ export function createBalanceFloatRenderSystem() {
 						textEid,
 						tickerTextEid: null,
 						iconEid: null,
-						coinCircle: null,
+						coinCircleEid: null,
 					};
 				}
 
@@ -214,7 +222,13 @@ export function createBalanceFloatRenderSystem() {
 				scale = 1.0;
 			}
 
-			if (visual.iconEid != null && visual.tickerTextEid != null) {
+			if (
+				visual.iconEid != null &&
+				visual.tickerTextEid != null &&
+				visual.coinCircleEid != null
+			) {
+				const { GraphicsDisplay } = ctx.components;
+
 				// 3-part layout: [amountText] [icon] [tickerText] centered at baseWorldX
 				const rawWidth = ctx.entities.getSpriteWidth(visual.iconEid);
 				if (rawWidth > 0) {
@@ -255,7 +269,11 @@ export function createBalanceFloatRenderSystem() {
 				Position.worldY[visual.iconEid] = iconY;
 				Sprite.alpha[visual.iconEid] = alpha;
 
-				visual.coinCircle?.setPosition(iconX, iconY).setAlpha(alpha);
+				// Coin circle — same ECS pipeline as the icon, so no frame lag
+				Position.worldX[visual.coinCircleEid] = iconX;
+				Position.worldY[visual.coinCircleEid] = iconY;
+				GraphicsDisplay.alpha[visual.coinCircleEid] = alpha;
+				GraphicsDisplay.scale[visual.coinCircleEid] = scale;
 			} else {
 				// No icon: single centered text
 				Position.worldX[visual.textEid] = baseWorldX;
@@ -276,7 +294,8 @@ export function createBalanceFloatRenderSystem() {
 				if (visual.tickerTextEid != null)
 					removeEntity(world, visual.tickerTextEid);
 				if (visual.iconEid != null) removeEntity(world, visual.iconEid);
-				visual.coinCircle?.destroy();
+				if (visual.coinCircleEid != null)
+					removeEntity(world, visual.coinCircleEid);
 				floatVisuals.delete(id);
 				fxFired.delete(id);
 			}
