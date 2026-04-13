@@ -139,9 +139,8 @@ export function createBalanceFloatRenderSystem() {
 						worldX,
 						worldY: worldY - 20,
 						graphics: coinCircleGfx,
-						depth: depth - 0.5,
+						depth: depth - 1,
 						alpha: 1,
-						scale: 0,
 					});
 
 					const iconEid = createSpriteEntity(world, ctx, {
@@ -273,7 +272,6 @@ export function createBalanceFloatRenderSystem() {
 				Position.worldX[visual.coinCircleEid] = iconX;
 				Position.worldY[visual.coinCircleEid] = iconY;
 				GraphicsDisplay.alpha[visual.coinCircleEid] = alpha;
-				GraphicsDisplay.scale[visual.coinCircleEid] = scale;
 			} else {
 				// No icon: single centered text
 				Position.worldX[visual.textEid] = baseWorldX;
