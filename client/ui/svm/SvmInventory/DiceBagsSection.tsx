@@ -3,7 +3,7 @@
  * Pure presentation — all data and handlers passed via props.
  */
 
-import { Stack, Typography } from "@townexchange/tex-ui-kit";
+import { Stack, Typography } from "@anterra/tex-ui-kit";
 import type React from "react";
 import type { SvmDiceBag } from "../../../api";
 import { BuyDiceBagSlot } from "./BuyDiceBagSlot";

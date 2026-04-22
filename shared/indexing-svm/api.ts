@@ -18,7 +18,7 @@ import {
 	or,
 	rateLimit,
 	validateSolanaAddress,
-} from "@townexchange/3p-plugin-sdk/indexer";
+} from "@anterra/3p-plugin-sdk/indexer";
 import { DICE_DUEL_PROGRAM_ID } from "../programs";
 import {
 	diceBagTable,

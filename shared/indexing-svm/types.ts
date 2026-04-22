@@ -9,7 +9,7 @@
 import type {
 	InferRow,
 	JsonSerialized,
-} from "@townexchange/3p-plugin-sdk/indexer";
+} from "@anterra/3p-plugin-sdk/indexer";
 import type {
 	diceBagTable,
 	gameConfigTable,

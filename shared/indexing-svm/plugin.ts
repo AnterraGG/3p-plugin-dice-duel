@@ -5,7 +5,7 @@
  * into one SvmPluginDescriptor via defineSvmPlugin().
  */
 
-import { defineSvmPlugin } from "@townexchange/3p-plugin-sdk/indexer";
+import { defineSvmPlugin } from "@anterra/3p-plugin-sdk/indexer";
 import type { DiceDuelEventMap } from "../event-data";
 import { diceDuelProgram } from "../svm/program";
 import {
@@ -34,7 +34,7 @@ export const diceDuelSvmPlugin = defineSvmPlugin<DiceDuelEventMap>({
 	api: svmApi,
 	aggregates: { hourlyWagerStats, dailyWagerStats },
 	sourceModules: [
-		"@townexchange/3p-plugin-dice-duel/indexing-svm",
-		"@townexchange/3p-plugin-dice-duel/svm",
+		"@anterra/3p-plugin-dice-duel/indexing-svm",
+		"@anterra/3p-plugin-dice-duel/svm",
 	],
 });

@@ -11,11 +11,11 @@ import {
 	addr,
 	toEpoch,
 	epochNow,
-} from "@townexchange/3p-plugin-sdk/indexer";
+} from "@anterra/3p-plugin-sdk/indexer";
 import type {
 	InferAnchorEvents,
 	IndexingDb,
-} from "@townexchange/3p-plugin-sdk/indexer";
+} from "@anterra/3p-plugin-sdk/indexer";
 import type { Address } from "@solana/kit";
 import type { PublishableDiceDuelEventMap } from "../event-data";
 import type {

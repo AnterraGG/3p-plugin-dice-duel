@@ -1,4 +1,4 @@
-import { GameWindow } from "@townexchange/tex-ui-kit";
+import { GameWindow } from "@anterra/tex-ui-kit";
 import { InitiateWagerSvm } from "./InitiateWagerSvm";
 
 export default function InitiateWagerContent({

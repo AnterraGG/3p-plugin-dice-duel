@@ -7,13 +7,13 @@ import {
 	usePluginAudio,
 	usePluginIdentity,
 	usePluginSvmTransaction,
-} from "@townexchange/3p-plugin-sdk/client";
-import { usePluginActiveChain } from "@townexchange/3p-plugin-sdk/client";
-import { ZoneType } from "@townexchange/3p-plugin-sdk/shared";
+} from "@anterra/3p-plugin-sdk/client";
+import { usePluginActiveChain } from "@anterra/3p-plugin-sdk/client";
+import { ZoneType } from "@anterra/3p-plugin-sdk/shared";
 import {
 	NotificationContainer,
 	useNotification,
-} from "@townexchange/tex-ui-kit";
+} from "@anterra/tex-ui-kit";
 import { useEffect } from "react";
 import { assets } from "../../shared/assets";
 import { DICE_DUEL_ANIMATION } from "../../shared/constants";

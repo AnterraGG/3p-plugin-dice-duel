@@ -8,7 +8,7 @@
 import {
 	type DecodedAnchorError,
 	createErrorDecoder,
-} from "@townexchange/3p-plugin-sdk/anchor";
+} from "@anterra/3p-plugin-sdk/anchor";
 import {
 	type DiceDuelError,
 	getDiceDuelErrorMessage,

@@ -6,9 +6,9 @@
  * - ctx.services.audio instead of ctx.worldContext.services.audio
  */
 
-import type { PluginUIEntry } from "@townexchange/3p-plugin-sdk/client";
-import { defineClientPlugin } from "@townexchange/3p-plugin-sdk/client";
-import { getTokenTextures } from "@townexchange/token-icons";
+import type { PluginUIEntry } from "@anterra/3p-plugin-sdk/client";
+import { defineClientPlugin } from "@anterra/3p-plugin-sdk/client";
+import { getTokenTextures } from "@anterra/token-icons";
 import { assets } from "../shared/assets";
 import { diceDuelChains } from "../shared/chains";
 import { manifest as diceDuelManifest } from "../shared/manifest";

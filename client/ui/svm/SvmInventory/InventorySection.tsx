@@ -3,7 +3,7 @@
  * Lightweight replacement after EVM code strip.
  */
 
-import { Flex, Typography } from "@townexchange/tex-ui-kit";
+import { Flex, Typography } from "@anterra/tex-ui-kit";
 import type React from "react";
 
 interface InventorySectionProps {

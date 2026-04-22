@@ -10,7 +10,7 @@ import {
 	createErrorDecoder,
 	createStubSigner,
 	toSvmIx,
-} from "@townexchange/3p-plugin-sdk/anchor";
+} from "@anterra/3p-plugin-sdk/anchor";
 import {
 	requireDefined,
 	usePluginIndexerApi,
@@ -18,7 +18,7 @@ import {
 	usePluginSvmTransaction,
 	useTransactionBuilder,
 	useTransactionGroup,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 import { fetchSvmPlayerStats } from "../../api/svmApi";
 
 import { getDiceDuelErrorMessage } from "#generated/clients/svm/dice-duel/errors";

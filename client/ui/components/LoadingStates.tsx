@@ -2,7 +2,7 @@
  * Loading state components with Dice Duel theming
  */
 
-import { Typography } from "@townexchange/tex-ui-kit";
+import { Typography } from "@anterra/tex-ui-kit";
 import type React from "react";
 import styles from "./components.module.scss";
 

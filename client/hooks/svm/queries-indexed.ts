@@ -11,7 +11,7 @@ import {
 	createPluginQueryKeys,
 	usePluginIndexerApi,
 	usePluginSvmTransaction,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 import {
 	fetchInventoryWagers,
 	fetchSvmDiceBags,

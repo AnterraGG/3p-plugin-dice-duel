@@ -1,5 +1,5 @@
 {
-	"name": "@townexchange/3p-plugin-dragon-dice",
+	"name": "@anterra/3p-plugin-dragon-dice",
 	"version": "0.1.0",
 	"description": "Dice Duel game plugin for TEX (third-party SDK)",
 	"type": "module",
@@ -43,20 +43,20 @@
 		}
 	},
 	"dependencies": {
-		"@solana/kit": "catalog:",
-		"@townexchange/3p-plugin-sdk": "workspace:*",
-		"@townexchange/token-icons": "workspace:*"
+		"@anterra/3p-plugin-sdk": "workspace:*",
+		"@anterra/token-icons": "workspace:*",
+		"@solana/kit": "catalog:"
 	},
 	"peerDependencies": {
+		"@anterra/tex-ui-kit": "workspace:*",
 		"@tanstack/react-query": "*",
-		"@townexchange/tex-ui-kit": "workspace:*",
 		"react": ">=18",
 		"viem": "*",
 		"wagmi": "*",
 		"zustand": "*"
 	},
 	"peerDependenciesMeta": {
-		"@townexchange/tex-ui-kit": {
+		"@anterra/tex-ui-kit": {
 			"optional": true
 		},
 		"react": {

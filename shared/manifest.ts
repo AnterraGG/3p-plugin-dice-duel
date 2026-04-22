@@ -6,7 +6,7 @@ import {
 	defineManifest,
 	eventChannels,
 	svmCapabilities,
-} from "@townexchange/3p-plugin-sdk/shared";
+} from "@anterra/3p-plugin-sdk/shared";
 import type { DiceDuelEventMap } from "./event-data";
 import { programs } from "./programs";
 

@@ -10,7 +10,7 @@ import {
 	usePluginIdentity,
 	usePluginSvmTransaction,
 	usePluginWindows,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 import {
 	Button,
 	Flex,
@@ -18,10 +18,10 @@ import {
 	Stack,
 	Typography,
 	modalStyles,
-} from "@townexchange/tex-ui-kit";
+} from "@anterra/tex-ui-kit";
 import type React from "react";
 
-import { TokenIcon } from "@townexchange/token-icons";
+import { TokenIcon } from "@anterra/token-icons";
 import type { SvmWagerCompact } from "../../../api";
 import {
 	useSvmPlayerStats,

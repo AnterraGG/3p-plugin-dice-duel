@@ -9,7 +9,7 @@
  * so we only invalidate what changed.
  */
 
-import type { PluginLoadContext } from "@townexchange/3p-plugin-sdk/client";
+import type { PluginLoadContext } from "@anterra/3p-plugin-sdk/client";
 import { DiceBagNotification, WagerNotification } from "../../shared/messages";
 import { queryKeys } from "../hooks/svm/queries-indexed";
 import { useDiceDuelNotificationStore } from "../store/diceDuelNotificationStore";

@@ -8,14 +8,14 @@
  * Also updates local player position/entityId in module state for UI components.
  */
 
-import type { PluginSystemContext } from "@townexchange/3p-plugin-sdk/client";
-import { createSpriteEntity } from "@townexchange/3p-plugin-sdk/client";
-import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
+import type { PluginSystemContext } from "@anterra/3p-plugin-sdk/client";
+import { createSpriteEntity } from "@anterra/3p-plugin-sdk/client";
+import type { PluginWorld } from "@anterra/3p-plugin-sdk/ecs";
 import {
 	type PluginComponent,
 	hasComponent,
 	removeEntity,
-} from "@townexchange/3p-plugin-sdk/ecs";
+} from "@anterra/3p-plugin-sdk/ecs";
 import { assets } from "../../shared/assets";
 import {
 	DICE_DUEL_ANIMATION,

@@ -7,15 +7,15 @@
  * TransformSystem pipeline and stay in sync during camera/player movement.
  */
 
-import type { PluginSystemContext } from "@townexchange/3p-plugin-sdk/client";
+import type { PluginSystemContext } from "@anterra/3p-plugin-sdk/client";
 import {
 	createGraphicsEntity,
 	createSpriteEntity,
 	createTextEntity,
-} from "@townexchange/3p-plugin-sdk/client";
-import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
-import { removeEntity } from "@townexchange/3p-plugin-sdk/ecs";
-import { TOKEN_ICONS } from "@townexchange/token-icons";
+} from "@anterra/3p-plugin-sdk/client";
+import type { PluginWorld } from "@anterra/3p-plugin-sdk/ecs";
+import { removeEntity } from "@anterra/3p-plugin-sdk/ecs";
+import { TOKEN_ICONS } from "@anterra/token-icons";
 import { DICE_DUEL_ANIMATION, DICE_DUEL_DEPTHS } from "../../shared/constants";
 import { registerCleanupCallback } from "../state";
 import { useDiceDuelGameStore } from "../store/diceDuelGameStore";

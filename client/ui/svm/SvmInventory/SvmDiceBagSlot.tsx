@@ -5,7 +5,7 @@
  * selection mode, right-click for context menu.
  */
 
-import { Card, Typography, useSelectionStore } from "@townexchange/tex-ui-kit";
+import { Card, Typography, useSelectionStore } from "@anterra/tex-ui-kit";
 import type React from "react";
 import type { MouseEventHandler } from "react";
 import type { SvmDiceBag } from "../../../api";

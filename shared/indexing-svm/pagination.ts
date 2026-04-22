@@ -6,8 +6,8 @@
  * - History (settledAt, address) — for /wagers/:address/history (sorted by settlement time)
  */
 
-import { createCursorCodec } from "@townexchange/3p-plugin-sdk/indexer";
-import type { CursorSortDirection } from "@townexchange/3p-plugin-sdk/indexer";
+import { createCursorCodec } from "@anterra/3p-plugin-sdk/indexer";
+import type { CursorSortDirection } from "@anterra/3p-plugin-sdk/indexer";
 
 export type { CursorSortDirection as SortDirection };
 

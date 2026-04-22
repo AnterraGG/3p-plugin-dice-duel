@@ -4,7 +4,7 @@
  * SVM-only — supports SOL token.
  */
 
-import { formatUnits, parseUnits } from "@townexchange/3p-plugin-sdk/shared";
+import { formatUnits, parseUnits } from "@anterra/3p-plugin-sdk/shared";
 import { SUPPORTED_TOKENS, type SupportedTokenSymbol } from "./constants";
 
 /**

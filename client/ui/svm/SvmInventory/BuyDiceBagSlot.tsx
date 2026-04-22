@@ -3,7 +3,7 @@
  * Matches SvmDiceBagSlot dimensions so it fits naturally in the dice grid.
  */
 
-import { Card, Typography } from "@townexchange/tex-ui-kit";
+import { Card, Typography } from "@anterra/tex-ui-kit";
 import type React from "react";
 import styles from "./SvmInventory.module.scss";
 

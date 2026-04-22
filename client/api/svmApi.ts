@@ -5,7 +5,7 @@
  * No hardcoded URLs. The bridge provides the client with the correct base URL.
  */
 
-import type { IndexerApiClient } from "@townexchange/3p-plugin-sdk/indexer";
+import type { IndexerApiClient } from "@anterra/3p-plugin-sdk/indexer";
 
 // ─── Logging ───────────────────────────────────────────────────────────────
 
@@ -127,4 +127,4 @@ export function fetchSvmLeaderboard(
 	return trackedGet(api, "/dice-duel/svm/leaderboard", params);
 }
 
-// fetchPriorityFees moved to @townexchange/3p-plugin-sdk/client
+// fetchPriorityFees moved to @anterra/3p-plugin-sdk/client

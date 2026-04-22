@@ -8,7 +8,7 @@
 import type {
 	SvmAccountMeta,
 	SvmInstruction,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 

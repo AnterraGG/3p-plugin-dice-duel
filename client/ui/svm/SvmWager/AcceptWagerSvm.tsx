@@ -11,7 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
 	usePluginAudio,
 	usePluginIdentity,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 import {
 	Button,
 	Stack,
@@ -19,7 +19,7 @@ import {
 	Typography,
 	modalStyles,
 	notificationApi,
-} from "@townexchange/tex-ui-kit";
+} from "@anterra/tex-ui-kit";
 import { useCallback, useState } from "react";
 import type { SvmWager } from "../../../api";
 import { logDiceDuelError } from "../../../hooks/svm/errors";

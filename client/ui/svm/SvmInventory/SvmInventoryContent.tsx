@@ -2,7 +2,7 @@
  * SvmInventoryContent — Window wrapper for the SVM inventory.
  */
 
-import { GameWindow } from "@townexchange/tex-ui-kit";
+import { GameWindow } from "@anterra/tex-ui-kit";
 import { SvmInventory } from "./SvmInventory";
 
 export default function SvmInventoryContent({

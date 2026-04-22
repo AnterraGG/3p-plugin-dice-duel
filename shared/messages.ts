@@ -8,8 +8,8 @@
 import {
 	definePluginMessage,
 	optional,
-} from "@townexchange/3p-plugin-sdk/shared";
-import type { InferMessageData } from "@townexchange/3p-plugin-sdk/shared";
+} from "@anterra/3p-plugin-sdk/shared";
+import type { InferMessageData } from "@anterra/3p-plugin-sdk/shared";
 
 /**
  * WagerNotification — sent from server to client when wager events occur.

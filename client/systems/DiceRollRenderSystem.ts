@@ -17,8 +17,8 @@ import type {
 	PluginSystemContext,
 	ScreenAnchorOptions,
 	UIAnchorHandle,
-} from "@townexchange/3p-plugin-sdk/client";
-import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
+} from "@anterra/3p-plugin-sdk/client";
+import type { PluginWorld } from "@anterra/3p-plugin-sdk/ecs";
 import { assets, DICE_FACE_COUNT, getDiceFaceHandle } from "../../shared/assets";
 import {
 	DICE_DUEL_ANIMATION,

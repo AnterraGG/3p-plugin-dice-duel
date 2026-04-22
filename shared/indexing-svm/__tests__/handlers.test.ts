@@ -1,7 +1,7 @@
 import type {
 	SvmAccountChange,
 	SvmIndexingHandlerContext,
-} from "@townexchange/3p-plugin-sdk/indexer";
+} from "@anterra/3p-plugin-sdk/indexer";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { diceDuelSvmPlugin } from "../plugin";
 

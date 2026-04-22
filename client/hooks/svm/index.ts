@@ -8,6 +8,6 @@ export {
 	useSvmGlobalLeaderboard,
 	queryKeys,
 } from "./queries-indexed";
-export { usePriorityFees } from "@townexchange/3p-plugin-sdk/client";
+export { usePriorityFees } from "@anterra/3p-plugin-sdk/client";
 export { decodeDiceDuelError, logDiceDuelError } from "./errors";
 export type { DecodedAnchorError } from "./errors";

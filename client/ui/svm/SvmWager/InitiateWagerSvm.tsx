@@ -19,8 +19,8 @@ import {
 	Typography,
 	modalStyles,
 	notificationApi,
-} from "@townexchange/tex-ui-kit";
-import { usePluginAudio } from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/tex-ui-kit";
+import { usePluginAudio } from "@anterra/3p-plugin-sdk/client";
 import { useCallback, useMemo, useState } from "react";
 import { assets } from "../../../../shared/assets";
 import { logDiceDuelError } from "../../../hooks/svm/errors";

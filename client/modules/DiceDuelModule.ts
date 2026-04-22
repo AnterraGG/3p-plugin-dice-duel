@@ -7,7 +7,7 @@
 import {
 	alwaysActive,
 	defineECSModule,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 import { clearDiceDuelVisuals } from "../state";
 import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
 import { createBalanceFloatRenderSystem } from "../systems/BalanceFloatRenderSystem";

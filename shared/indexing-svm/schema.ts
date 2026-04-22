@@ -8,7 +8,7 @@
  * program deployments coexists cleanly. All queries filter by programId.
  */
 
-import { defineTable } from "@townexchange/3p-plugin-sdk/indexer";
+import { defineTable } from "@anterra/3p-plugin-sdk/indexer";
 
 // ─── Wager Table ───────────────────────────────────────────────────────────
 

@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
 	usePluginIdentity,
 	usePluginSvmTransaction,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 import {
 	Button,
 	GameWindow,
@@ -18,7 +18,7 @@ import {
 	Typography,
 	modalStyles,
 	notificationApi,
-} from "@townexchange/tex-ui-kit";
+} from "@anterra/tex-ui-kit";
 import type React from "react";
 import { useCallback, useState } from "react";
 

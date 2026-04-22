@@ -9,7 +9,7 @@ import {
 	usePluginIdentity,
 	usePluginSvmTransaction,
 	usePluginWindows,
-} from "@townexchange/3p-plugin-sdk/client";
+} from "@anterra/3p-plugin-sdk/client";
 import {
 	Button,
 	Flex,
@@ -19,7 +19,7 @@ import {
 	Typography,
 	useContextMenu,
 	useSelectionStore,
-} from "@townexchange/tex-ui-kit";
+} from "@anterra/tex-ui-kit";
 import type React from "react";
 import { useCallback, useState } from "react";
 import type { SvmDiceBag, SvmWager, SvmWagerCompact } from "../../../api";

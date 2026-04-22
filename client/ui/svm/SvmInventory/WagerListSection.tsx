@@ -3,7 +3,7 @@
  * Used for Incoming, Claimable, Pending, and Active sections.
  */
 
-import { ScrollableElement } from "@townexchange/tex-ui-kit";
+import { ScrollableElement } from "@anterra/tex-ui-kit";
 import type React from "react";
 import type { MouseEventHandler } from "react";
 import type { SvmWager } from "../../../api";

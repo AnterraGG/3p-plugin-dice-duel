@@ -11,8 +11,8 @@ import type {
 	IText,
 	PluginSystemContext,
 	UIAnchorHandle,
-} from "@townexchange/3p-plugin-sdk/client";
-import type { PluginWorld } from "@townexchange/3p-plugin-sdk/ecs";
+} from "@anterra/3p-plugin-sdk/client";
+import type { PluginWorld } from "@anterra/3p-plugin-sdk/ecs";
 import { DICE_DUEL_ANIMATION, DICE_DUEL_DEPTHS } from "../../shared/constants";
 import {
 	registerCleanupCallback,
@@ -29,7 +29,7 @@ import {
 	goldLight,
 	textDark,
 	textWhite,
-} from "@townexchange/tex-ui-kit";
+} from "@anterra/tex-ui-kit";
 import { useDiceDuelGameStore } from "../store/diceDuelGameStore";
 
 const HEX_GOLD = cssHexToNumber(gold);

@@ -8,10 +8,10 @@
 import {
 	defineEventHandlers,
 	defineServerPlugin,
-} from "@townexchange/3p-plugin-sdk/server";
-import type { OnchainEvent } from "@townexchange/3p-plugin-sdk/shared";
-import { PluginAnimationType } from "@townexchange/3p-plugin-sdk/shared";
-import { formatSol } from "@townexchange/3p-plugin-sdk/shared";
+} from "@anterra/3p-plugin-sdk/server";
+import type { OnchainEvent } from "@anterra/3p-plugin-sdk/shared";
+import { PluginAnimationType } from "@anterra/3p-plugin-sdk/shared";
+import { formatSol } from "@anterra/3p-plugin-sdk/shared";
 import type {
 	DiceDuelEventMap,
 	WagerStatusEventData,

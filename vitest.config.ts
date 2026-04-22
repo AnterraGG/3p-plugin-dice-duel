@@ -5,7 +5,7 @@ export default defineConfig({
 		globals: true,
 		environment: "node",
 		include: ["shared/**/*.test.ts"],
-		exclude: ["**/node_modules/**", "**/tex-turborepo-fix-pre-reset/**"],
+		exclude: ["**/node_modules/**", "**/anterra-monorepo/**"],
 		testTimeout: 10000,
 	},
 });

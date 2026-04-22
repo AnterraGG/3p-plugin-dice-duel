@@ -2,7 +2,7 @@
  * ResultDisplay - Win/Lose result display with animations
  */
 
-import { Button, Flex, Typography } from "@townexchange/tex-ui-kit";
+import { Button, Flex, Typography } from "@anterra/tex-ui-kit";
 import type React from "react";
 import { formatTokenAmount, getTokenSymbol } from "../../../shared/tokenUtils";
 import { DiceResultDisplay } from "./DiceResultDisplay";

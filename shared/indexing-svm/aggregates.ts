@@ -4,7 +4,7 @@
  * Time-series aggregations backed by TimescaleDB continuous aggregates.
  */
 
-import { defineAggregate } from "@townexchange/3p-plugin-sdk/indexer";
+import { defineAggregate } from "@anterra/3p-plugin-sdk/indexer";
 import { wagerEventLog } from "./schema";
 
 /**

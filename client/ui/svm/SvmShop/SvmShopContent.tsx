@@ -2,7 +2,7 @@
  * SvmShopContent — Window wrapper for the SVM shop.
  */
 
-import { GameWindow } from "@townexchange/tex-ui-kit";
+import { GameWindow } from "@anterra/tex-ui-kit";
 import { SvmShop } from "./SvmShop";
 
 export default function SvmShopContent({ onClose }: { onClose: () => void }) {

@@ -5,7 +5,7 @@
  * Framework auto-loads these before onLoad() runs.
  */
 
-import { definePluginAssets } from "@townexchange/3p-plugin-sdk/client";
+import { definePluginAssets } from "@anterra/3p-plugin-sdk/client";
 
 export const assets = definePluginAssets({
 	audio: {

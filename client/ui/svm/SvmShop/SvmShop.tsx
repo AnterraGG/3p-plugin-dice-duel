@@ -19,15 +19,15 @@ import {
 	usePluginAudio,
 	usePluginSvmCluster,
 	usePluginSvmTransaction,
-} from "@townexchange/3p-plugin-sdk/client";
-import { formatSol } from "@townexchange/3p-plugin-sdk/shared";
+} from "@anterra/3p-plugin-sdk/client";
+import { formatSol } from "@anterra/3p-plugin-sdk/shared";
 import {
 	Button,
 	Flex,
 	Typography,
 	notificationApi,
-} from "@townexchange/tex-ui-kit";
-import { TokenIcon } from "@townexchange/token-icons";
+} from "@anterra/tex-ui-kit";
+import { TokenIcon } from "@anterra/token-icons";
 import { useEffect, useState } from "react";
 import { logDiceDuelError } from "../../../hooks/svm/errors";
 import {

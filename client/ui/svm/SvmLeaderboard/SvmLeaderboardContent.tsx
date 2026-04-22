@@ -6,8 +6,8 @@
  * Highlights the current player's row if they appear on the board.
  */
 
-import { usePluginSvmTransaction } from "@townexchange/3p-plugin-sdk/client";
-import { GameWindow, Typography } from "@townexchange/tex-ui-kit";
+import { usePluginSvmTransaction } from "@anterra/3p-plugin-sdk/client";
+import { GameWindow, Typography } from "@anterra/tex-ui-kit";
 import { useSvmGlobalLeaderboard } from "../../../hooks/svm/queries-indexed";
 import styles from "./SvmLeaderboard.module.scss";
 

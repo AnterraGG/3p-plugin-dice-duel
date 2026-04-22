@@ -11,9 +11,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
 	usePluginAudio,
 	usePluginIdentity,
-} from "@townexchange/3p-plugin-sdk/client";
-import { Card, Flex, notificationApi } from "@townexchange/tex-ui-kit";
-import { TokenIcon } from "@townexchange/token-icons";
+} from "@anterra/3p-plugin-sdk/client";
+import { Card, Flex, notificationApi } from "@anterra/tex-ui-kit";
+import { TokenIcon } from "@anterra/token-icons";
 import type React from "react";
 import { useCallback, useState } from "react";
 import type { MouseEventHandler } from "react";

@@ -1,4 +1,4 @@
-import { GameWindow } from "@townexchange/tex-ui-kit";
+import { GameWindow } from "@anterra/tex-ui-kit";
 import type { SvmWager } from "../../../api";
 import { AcceptWagerSvm } from "./AcceptWagerSvm";
 

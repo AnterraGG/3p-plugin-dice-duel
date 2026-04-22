@@ -1,7 +1,7 @@
 import {
 	definePluginChains,
 	requireSvmCluster,
-} from "@townexchange/3p-plugin-sdk/shared";
+} from "@anterra/3p-plugin-sdk/shared";
 
 export const DICE_DUEL_SVM_CLUSTER = "devnet" as const;
 

@@ -5,7 +5,7 @@
  * event parsers, and PDA helpers are auto-derived from Codama artifacts.
  */
 
-import { defineProgram } from "@townexchange/3p-plugin-sdk/indexer";
+import { defineProgram } from "@anterra/3p-plugin-sdk/indexer";
 import type { Option } from "@solana/kit";
 
 // ─── Codama-generated imports ──────────────────────────────────────────────

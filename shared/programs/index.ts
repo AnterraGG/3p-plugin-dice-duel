@@ -5,7 +5,7 @@
  * Uses MagicBlock VRF for verifiable randomness.
  */
 
-import { definePluginPrograms } from "@townexchange/3p-plugin-sdk/shared";
+import { definePluginPrograms } from "@anterra/3p-plugin-sdk/shared";
 import { DICE_DUEL_PROGRAM_ADDRESS } from "#generated/clients/svm/dice-duel/programs";
 import DiceDuelIDL from "../../generated/idl/dice_duel.json";
 

@@ -3,7 +3,7 @@
  * Matches the visual design/structure of EVM HistoryItemCompact.
  */
 
-import { TokenIcon } from "@townexchange/token-icons";
+import { TokenIcon } from "@anterra/token-icons";
 import type React from "react";
 import type { SvmWager, SvmWagerCompact } from "../../../api";
 import styles from "./SvmInventory.module.scss";

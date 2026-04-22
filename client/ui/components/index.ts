@@ -11,4 +11,4 @@ export {
 	SimpleSpinner,
 	RollingDice,
 } from "./LoadingStates";
-export { TokenIcon } from "@townexchange/token-icons";
+export { TokenIcon } from "@anterra/token-icons";
