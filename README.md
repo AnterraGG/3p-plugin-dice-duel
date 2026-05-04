@@ -1,6 +1,6 @@
 # Dice Duel
 
-On-chain dice duel game built on Solana with MagicBlock VRF for verifiable randomness.
+Onchain dice duel game built on Solana with MagicBlock VRF for verifiable randomness.
 
 ## Structure
 
